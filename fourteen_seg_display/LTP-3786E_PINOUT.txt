@@ -1,0 +1,145 @@
+LTP-3786E 14-Segment Display Pinout
+====================================
+
+The LTP-3786E is a 2-digit 14-segment common anode display in an 18-pin DIP package.
+
+
+TOP VIEW (looking down at the display face):
+=============================================
+
+              Display Face
+         ┌────────────────────┐
+         │  [Digit1] [Digit2] │  ← You see the segments here
+         └────────────────────┘
+                   │
+                   ▼
+    Pin 1  ●──────────────────●  Pin 18
+    Pin 2  ●──────────────────●  Pin 17
+    Pin 3  ●──────────────────●  Pin 16
+    Pin 4  ●──────────────────●  Pin 15
+    Pin 5  ●──────────────────●  Pin 14
+    Pin 6  ●──────────────────●  Pin 13
+    Pin 7  ●──────────────────●  Pin 12
+    Pin 8  ●──────────────────●  Pin 11
+    Pin 9  ●──────────────────●  Pin 10
+           └──────────────────┘
+         Left Side    Right Side
+
+
+BOTTOM VIEW (looking up from PCB, pins pointing toward you):
+=============================================================
+
+           ┌──────────────────┐
+    Pin 9  ●──────────────────●  Pin 10
+    Pin 8  ●──────────────────●  Pin 11
+    Pin 7  ●──────────────────●  Pin 12
+    Pin 6  ●──────────────────●  Pin 13
+    Pin 5  ●──────────────────●  Pin 14
+    Pin 4  ●──────────────────●  Pin 15
+    Pin 3  ●──────────────────●  Pin 16
+    Pin 2  ●──────────────────●  Pin 17
+    Pin 1  ●──────────────────●  Pin 18
+                   │
+                   ▼
+         ┌────────────────────┐
+         │  [Digit1] [Digit2] │  ← Display face (other side)
+         └────────────────────┘
+         Left Side    Right Side
+
+
+PIN FUNCTIONS:
+==============
+
+LEFT SIDE (Pins 1-9):          RIGHT SIDE (Pins 10-18):
+Pin 1:   E                     Pin 18:  K
+Pin 2:   D2                    Pin 17:  J
+Pin 3:   CA1 (Digit 1 Anode)   Pin 16:  H
+Pin 4:   C                     Pin 15:  I
+Pin 5:   DP1 (Decimal Pt 1)    Pin 14:  D1
+Pin 6:   B                     Pin 13:  CA2 (Digit 2 Anode)
+Pin 7:   A2                    Pin 12:  DP2 (Decimal Pt 2)
+Pin 8:   A1                    Pin 11:  G1
+Pin 9:   F                     Pin 10:  G2
+
+
+COMPLETE PIN TABLE:
+===================
+
+Pin | Function | Description                        | Connect to FPGA
+----|----------|------------------------------------|-----------------
+1   | E        | Segment E (bottom left vertical)   | SEG[6] + 330Ω
+2   | D2       | Segment D2 (bottom right half)     | SEG[5] + 330Ω
+3   | CA1      | Common Anode Digit 1 (LEFT digit)  | DIG[1] or DIG[3]*
+4   | C        | Segment C (bottom right vertical)  | SEG[3] + 330Ω
+5   | DP1      | Decimal Point 1 (not used)         | N/C
+6   | B        | Segment B (top right vertical)     | SEG[2] + 330Ω
+7   | A2       | Segment A2 (top right half)        | SEG[1] + 330Ω
+8   | A1       | Segment A1 (top left half)         | SEG[0] + 330Ω
+9   | F        | Segment F (top left vertical)      | SEG[7] + 330Ω
+10  | G2       | Segment G2 (middle right half)     | SEG[9] + 330Ω
+11  | G1       | Segment G1 (middle left half)      | SEG[8] + 330Ω
+12  | DP2      | Decimal Point 2 (not used)         | N/C
+13  | CA2      | Common Anode Digit 2 (RIGHT digit) | DIG[0] or DIG[2]*
+14  | D1       | Segment D1 (bottom left half)      | SEG[4] + 330Ω
+15  | I        | Segment I (middle top vertical)    | SEG[11] + 330Ω
+16  | H        | Segment H (middle bottom vertical) | SEG[10] + 330Ω
+17  | J        | Segment J (top-right diagonal)     | SEG[12] + 330Ω
+18  | K        | Segment K (bottom-right diagonal)  | SEG[13] + 330Ω
+
+* Display 1: DIG[0]=rightmost, DIG[1]=leftmost
+* Display 2: DIG[2]=rightmost, DIG[3]=leftmost
+
+
+14-SEGMENT LAYOUT (Each Digit):
+================================
+
+           A1    A2
+          ───I   ───
+         │    │ │    │
+        F│  J │ │ K  │B
+         │    │ │    │
+          ─G1─   ─G2─
+         │    │ │    │
+        E│  H │ │    │C
+         │    │ │    │
+          ───    ───
+           D1    D2
+
+
+IDENTIFYING PIN 1:
+==================
+- Pin 1 is marked with a dot or notch on the package
+- With display face UP and text readable, Pin 1 is TOP-LEFT
+- Pins count counter-clockwise from Pin 1 (top view)
+
+
+EXAMPLE: Inserting into Breadboard (Bottom View)
+=================================================
+
+When you insert the display into a breadboard, you're looking at the
+BOTTOM view. The pin numbers are:
+
+           Row 1: 9  8  7  6  5  4  3  2  1
+                  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓  ↓
+                 ┌──────────────────────────┐
+                 │    LTP-3786E             │
+                 │  [Digit1] [Digit2]       │← Display face (other side)
+                 └──────────────────────────┘
+                  ↑  ↑  ↑  ↑  ↑  ↑  ↑  ↑  ↑
+           Row 2: 10 11 12 13 14 15 16 17 18
+
+
+WIRING SUMMARY:
+===============
+All 14 segment pins need 220-330Ω current-limiting resistors!
+
+Display 1 (4 digits total, this is digits 0-1):
+  Pin 3  (CA1) → DIG[1]  (left digit of display 1)
+  Pin 13 (CA2) → DIG[0]  (right digit of display 1)
+
+Display 2 (4 digits total, this is digits 2-3):
+  Pin 3  (CA1) → DIG[3]  (left digit of display 2)
+  Pin 13 (CA2) → DIG[2]  (right digit of display 2)
+
+All segment pins (1,2,4,6,7,8,9,10,11,14,15,16,17,18) connect to
+SEG[0-13] through resistors - these are SHARED between both displays.

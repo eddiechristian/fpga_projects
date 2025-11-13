@@ -1,0 +1,60 @@
+# Vivado Project Files
+*.xpr
+*.cache/
+*.hw/
+*.ip_user_files/
+*.sim/
+*.runs/
+*.gen/
+*.tmp/
+
+# Vivado build directories (contains all generated files)
+*/build/
+
+# Vivado specific directories (any project)
+*.cache/
+*.hw/
+*.ip_user_files/
+*.sim/
+*.runs/
+*.gen/
+*.srcs/
+
+# Vivado logs and reports
+*.log
+*.jou
+*.str
+*.rpt
+*.dcp
+*.xml
+*.html
+vivado*.backup.*
+.Xil/
+.vivado/
+
+# Bitstream and programming files (optional - uncomment if you want to track bitstreams)
+# *.bit
+# *.bin
+# *.mcs
+# *.prm
+
+# System files
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
+
+# Python (if using Python scripts)
+__pycache__/
+*.pyc
+*.pyo
+
+# Backup files
+*.bak
+*.old
+
+# Editor files
+.vscode/
+.idea/
+*.code-workspace
