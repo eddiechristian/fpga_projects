@@ -38,27 +38,31 @@ set_property -dict { PACKAGE_PIN Y13  IOSTANDARD LVCMOS25 } [get_ports { LED[7] 
 
 ##############################################################################
 ## PMOD JA - 14-segment signals (shared by both displays)
-## Segments: a1, a2, b, c, d1, d2, e, f, g1, g2, h, i, j, k
+## Mapping: SEG(0 to 13) = "ABCDEFGHJKLMNP"
+##   SEG[0]=A (top), SEG[1]=B, SEG[2]=C, SEG[3]=D (bottom), SEG[4]=E, SEG[5]=F
+##   SEG[6]=G (center-top), SEG[7]=H (diag), SEG[8]=J (mid-right horiz)
+##   SEG[9]=K (diag), SEG[10]=L (center-bottom), SEG[11]=M (diag)
+##   SEG[12]=N (mid-left horiz), SEG[13]=P (diag)
 ## These 14 signals drive the segment patterns on both LTP-3786E displays
 ##############################################################################
-set_property -dict { PACKAGE_PIN AB22 IOSTANDARD LVCMOS33 } [get_ports { SEG[0] }];  # JA1 - segment a1
-set_property -dict { PACKAGE_PIN AB21 IOSTANDARD LVCMOS33 } [get_ports { SEG[1] }];  # JA2 - segment a2
-set_property -dict { PACKAGE_PIN AB20 IOSTANDARD LVCMOS33 } [get_ports { SEG[2] }];  # JA3 - segment b
-set_property -dict { PACKAGE_PIN AB18 IOSTANDARD LVCMOS33 } [get_ports { SEG[3] }];  # JA4 - segment c
-set_property -dict { PACKAGE_PIN Y21  IOSTANDARD LVCMOS33 } [get_ports { SEG[4] }];  # JA7 - segment d1
-set_property -dict { PACKAGE_PIN AA21 IOSTANDARD LVCMOS33 } [get_ports { SEG[5] }];  # JA8 - segment d2
-set_property -dict { PACKAGE_PIN AA20 IOSTANDARD LVCMOS33 } [get_ports { SEG[6] }];  # JA9 - segment e
-set_property -dict { PACKAGE_PIN AA18 IOSTANDARD LVCMOS33 } [get_ports { SEG[7] }];  # JA10 - segment f
+set_property -dict { PACKAGE_PIN AB22 IOSTANDARD LVCMOS33 } [get_ports { SEG[0] }];  # JA1 - A (top horizontal)
+set_property -dict { PACKAGE_PIN AB21 IOSTANDARD LVCMOS33 } [get_ports { SEG[1] }];  # JA2 - B (top-right vert)
+set_property -dict { PACKAGE_PIN AB20 IOSTANDARD LVCMOS33 } [get_ports { SEG[2] }];  # JA3 - C (bottom-right vert)
+set_property -dict { PACKAGE_PIN AB18 IOSTANDARD LVCMOS33 } [get_ports { SEG[3] }];  # JA4 - D (bottom horizontal)
+set_property -dict { PACKAGE_PIN Y21  IOSTANDARD LVCMOS33 } [get_ports { SEG[4] }];  # JA7 - E (bottom-left vert)
+set_property -dict { PACKAGE_PIN AA21 IOSTANDARD LVCMOS33 } [get_ports { SEG[5] }];  # JA8 - F (top-left vert)
+set_property -dict { PACKAGE_PIN AA20 IOSTANDARD LVCMOS33 } [get_ports { SEG[6] }];  # JA9 - G (center-top vert)
+set_property -dict { PACKAGE_PIN AA18 IOSTANDARD LVCMOS33 } [get_ports { SEG[7] }];  # JA10 - H (top-right diag)
 
 ##############################################################################
 ## PMOD JB - More 14-segment signals (shared by both displays)
 ##############################################################################
-set_property -dict { PACKAGE_PIN V9   IOSTANDARD LVCMOS33 } [get_ports { SEG[8] }];  # JB1 - segment g1
-set_property -dict { PACKAGE_PIN V8   IOSTANDARD LVCMOS33 } [get_ports { SEG[9] }];  # JB2 - segment g2
-set_property -dict { PACKAGE_PIN V7   IOSTANDARD LVCMOS33 } [get_ports { SEG[10] }]; # JB3 - segment h
-set_property -dict { PACKAGE_PIN W7   IOSTANDARD LVCMOS33 } [get_ports { SEG[11] }]; # JB4 - segment i
-set_property -dict { PACKAGE_PIN W9   IOSTANDARD LVCMOS33 } [get_ports { SEG[12] }]; # JB7 - segment j
-set_property -dict { PACKAGE_PIN Y9   IOSTANDARD LVCMOS33 } [get_ports { SEG[13] }]; # JB8 - segment k
+set_property -dict { PACKAGE_PIN V9   IOSTANDARD LVCMOS33 } [get_ports { SEG[8] }];  # JB1 - J (mid-right horiz)
+set_property -dict { PACKAGE_PIN V8   IOSTANDARD LVCMOS33 } [get_ports { SEG[9] }];  # JB2 - K (bottom-right diag)
+set_property -dict { PACKAGE_PIN V7   IOSTANDARD LVCMOS33 } [get_ports { SEG[10] }]; # JB3 - L (center-bottom vert)
+set_property -dict { PACKAGE_PIN W7   IOSTANDARD LVCMOS33 } [get_ports { SEG[11] }]; # JB4 - M (bottom-left diag)
+set_property -dict { PACKAGE_PIN W9   IOSTANDARD LVCMOS33 } [get_ports { SEG[12] }]; # JB7 - N (mid-left horiz)
+set_property -dict { PACKAGE_PIN Y9   IOSTANDARD LVCMOS33 } [get_ports { SEG[13] }]; # JB8 - P (top-left diag)
 
 ##############################################################################
 ## PMOD JC - Digit select signals for all 4 digits

@@ -39,7 +39,7 @@ entity segment_multiplexor is
         ascii_in : in STD_LOGIC_VECTOR(((NUM_DIGITS * 8) -1) downto 0);  -- ASCII input character
         reset : in  std_logic;
         digit_selector: out STD_LOGIC_VECTOR((integer(ceil(log2(real(NUM_DIGITS))))-1) downto 0);
-        segments : out STD_LOGIC_VECTOR(13 downto 0) -- 14-segment output
+        segments : out STD_LOGIC_VECTOR(0 to 13) -- 14-segment output (A=0, B=1, ...P=13)
     );
 end segment_multiplexor;
 
@@ -55,7 +55,7 @@ architecture Behavioral of segment_multiplexor is
     component ascii_to_14seg
         Port ( 
             ascii_in : in STD_LOGIC_VECTOR(7 downto 0);
-            segments : out STD_LOGIC_VECTOR(13 downto 0)
+            segments : out STD_LOGIC_VECTOR(0 to 13)
         );
     end component;
     

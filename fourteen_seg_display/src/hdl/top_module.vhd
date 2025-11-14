@@ -36,7 +36,7 @@ Port (
     SW:      in  std_logic_vector(7 downto 0);
     BTN:     in std_logic_vector(4 downto 0);
     LED:     out std_logic_vector(7 downto 0);
-    SEG:     out std_logic_vector(13 downto 0);  -- 14 segment signals
+    SEG:     out std_logic_vector(0 to 13);      -- 14 segment signals (A=0, B=1, ...P=13)
     DIG:     out std_logic_vector(3 downto 0)    -- 4 digit select signals
     );
 end top_module;
@@ -79,7 +79,7 @@ architecture Behavioral of top_module is
             ascii_in : in STD_LOGIC_VECTOR(((NUM_DIGITS * 8) -1) downto 0);
             reset : in  std_logic;
             digit_selector: out STD_LOGIC_VECTOR((integer(ceil(log2(real(NUM_DIGITS))))-1) downto 0);
-            segments : out STD_LOGIC_VECTOR(13 downto 0)
+            segments : out STD_LOGIC_VECTOR(0 to 13)
         );
     end component;
     

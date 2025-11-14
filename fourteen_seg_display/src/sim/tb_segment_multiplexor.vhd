@@ -23,7 +23,7 @@ architecture Behavioral of tb_segment_multiplexor is
             ascii_in : in STD_LOGIC_VECTOR(((NUM_DIGITS * 8) -1) downto 0);
             reset : in  std_logic;
             digit_selector: out STD_LOGIC_VECTOR((integer(ceil(log2(real(NUM_DIGITS))))-1) downto 0);
-            segments : out STD_LOGIC_VECTOR(13 downto 0)
+            segments : out STD_LOGIC_VECTOR(0 to 13)
         );
     end component;
     
@@ -32,7 +32,7 @@ architecture Behavioral of tb_segment_multiplexor is
     signal reset : std_logic := '0';
     signal ascii_in : std_logic_vector((NUM_DIGITS * 8 - 1) downto 0);
     signal digit_selector : std_logic_vector(2 downto 0);  -- 3 bits for 5 digits (0-4)
-    signal segments : std_logic_vector(13 downto 0);
+    signal segments : std_logic_vector(0 to 13);
     
     -- Clock generation flag
     signal sim_done : boolean := false;
