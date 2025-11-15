@@ -4,7 +4,7 @@
 
 set project_name "triple_dac"
 set script_dir [file normalize [file dirname [info script]]]
-set bitstream_file "$script_dir/build/$project_name.runs/impl_1/triple_dac_top.bit"
+set bitstream_file "$script_dir/build/$project_name.runs/impl_1/top_module.bit"
 
 puts "========================================"
 puts "Program FPGA"

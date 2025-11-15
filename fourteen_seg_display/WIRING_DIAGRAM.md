@@ -83,10 +83,11 @@ Display 1 (Digits 0-1)    Display 2 (Digits 2-3)
 
 ## How It Works
 1. **Multiplexing**: The FPGA rapidly cycles through digits (every ~1ms)
-2. **Digit Select**: Only one digit is enabled at a time (active LOW)
+2. **Digit Select**: Only one digit is enabled at a time (active HIGH - pull high to select)
 3. **Segments**: All 14 segment signals are shared - the digit select determines which physical digit shows the pattern
-4. **Blanking**: Leading zeros are automatically blanked via the blank_mask logic
-5. **Counter Display**: The design counts from 0000 to FFFF in hexadecimal
+4. **Segment Polarity**: Common-anode display uses active-LOW segments (pull LOW to turn ON)
+5. **Blanking**: Leading zeros are automatically blanked via the blank_mask logic
+6. **Counter Display**: The design counts from 0000 to FFFF in hexadecimal
 
 ## Testing
 1. Program the FPGA

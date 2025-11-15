@@ -36,13 +36,14 @@ Port (
     SW:      in  std_logic_vector(7 downto 0);
     BTN:     in std_logic_vector(4 downto 0);
     LED:     out std_logic_vector(7 downto 0);
-    SEG:    out std_logic_vector(0 to 13);
-    DIG: out std_logic_vector(3 downto 0);
-    );
+    SEG:     out std_logic_vector(0 to 13);
+    DIG:     out std_logic_vector(3 downto 0)
+);
 end top_module;
 
 architecture Behavioral of top_module is
     -- Constants
+    signal segments_internal : std_logic_vector(0 to 13); -- Internal signal before inversion
 
     component ascii_to_14seg
         Port(
@@ -55,7 +56,14 @@ begin
     Inst_ascii_to_14seg: ascii_to_14seg
         port map(
             ascii_in => SW,
-            segments => SEG,
+            segments => segments_internal
         );
-    DIG <= b"0001"
+    
+    -- Invert segments for common-anode display (active-low)
+    -- LTP-3786E requires pulling segments LOW to turn them ON
+    SEG <= not segments_internal;
+    
+    -- Enable digit 0 (active-high)
+    DIG <= b"1111";
+    
 end Behavioral;

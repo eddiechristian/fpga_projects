@@ -50,6 +50,7 @@ architecture Behavioral of segment_multiplexor is
     signal digit_sel : unsigned (SELECTOR_WIDTH-1 downto 0) := (others => '0'); -- Digit selector
     signal clk_divider : unsigned (DIVIDER_WIDTH-1 downto 0) := (others => '0'); -- Clock divider counter
     signal current_ascii : std_logic_vector(7 downto 0);
+    signal segments_internal : std_logic_vector(0 to 13); -- Internal signal before inversion
     
     -- Component declaration
     component ascii_to_14seg
@@ -94,7 +95,11 @@ begin
     ascii_decoder: ascii_to_14seg
         port map (
             ascii_in => current_ascii,
-            segments => segments
+            segments => segments_internal
         );
+    
+    -- Invert segments for common-anode display (active-low)
+    -- LTP-3786E requires pulling segments LOW to turn them ON
+    segments <= not segments_internal;
         
 end Behavioral;

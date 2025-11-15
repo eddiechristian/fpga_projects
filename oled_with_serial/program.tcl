@@ -4,7 +4,7 @@
 
 set project_name "oled_with_serial"
 set script_dir [file normalize [file dirname [info script]]]
-set bitstream_file "$script_dir/build/$project_name.runs/impl_1/oled_master.bit"
+set bitstream_file "$script_dir/build/$project_name.runs/impl_1/top_module.bit"
 
 puts "========================================"
 puts "Program FPGA"

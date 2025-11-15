@@ -1,8 +1,8 @@
 # Vivado Project Creation Script
-# This script creates the fourteen_seg_display project from source files
+# This script creates the test_segment_display project from source files
 
 # Set project name and directory
-set project_name "fourteen_seg_display"
+set project_name "test_segment_display"
 set script_dir [file normalize [file dirname [info script]]]
 set project_dir "$script_dir/build"
 
@@ -23,7 +23,7 @@ set_property default_lib xil_defaultlib [current_project]
 # Add HDL source files
 add_files -norecurse {
     src/hdl/top_module.vhd
-    src/ascii_to_14seg.vhd
+    src/hdl/ascii_to_14seg.vhd
 }
 
 # Set top module
@@ -53,7 +53,38 @@ set_property strategy Performance_ExplorePostRoutePhysOpt [get_runs impl_1]
 puts "Project created successfully!"
 puts "Project location: $project_dir"
 puts ""
-puts "To build the project, run:"
-puts "  launch_runs impl_1 -to_step write_bitstream -jobs 4"
-puts ""
-puts "Or in GUI, open: $project_dir/$project_name.xpr"
+
+# Build the project
+puts "========================================="
+puts "Starting Synthesis..."
+puts "=========================================\n"
+launch_runs synth_1 -jobs 4
+wait_on_run synth_1
+
+if {[get_property PROGRESS [get_runs synth_1]] != "100%"} {
+    puts "\nERROR: Synthesis failed!"
+    exit 1
+}
+puts "\nSynthesis completed successfully!"
+
+puts "\n========================================="
+puts "Starting Implementation..."
+puts "=========================================\n"
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+
+if {[get_property PROGRESS [get_runs impl_1]] != "100%"} {
+    puts "\nERROR: Implementation failed!"
+    exit 1
+}
+puts "\nImplementation completed successfully!"
+
+# Get bitstream location
+set bitstream_file "$project_dir/$project_name.runs/impl_1/top_module.bit"
+puts "\n========================================="
+puts "Build Complete!"
+puts "=========================================\n"
+puts "Bitstream: $bitstream_file"
+puts "\nTo program the FPGA, connect the board and run:"
+puts "  vivado -mode batch -source program_fpga.tcl"
+puts "\nOr open in GUI: $project_dir/$project_name.xpr"

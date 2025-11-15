@@ -1,0 +1,16 @@
+# Vivado build directory
+build/
+
+# Vivado temporary files
+.Xil/
+*.jou
+*.log
+*.str
+
+# Simulation files
+*.wdb
+*.wcfg
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -55,7 +55,7 @@ if {[get_property PROGRESS [get_runs impl_1]] != "100%"} {
 puts "Implementation complete!"
 
 # Get bitstream location
-set bitstream_file "[get_property DIRECTORY [get_runs impl_1]]/oled_master.bit"
+set bitstream_file "[get_property DIRECTORY [get_runs impl_1]]/top_module.bit"
 puts "\nBitstream generated: $bitstream_file"
 
 #=============================================================================

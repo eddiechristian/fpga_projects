@@ -65,16 +65,16 @@ set_property -dict { PACKAGE_PIN W9   IOSTANDARD LVCMOS33 } [get_ports { SEG[12]
 set_property -dict { PACKAGE_PIN Y9   IOSTANDARD LVCMOS33 } [get_ports { SEG[13] }]; # JB8 - P (top-left diag)
 
 ##############################################################################
-## PMOD JC - Digit select signals for all 4 digits
+## PMOD JC - Digit select signals for all 4 digits (OFFICIAL DIGILENT PINS)
 ## DIG[0] - Display 1, Digit 0 (rightmost of display 1)
 ## DIG[1] - Display 1, Digit 1 (leftmost of display 1)
 ## DIG[2] - Display 2, Digit 0 (rightmost of display 2)
 ## DIG[3] - Display 2, Digit 1 (leftmost of display 2)
 ##############################################################################
-set_property -dict { PACKAGE_PIN V6   IOSTANDARD LVCMOS33 } [get_ports { DIG[0] }]; # JC1 - Digit 0
-set_property -dict { PACKAGE_PIN W6   IOSTANDARD LVCMOS33 } [get_ports { DIG[1] }]; # JC2 - Digit 1
-set_property -dict { PACKAGE_PIN U8   IOSTANDARD LVCMOS33 } [get_ports { DIG[2] }]; # JC3 - Digit 2
-set_property -dict { PACKAGE_PIN V8   IOSTANDARD LVCMOS33 } [get_ports { DIG[3] }]; # JC4 - Digit 3
+set_property -dict { PACKAGE_PIN Y6   IOSTANDARD LVCMOS33 } [get_ports { DIG[0] }]; # JC1 - Digit 0
+set_property -dict { PACKAGE_PIN AA6  IOSTANDARD LVCMOS33 } [get_ports { DIG[1] }]; # JC2 - Digit 1
+set_property -dict { PACKAGE_PIN AA8  IOSTANDARD LVCMOS33 } [get_ports { DIG[2] }]; # JC3 - Digit 2
+set_property -dict { PACKAGE_PIN AB8  IOSTANDARD LVCMOS33 } [get_ports { DIG[3] }]; # JC4 - Digit 3
 
 ## Configuration options
 set_property CFGBVS VCCO [current_design]

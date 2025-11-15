@@ -37,11 +37,11 @@ add_files -norecurse {
     src/hdl/i2c_master.vhd
     src/hdl/mcp4725_driver.vhd
     src/hdl/sine_generator.vhd
-    src/hdl/triple_dac_top.vhd
+    src/hdl/top_module.vhd
 }
 
 # Set top module
-set_property top triple_dac_top [current_fileset]
+set_property top top_module [current_fileset]
 
 puts "VHDL sources added!"
 

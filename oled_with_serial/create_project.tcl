@@ -40,11 +40,11 @@ add_files -norecurse {
     src/hdl/oled_ctrl.vhd
     src/hdl/uart_rx.vhd
     src/hdl/text_buffer.vhd
-    src/hdl/oled_master.vhd
+    src/hdl/top_module.vhd
 }
 
 # Set top module
-set_property top oled_master [current_fileset]
+set_property top top_module [current_fileset]
 
 puts "VHDL sources added!"
 

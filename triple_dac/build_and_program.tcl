@@ -57,7 +57,7 @@ if {[get_property PROGRESS [get_runs impl_1]] != "100%"} {
 puts "Implementation complete!"
 
 # Get bitstream location
-set bitstream_file "[get_property DIRECTORY [get_runs impl_1]]/triple_dac_top.bit"
+set bitstream_file "[get_property DIRECTORY [get_runs impl_1]]/top_module.bit"
 puts ""
 puts "Bitstream generated: $bitstream_file"
 
