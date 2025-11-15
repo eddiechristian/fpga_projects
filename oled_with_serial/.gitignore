@@ -1,0 +1,16 @@
+# Vivado build directory
+build/
+
+# Vivado temporary files
+.Xil/
+*.jou
+*.log
+*.str
+*.debug
+*.backup.jou
+*.backup.log
+
+# OS files
+.DS_Store
+Thumbs.db
+*~
