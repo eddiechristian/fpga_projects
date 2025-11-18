@@ -256,6 +256,117 @@ You'll need to adjust the clock divider and timing constants accordingly.
 - **Max Clock**: 100 MHz (system), 25 MHz (pixel clock)
 - **I/O Pins**: 26 (8 red + 8 green + 8 blue + HSYNC + VSYNC)
 
+## Clock Domain Considerations
+
+### Using Pixel Clock with Video Buffers
+
+The pixel clock in this design is **derived synchronously** from the 100 MHz system clock (divided by 4). This means you can safely use it to drive other entities like video memory buffers.
+
+#### Safe Approach - Clock Enable (Recommended)
+
+```vhdl
+-- Generate clock enable instead of toggling clock
+signal clk_25mhz_enable : std_logic;
+
+process(clk_100mhz, reset)
+begin
+    if reset = '1' then
+        clk_counter <= (others => '0');
+        clk_25mhz_enable <= '0';
+    elsif rising_edge(clk_100mhz) then
+        if clk_counter = 3 then
+            clk_25mhz_enable <= '1';
+            clk_counter <= (others => '0');
+        else
+            clk_25mhz_enable <= '0';
+            clk_counter <= clk_counter + 1;
+        end if;
+    end if;
+end process;
+
+-- Pass to video buffer entity
+video_buffer_inst : video_buffer
+    port map (
+        clk => clk_100mhz,              -- Same clock domain
+        clk_enable => clk_25mhz_enable,  -- Enable every 4th cycle
+        ...
+    );
+```
+
+#### Current Approach - Divided Clock (Also Works)
+
+The current implementation toggles `clk_25mhz` as an actual clock signal:
+
+```vhdl
+-- This is SAFE because it's synchronously derived
+frame_buffer : entity work.video_memory
+    port map (
+        pixel_clk => clk_25mhz,     -- Read side (25 MHz)
+        read_addr => pixel_address,
+        pixel_out => rgb_data,
+        
+        write_clk => clk_100mhz,    -- Write side (100 MHz)
+        write_addr => cpu_address,
+        write_data => cpu_data,
+        write_en => cpu_write
+    );
+```
+
+#### When It's Safe
+
+✅ **SAFE:** The pixel clock is only used within the VGA controller  
+✅ **SAFE:** Passing pixel clock to video buffer for read operations  
+✅ **SAFE:** Using dual-port RAM with separate read/write clocks  
+✅ **SAFE:** All logic on pixel clock is synchronous to it
+
+#### When to Be Careful
+
+⚠️ **CAUTION:** Signals crossing between 100 MHz and 25 MHz domains  
+⚠️ **CAUTION:** Combinational paths between clock domains  
+⚠️ **CAUTION:** Asynchronous resets or control signals
+
+### Key Insight
+
+Since the 25 MHz pixel clock is **synchronously derived** from the 100 MHz system clock, you're technically in the **same clock domain** with a clock enable pattern. The FPGA tools handle this relationship well. However, if you treat them as separate domains and mix signals without proper synchronization, you can create issues.
+
+### Dual-Port RAM Example
+
+For video buffers, use dual-port RAM where one port runs on the pixel clock (read) and the other on the system clock (write):
+
+```vhdl
+entity video_memory is
+    port (
+        -- Read port (pixel clock domain)
+        pixel_clk   : in  std_logic;
+        read_addr   : in  std_logic_vector(18 downto 0);  -- 640*480
+        pixel_out   : out std_logic_vector(11 downto 0);  -- RGB444
+        
+        -- Write port (system clock domain)
+        write_clk   : in  std_logic;
+        write_addr  : in  std_logic_vector(18 downto 0);
+        write_data  : in  std_logic_vector(11 downto 0);
+        write_en    : in  std_logic
+    );
+end video_memory;
+```
+
+The dual-port RAM handles clock domain crossing internally, making it safe for video buffer applications.
+
+## Simulation
+
+The project includes a comprehensive testbench that monitors all VGA signals:
+
+```bash
+vivado -mode gui -source run_simulation.tcl
+```
+
+The testbench tracks:
+- System clock (100 MHz) and pixel clock (25 MHz)
+- VGA sync signals (HSYNC, VSYNC)
+- RGB color outputs
+- Horizontal and vertical position counters
+- Timing region indicators (front porch, sync pulse, back porch)
+
 ## Next Steps
 
 1. **Add framebuffer**: Store image data in block RAM

@@ -12,12 +12,16 @@ create_project ${project_name} ${project_dir} -part xc7a200tsbg484-1 -force
 set_property target_language VHDL [current_project]
 set_property simulator_language VHDL [current_project]
 
-# Add source files
-add_files -fileset sources_1 ${src_dir}/top_module.vhd
+# Add HDL source files
+add_files -fileset sources_1 ${src_dir}/hdl/top_module.vhd
 set_property top top_module [current_fileset]
 
+# Add simulation files
+add_files -fileset sim_1 ${src_dir}/sim/top_module_tb.vhd
+set_property top top_module_tb [get_filesets sim_1]
+
 # Add constraint file
-add_files -fileset constrs_1 ${src_dir}/nexys_video.xdc
+add_files -fileset constrs_1 ${src_dir}/constraints/nexys_video.xdc
 
 # Update compile order
 update_compile_order -fileset sources_1

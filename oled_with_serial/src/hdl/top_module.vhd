@@ -31,11 +31,10 @@ entity top_module is
     );
 end top_module;
 
-architecture Behavioral of oled_master is
+architecture Behavioral of top_module is
     -- State definitions
     type state_type is (
         Idle, Init,
-        ActiveWriteAlpha, ActiveUpdateAlpha, ActiveDelayAlpha,
         ActiveWriteSplash, ActiveUpdateSplash, ActiveDelaySplash,
         SerialMode, SerialWrite, SerialUpdate, SerialDelay,
         ActiveWait, Done,
@@ -59,11 +58,6 @@ architecture Behavioral of oled_master is
     constant splash_str2 : string := "to computer and ";
     constant splash_str3 : string := "type. What you  ";
     constant splash_str4 : string := "type shows here.";
-    -- ALPHA screen text
-    constant alpha_str1  : string := "ABCDEFGHIJKLMNOP";
-    constant alpha_str2  : string := "QRSTUVWXYZabcdef";
-    constant alpha_str3  : string := "ghijklmnopqrstuv";
-    constant alpha_str4  : string := "wxyz0123456789  ";
     
     signal rst : std_logic;
     
@@ -272,20 +266,12 @@ begin
         if serial_mode_active = '1' then
             -- Serial mode: use text buffer
             write_ascii_data <= disp_char;
-        elsif screen_select = SPLASH then
+        else 
             case y_pos is
                 when 0      => write_ascii_data <= get_char(splash_str1, 0, x_pos);
                 when 1      => write_ascii_data <= get_char(splash_str2, 1, x_pos);
                 when 2      => write_ascii_data <= get_char(splash_str3, 2, x_pos);
                 when 3      => write_ascii_data <= get_char(splash_str4, 3, x_pos);
-                when others => write_ascii_data <= x"20";  -- Space
-            end case;
-        else  -- ALPHA
-            case y_pos is
-                when 0      => write_ascii_data <= get_char(alpha_str1, 0, x_pos);
-                when 1      => write_ascii_data <= get_char(alpha_str2, 1, x_pos);
-                when 2      => write_ascii_data <= get_char(alpha_str3, 2, x_pos);
-                when 3      => write_ascii_data <= get_char(alpha_str4, 3, x_pos);
                 when others => write_ascii_data <= x"20";  -- Space
             end case;
         end if;
@@ -326,27 +312,9 @@ begin
                 when Init =>
                     disp_on_start <= '0';
                     if rst = '0' and init_done = '1' then
-                        state <= ActiveWriteAlpha;
+                        state <= ActiveWriteSplash;
                     end if;
                 
-                when ActiveWriteAlpha =>
-                    write_start <= '1';
-                    write_base_addr <= (others => '0');
-                    screen_select <= ALPHA;
-                    after_state <= ActiveUpdateAlpha;
-                    state <= WriteWait;
-                
-                when ActiveUpdateAlpha =>
-                    after_state <= ActiveDelayAlpha;
-                    state <= UpdateWait;
-                    update_start <= '1';
-                    update_clear <= '0';
-                
-                when ActiveDelayAlpha =>
-                    after_state <= ActiveWriteSplash;
-                    state <= DelayWait;
-                    delay_start <= '1';
-                    delay_time_ms <= x"FA0";  -- 4000 decimal
                 
                 when ActiveWriteSplash =>
                     write_start <= '1';
