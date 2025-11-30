@@ -37,7 +37,7 @@ Port (
     BTN:     in std_logic_vector(4 downto 0);
     LED:     out std_logic_vector(7 downto 0);
     SEG:     out std_logic_vector(0 to 13);
-    DIG:     out std_logic_vector(3 downto 0)
+    DIG:     out std_logic_vector(5 downto 0)
 );
 end top_module;
 
@@ -64,6 +64,6 @@ begin
     SEG <= not segments_internal;
     
     -- Enable digit 0 (active-high)
-    DIG <= b"1111";
-    
+    DIG <= SW(5 downto 0);
+    LED <= SEG(7 downto 0);
 end Behavioral;

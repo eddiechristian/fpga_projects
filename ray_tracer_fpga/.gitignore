@@ -1,0 +1,19 @@
+# Vivado build directory
+build/
+
+# Vivado logs and journals
+*.log
+*.jou
+vivado*.str
+
+# Vivado cache
+.Xil/
+
+# Backup files
+*.bak
+*~
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
