@@ -99,7 +99,8 @@ make_wrapper -files [get_files $project_dir/$project_name.srcs/sources_1/bd/hdmi
 add_files -norecurse $project_dir/$project_name.gen/sources_1/bd/hdmi_video_bd/hdl/hdmi_video_bd_wrapper.vhd
 
 # Add HDL source files
-add_files -fileset sources_1 ./src/hdl/ray_tracer_core.vhd
+add_files -fileset sources_1 ./src/hdl/fp_math_pkg.vhd
+add_files -fileset sources_1 ./src/hdl/ray_tracer_core_fp.vhd
 add_files -fileset sources_1 ./src/hdl/vga_controller.vhd
 add_files -fileset sources_1 ./src/hdl/top_module_raytracer.vhd
 

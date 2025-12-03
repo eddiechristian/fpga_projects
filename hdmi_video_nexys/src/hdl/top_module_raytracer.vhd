@@ -58,7 +58,7 @@ architecture Behavioral of top_module_raytracer is
         );
     end component;
     
-    component ray_tracer_core is
+    component ray_tracer_core_fp is
         Generic (
             SCREEN_WIDTH : integer := 640;
             SCREEN_HEIGHT : integer := 480
@@ -172,8 +172,8 @@ begin
     -- Send R in position that displays as 0, G in position that displays as 1, B in position that displays as 2
     vid_data_i <= vga_red & "0000" & vga_blue & "0000" & vga_green & "0000";
     
-    -- Ray Tracer Core
-    ray_tracer : ray_tracer_core
+    -- Ray Tracer Core (Floating Point version)
+    ray_tracer : ray_tracer_core_fp
         generic map (
             SCREEN_WIDTH => 640,
             SCREEN_HEIGHT => 480
