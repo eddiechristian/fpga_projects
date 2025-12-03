@@ -166,7 +166,11 @@ begin
     vid_hsync_i <= not hsync;  -- Convert to active high for HDMI
     vid_vsync_i <= not vsync;
     vid_active_i <= video_active;
-    vid_data_i <= vga_red & "0000" & vga_green & "0000" & vga_blue & "0000";
+    -- Observed: sending B,R,G shows B,G,R on display
+    -- Channels: [23:16], [15:8], [7:0] map to display as: 0, 2, 1
+    -- To get R,G,B on display (order 0,1,2), send in positions that map correctly
+    -- Send R in position that displays as 0, G in position that displays as 1, B in position that displays as 2
+    vid_data_i <= vga_red & "0000" & vga_blue & "0000" & vga_green & "0000";
     
     -- Ray Tracer Core
     ray_tracer : ray_tracer_core

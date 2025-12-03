@@ -129,7 +129,6 @@ begin
                 
                 when GENERATE_RAY =>
                     -- Convert pixel coordinates to normalized screen space [-1, 1]
-                    -- norm_x = (pixel_x / SCREEN_WIDTH) * 2 - 1
                     temp_mul := resize(signed(pixel_x), 32) * ONE_FP;
                     temp_div := temp_mul / to_signed(SCREEN_WIDTH, 32);
                     norm_x := temp_div(31 downto 0);
@@ -145,8 +144,7 @@ begin
                     ray_origin_y <= CAMERA_POS_Y;
                     ray_origin_z <= CAMERA_POS_Z;
                     
-                    -- Ray direction: toward screen position with aspect ratio correction
-                    -- Simplified: ray points toward (norm_x * 0.25, 0, norm_y * 0.25 / aspect)
+                    -- Ray direction: toward screen position
                     ray_dir_x <= norm_x(31 downto 2) & "00";  -- * 0.25
                     ray_dir_y <= ONE_FP;  -- Forward direction
                     ray_dir_z <= norm_y(31 downto 2) & "00";  -- * 0.25
@@ -268,22 +266,18 @@ begin
                     state <= OUTPUT_PIXEL;
                 
                 when OUTPUT_PIXEL =>
-                    -- Test pattern: show pixel coordinates as colors to verify output
-                    -- This will create a gradient pattern if the display is working
-                    red <= pixel_x(3 downto 0);    -- X coordinate in red
-                    green <= pixel_y(3 downto 0);  -- Y coordinate in green  
-                    blue <= pixel_x(3 downto 0) xor pixel_y(3 downto 0);  -- Pattern in blue
-                    
-                    -- Original ray tracer output (commented for now)
-                    -- if hit_detected = '1' then
-                    --     red <= std_logic_vector(hit_color_r(7 downto 4));
-                    --     green <= std_logic_vector(hit_color_g(7 downto 4));
-                    --     blue <= std_logic_vector(hit_color_b(7 downto 4));
-                    -- else
-                    --     red <= x"0";
-                    --     green <= x"0";
-                    --     blue <= x"0";
-                    -- end if;
+                    -- Debug: Simple white/black to verify hit detection
+                    if hit_detected = '1' then
+                        -- Show sphere colors
+                        red <= std_logic_vector(hit_color_r(7 downto 4));
+                        green <= std_logic_vector(hit_color_g(7 downto 4));
+                        blue <= std_logic_vector(hit_color_b(7 downto 4));
+                    else
+                        -- Black background
+                        red <= x"0";
+                        green <= x"0";
+                        blue <= x"0";
+                    end if;
                     
                     pixel_ready_i <= '1';
                     state <= IDLE;
