@@ -103,6 +103,13 @@ begin
         variable temp_div : signed(63 downto 0);
         variable sphere_hit : std_logic;
         variable t_hit : signed(31 downto 0);
+        -- Sphere intersection variables
+        variable oc_x, oc_y, oc_z : signed(31 downto 0);
+        variable a, b, c : signed(63 downto 0);
+        variable discriminant : signed(63 downto 0);
+        variable t : signed(31 downto 0);
+        variable temp_prod : signed(63 downto 0);
+        variable temp_prod_128 : signed(127 downto 0);
     begin
         if reset = '1' then
             state <= IDLE;
@@ -149,31 +156,105 @@ begin
                     state <= TEST_SPHERE1;
                 
                 when TEST_SPHERE1 =>
-                    -- Simplified sphere intersection test
-                    -- This is a placeholder - full implementation would use proper
-                    -- ray-sphere intersection algorithm with Xilinx FP IP
+                    -- Sphere intersection: solve |origin + t*dir - center|^2 = radius^2
+                    -- Vector from ray origin to sphere center
+                    oc_x := ray_origin_x - SPHERE1_X;
+                    oc_y := ray_origin_y - SPHERE1_Y;
+                    oc_z := ray_origin_z - SPHERE1_Z;
                     
-                    -- For now, simple distance check from sphere center
-                    sphere_hit := '0';
+                    -- Quadratic coefficients (simplified)
+                    -- a = dot(dir, dir) ≈ 1 for normalized rays
+                    -- b = 2 * dot(oc, dir)
+                    -- c = dot(oc, oc) - radius^2
                     
-                    -- Check if ray is near sphere (simplified)
-                    -- In full implementation, solve: |origin + t*direction - sphere_center|^2 = radius^2
+                    -- b = 2 * dot(oc, dir) (fixed point multiply and shift)
+                    b := (oc_x * ray_dir_x) + (oc_y * ray_dir_y) + (oc_z * ray_dir_z);
+                    b := shift_right(b, 14);  -- Divide by 2^15 then multiply by 2
                     
-                    if sphere_hit = '1' then
-                        hit_detected <= '1';
-                        hit_color_r <= SPHERE1_COLOR_R;
-                        hit_color_g <= SPHERE1_COLOR_G;
-                        hit_color_b <= SPHERE1_COLOR_B;
+                    -- c = dot(oc, oc) - radius^2
+                    c := (oc_x * oc_x) + (oc_y * oc_y) + (oc_z * oc_z);
+                    c := shift_right(c, 16);  -- Fixed point adjustment
+                    temp_prod := SPHERE1_R * SPHERE1_R;
+                    c := c - shift_right(temp_prod, 16);
+                    
+                    -- discriminant = b^2 - 4ac (a ≈ 1)
+                    temp_prod_128 := b * b;
+                    discriminant := shift_right(temp_prod_128, 16)(63 downto 0) - shift_left(c, 2);
+                    
+                    -- Check if we hit (discriminant >= 0 and t > 0)
+                    if discriminant >= 0 and b < 0 then
+                        -- Approximate t = -b (simplified, no sqrt yet)
+                        t := -b(31 downto 0);
+                        
+                        if t > 0 and t < hit_distance then
+                            hit_detected <= '1';
+                            hit_distance <= t;
+                            hit_color_r <= SPHERE1_COLOR_R;
+                            hit_color_g <= SPHERE1_COLOR_G;
+                            hit_color_b <= SPHERE1_COLOR_B;
+                        end if;
                     end if;
                     
                     state <= TEST_SPHERE2;
                 
                 when TEST_SPHERE2 =>
-                    -- Similar sphere 2 test
+                    -- Sphere 2 intersection test
+                    oc_x := ray_origin_x - SPHERE2_X;
+                    oc_y := ray_origin_y - SPHERE2_Y;
+                    oc_z := ray_origin_z - SPHERE2_Z;
+                    
+                    b := (oc_x * ray_dir_x) + (oc_y * ray_dir_y) + (oc_z * ray_dir_z);
+                    b := shift_right(b, 14);
+                    
+                    c := (oc_x * oc_x) + (oc_y * oc_y) + (oc_z * oc_z);
+                    c := shift_right(c, 16);
+                    temp_prod := SPHERE2_R * SPHERE2_R;
+                    c := c - shift_right(temp_prod, 16);
+                    
+                    temp_prod_128 := b * b;
+                    discriminant := shift_right(temp_prod_128, 16)(63 downto 0) - shift_left(c, 2);
+                    
+                    if discriminant >= 0 and b < 0 then
+                        t := -b(31 downto 0);
+                        
+                        if t > 0 and t < hit_distance then
+                            hit_detected <= '1';
+                            hit_distance <= t;
+                            hit_color_r <= SPHERE2_COLOR_R;
+                            hit_color_g <= SPHERE2_COLOR_G;
+                            hit_color_b <= SPHERE2_COLOR_B;
+                        end if;
+                    end if;
                     state <= TEST_SPHERE3;
                 
                 when TEST_SPHERE3 =>
-                    -- Similar sphere 3 test
+                    -- Sphere 3 intersection test
+                    oc_x := ray_origin_x - SPHERE3_X;
+                    oc_y := ray_origin_y - SPHERE3_Y;
+                    oc_z := ray_origin_z - SPHERE3_Z;
+                    
+                    b := (oc_x * ray_dir_x) + (oc_y * ray_dir_y) + (oc_z * ray_dir_z);
+                    b := shift_right(b, 14);
+                    
+                    c := (oc_x * oc_x) + (oc_y * oc_y) + (oc_z * oc_z);
+                    c := shift_right(c, 16);
+                    temp_prod := SPHERE3_R * SPHERE3_R;
+                    c := c - shift_right(temp_prod, 16);
+                    
+                    temp_prod_128 := b * b;
+                    discriminant := shift_right(temp_prod_128, 16)(63 downto 0) - shift_left(c, 2);
+                    
+                    if discriminant >= 0 and b < 0 then
+                        t := -b(31 downto 0);
+                        
+                        if t > 0 and t < hit_distance then
+                            hit_detected <= '1';
+                            hit_distance <= t;
+                            hit_color_r <= SPHERE3_COLOR_R;
+                            hit_color_g <= SPHERE3_COLOR_G;
+                            hit_color_b <= SPHERE3_COLOR_B;
+                        end if;
+                    end if;
                     state <= COMPUTE_LIGHTING;
                 
                 when COMPUTE_LIGHTING =>
@@ -187,17 +268,22 @@ begin
                     state <= OUTPUT_PIXEL;
                 
                 when OUTPUT_PIXEL =>
-                    if hit_detected = '1' then
-                        -- Apply lighting to color
-                        red <= std_logic_vector(hit_color_r(7 downto 4));
-                        green <= std_logic_vector(hit_color_g(7 downto 4));
-                        blue <= std_logic_vector(hit_color_b(7 downto 4));
-                    else
-                        -- Background color (black)
-                        red <= x"0";
-                        green <= x"0";
-                        blue <= x"0";
-                    end if;
+                    -- Test pattern: show pixel coordinates as colors to verify output
+                    -- This will create a gradient pattern if the display is working
+                    red <= pixel_x(3 downto 0);    -- X coordinate in red
+                    green <= pixel_y(3 downto 0);  -- Y coordinate in green  
+                    blue <= pixel_x(3 downto 0) xor pixel_y(3 downto 0);  -- Pattern in blue
+                    
+                    -- Original ray tracer output (commented for now)
+                    -- if hit_detected = '1' then
+                    --     red <= std_logic_vector(hit_color_r(7 downto 4));
+                    --     green <= std_logic_vector(hit_color_g(7 downto 4));
+                    --     blue <= std_logic_vector(hit_color_b(7 downto 4));
+                    -- else
+                    --     red <= x"0";
+                    --     green <= x"0";
+                    --     blue <= x"0";
+                    -- end if;
                     
                     pixel_ready_i <= '1';
                     state <= IDLE;

@@ -1,0 +1,18 @@
+# Build outputs
+build/
+
+# Vivado files
+*.jou
+*.log
+*.str
+.Xil/
+vivado*.backup.*
+
+# Simulation files
+*.wdb
+*.wcfg
+xsim.dir/
+
+# OS files
+.DS_Store
+Thumbs.db
