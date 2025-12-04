@@ -13,16 +13,20 @@ architecture Behavioral of top_module_tb is
     -- Component declaration
     component top_module
         Port (
-            clk         : in  STD_LOGIC;
-            reset       : in  STD_LOGIC;
-            a_in        : in  STD_LOGIC_VECTOR(31 downto 0);
-            b_in        : in  STD_LOGIC_VECTOR(31 downto 0);
-            valid_in    : in  STD_LOGIC;
-            sqrt_out    : out STD_LOGIC_VECTOR(31 downto 0);
-            mult_out    : out STD_LOGIC_VECTOR(31 downto 0);
-            add_out     : out STD_LOGIC_VECTOR(31 downto 0);
-            compare_out : out STD_LOGIC_VECTOR(7 downto 0);
-            valid_out   : out STD_LOGIC
+            clk          : in  STD_LOGIC;
+            reset        : in  STD_LOGIC;
+            a_in         : in  STD_LOGIC_VECTOR(31 downto 0);
+            b_in         : in  STD_LOGIC_VECTOR(31 downto 0);
+            valid_in     : in  STD_LOGIC;
+            sqrt_out     : out STD_LOGIC_VECTOR(31 downto 0);
+            mult_out     : out STD_LOGIC_VECTOR(31 downto 0);
+            add_out      : out STD_LOGIC_VECTOR(31 downto 0);
+            compare_out  : out STD_LOGIC_VECTOR(7 downto 0);
+            sqrt_valid   : out STD_LOGIC;
+            mult_valid   : out STD_LOGIC;
+            add_valid    : out STD_LOGIC;
+            compare_valid: out STD_LOGIC;
+            valid_out    : out STD_LOGIC
         );
     end component;
 
@@ -30,19 +34,61 @@ architecture Behavioral of top_module_tb is
     constant CLK_PERIOD : time := 10 ns;
 
     -- Signals
-    signal clk          : STD_LOGIC := '0';
-    signal reset        : STD_LOGIC := '0';
-    signal a_in         : STD_LOGIC_VECTOR(31 downto 0) := (others => '0');
-    signal b_in         : STD_LOGIC_VECTOR(31 downto 0) := (others => '0');
-    signal valid_in     : STD_LOGIC := '0';
-    signal sqrt_out     : STD_LOGIC_VECTOR(31 downto 0);
-    signal mult_out     : STD_LOGIC_VECTOR(31 downto 0);
-    signal add_out      : STD_LOGIC_VECTOR(31 downto 0);
-    signal compare_out  : STD_LOGIC_VECTOR(7 downto 0);
-    signal valid_out    : STD_LOGIC;
+    signal clk           : STD_LOGIC := '0';
+    signal reset         : STD_LOGIC := '0';
+    signal a_in          : STD_LOGIC_VECTOR(31 downto 0) := (others => '0');
+    signal b_in          : STD_LOGIC_VECTOR(31 downto 0) := (others => '0');
+    signal valid_in      : STD_LOGIC := '0';
+    signal sqrt_out      : STD_LOGIC_VECTOR(31 downto 0);
+    signal mult_out      : STD_LOGIC_VECTOR(31 downto 0);
+    signal add_out       : STD_LOGIC_VECTOR(31 downto 0);
+    signal compare_out   : STD_LOGIC_VECTOR(7 downto 0);
+    signal sqrt_valid    : STD_LOGIC;
+    signal mult_valid    : STD_LOGIC;
+    signal add_valid     : STD_LOGIC;
+    signal compare_valid : STD_LOGIC;
+    signal valid_out     : STD_LOGIC;
+    
+    -- Real value signals for waveform display
+    signal a_in_real     : real := 0.0;
+    signal b_in_real     : real := 0.0;
+    signal sqrt_out_real : real := 0.0;
+    signal mult_out_real : real := 0.0;
+    signal add_out_real  : real := 0.0;
 
     signal sim_done     : BOOLEAN := false;
 
+    -- Helper function to convert IEEE 754 single precision to real
+    function fp32_to_real(fp : std_logic_vector(31 downto 0)) return real is
+        variable sign : std_logic;
+        variable exponent : integer;
+        variable mantissa : real;
+        variable result : real;
+    begin
+        -- Extract fields
+        sign := fp(31);
+        exponent := to_integer(unsigned(fp(30 downto 23)));
+        
+        -- Handle special cases
+        if exponent = 0 then
+            return 0.0;  -- Zero or denormal (treat as zero)
+        elsif exponent = 255 then
+            return 0.0;  -- Infinity or NaN (treat as zero for display)
+        end if;
+        
+        -- Calculate mantissa (with implicit 1)
+        mantissa := 1.0 + real(to_integer(unsigned(fp(22 downto 0)))) / (2.0 ** 23);
+        
+        -- Calculate result
+        result := mantissa * (2.0 ** real(exponent - 127));
+        
+        if sign = '1' then
+            result := -result;
+        end if;
+        
+        return result;
+    end function;
+    
     -- Helper function to convert real to IEEE 754 single precision
     function real_to_fp32(r : real) return std_logic_vector is
         variable result : std_logic_vector(31 downto 0);
@@ -89,17 +135,30 @@ begin
     -- Instantiate UUT
     uut : top_module
         port map (
-            clk         => clk,
-            reset       => reset,
-            a_in        => a_in,
-            b_in        => b_in,
-            valid_in    => valid_in,
-            sqrt_out    => sqrt_out,
-            mult_out    => mult_out,
-            add_out     => add_out,
-            compare_out => compare_out,
-            valid_out   => valid_out
+            clk           => clk,
+            reset         => reset,
+            a_in          => a_in,
+            b_in          => b_in,
+            valid_in      => valid_in,
+            sqrt_out      => sqrt_out,
+            mult_out      => mult_out,
+            add_out       => add_out,
+            compare_out   => compare_out,
+            sqrt_valid    => sqrt_valid,
+            mult_valid    => mult_valid,
+            add_valid     => add_valid,
+            compare_valid => compare_valid,
+            valid_out     => valid_out
         );
+    
+    -- Convert input signals to real for waveform display
+    a_in_real <= fp32_to_real(a_in);
+    b_in_real <= fp32_to_real(b_in);
+    
+    -- Convert output signals to real for waveform display
+    sqrt_out_real <= fp32_to_real(sqrt_out);
+    mult_out_real <= fp32_to_real(mult_out);
+    add_out_real  <= fp32_to_real(add_out);
 
     -- Clock generation
     clk_process : process

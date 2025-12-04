@@ -154,25 +154,10 @@ report_utilization -file $project_dir/utilization.rpt
 report_timing_summary -file $project_dir/timing.rpt
 report_power -file $project_dir/power.rpt
 
-puts "Implementation complete. Generating post-implementation simulation files..."
-
-# Write timing simulation files
-write_vhdl -mode timesim -force $project_dir/timing_sim.vhd
-write_sdf -mode timesim -force $project_dir/timing_sim.sdf
-
-# Generate bitstream (optional)
-# launch_runs impl_1 -to_step write_bitstream
-# wait_on_run impl_1
-
+puts "Implementation complete!"
 puts "Build complete!"
 puts "Project location: $project_dir/$project_name.xpr"
-puts ""
-puts "To run post-synthesis simulation:"
-puts "  launch_simulation -mode post-synthesis -type functional"
-puts ""
-puts "To run post-implementation timing simulation:"
-puts "  launch_simulation -mode post-implementation -type timing"
-puts ""
-puts "Timing simulation files:"
-puts "  VHDL: $project_dir/timing_sim.vhd"
-puts "  SDF:  $project_dir/timing_sim.sdf"
+puts "Reports generated:"
+puts "  Utilization: $project_dir/utilization.rpt"
+puts "  Timing:      $project_dir/timing.rpt"
+puts "  Power:       $project_dir/power.rpt"
