@@ -1,0 +1,23 @@
+# Build directory
+build/
+
+# Vivado files
+*.jou
+*.log
+*.str
+*.xpr.user
+.Xil/
+
+# Simulation files
+*.wdb
+*.wcfg
+xsim.dir/
+webtalk*
+
+# IP core files (generated)
+*.xci.user
+
+# OS files
+.DS_Store
+Thumbs.db
+*~

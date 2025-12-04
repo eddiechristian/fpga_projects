@@ -1,0 +1,30 @@
+Here are the utilization reports for each floating-point IP core:
+
+Floating Point Add
+•  LUTs: 196 (0.15%)
+•  Registers: 315 (0.12%)
+•  DSPs: 2 (0.27%)
+
+Floating Point Multiply
+•  LUTs: 110 (0.08%)
+•  Registers: 173 (0.06%)
+•  DSPs: 2 (0.27%)
+
+Floating Point Square Root
+•  LUTs: 443 (0.33%)
+•  Registers: 840 (0.31%)
+•  DSPs: 0
+
+Floating Point Compare
+•  LUTs: 48 (0.04%)
+•  Registers: 12 (<0.01%)
+•  DSPs: 0
+
+
+
+Based on the utilization reports, your board (Artix-7 xc7a200tsbg484-1) has:
+
+•  LUTs (Slice LUTs): 134,600
+•  Registers (Slice Registers): 269,200
+•  DSPs (DSP48E1): 740
+•  Block RAM Tiles: 365
