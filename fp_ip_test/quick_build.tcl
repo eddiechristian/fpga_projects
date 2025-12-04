@@ -73,6 +73,16 @@ if {[get_property PROGRESS [get_runs impl_1]] != "100%"} {
     exit 1
 }
 
+# Generate bitstream
+puts "Generating bitstream..."
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+
+if {[get_property PROGRESS [get_runs impl_1]] != "100%"} {
+    puts "ERROR: Bitstream generation failed!"
+    exit 1
+}
+
 # Generate reports
 puts "Generating reports..."
 open_run impl_1
@@ -85,6 +95,7 @@ puts "================================"
 puts "Quick build complete!"
 puts "================================"
 puts "Project location: $project_dir/$project_name.xpr"
+puts "Bitstream: $project_dir/$project_name.runs/impl_1/top_module.bit"
 puts "Reports generated:"
 puts "  Utilization: $project_dir/utilization.rpt"
 puts "  Timing:      $project_dir/timing.rpt"
