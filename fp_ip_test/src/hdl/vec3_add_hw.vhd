@@ -4,7 +4,11 @@ use work.vec3_pkg.all;
 
 -- Hardware Vec3 addition: result = a + b
 -- Uses 3 floating-point adders in parallel
--- Latency: 11 clock cycles (per FP add IP configuration)
+-- 
+-- Performance:
+--   Latency: 11 clock cycles
+--   Throughput: 1 result per cycle (fully pipelined)
+--   Resource usage: 3x FP_ADD cores
 entity vec3_add_hw is
     port (
         clk       : in  std_logic;

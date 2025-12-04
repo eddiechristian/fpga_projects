@@ -4,7 +4,11 @@ use work.vec3_pkg.all;
 
 -- Hardware Vec3 scalar multiplication: result = v * scalar
 -- Uses 3 floating-point multipliers in parallel
--- Latency: 8 clock cycles (per FP mult IP configuration)
+-- 
+-- Performance:
+--   Latency: 8 clock cycles
+--   Throughput: 1 result per cycle (fully pipelined)
+--   Resource usage: 3x FP_MULT cores
 entity vec3_scale_hw is
     port (
         clk       : in  std_logic;

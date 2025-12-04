@@ -4,11 +4,19 @@ use work.vec3_pkg.all;
 
 -- Hardware Vec3 dot product: result = a.x*b.x + a.y*b.y + a.z*b.z
 -- Uses 3 floating-point multipliers and 2 floating-point adders
+-- 
 -- Pipeline stages:
 --   Stage 1: 3 parallel multiplications (8 cycles)
 --   Stage 2: Add mult_x + mult_y (11 cycles)
 --   Stage 3: Add sum_xy + mult_z (11 cycles)
--- Total latency: ~30 clock cycles
+-- 
+-- Performance:
+--   Total Latency: 30 clock cycles (8 + 11 + 11)
+--   Throughput: 1 result per cycle (fully pipelined)
+--   Resource usage: 3x FP_MULT + 2x FP_ADD cores
+--   
+-- Note: The addition stages must be sequential (cannot be parallelized further)
+-- because we need to sum 3 values which requires 2 addition operations.
 entity vec3_dot_hw is
     port (
         clk       : in  std_logic;
