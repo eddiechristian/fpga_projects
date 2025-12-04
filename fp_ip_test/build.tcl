@@ -81,6 +81,19 @@ set_property -dict [list \
     CONFIG.Has_RESULT_TREADY {false} \
 ] [get_ips floating_point_compare]
 
+# 5. Create Divide IP
+create_ip -name floating_point -vendor xilinx.com -library ip -version 7.1 -module_name floating_point_div -dir $ip_dir
+set_property -dict [list \
+    CONFIG.Operation_Type {Divide} \
+    CONFIG.A_Precision_Type {Single} \
+    CONFIG.Result_Precision_Type {Single} \
+    CONFIG.C_Latency {28} \
+    CONFIG.C_Rate {1} \
+    CONFIG.Flow_Control {NonBlocking} \
+    CONFIG.Maximum_Latency {false} \
+    CONFIG.Has_RESULT_TREADY {false} \
+] [get_ips floating_point_div]
+
 # Generate all IP
 puts "Generating IP cores..."
 generate_target all [get_ips]
