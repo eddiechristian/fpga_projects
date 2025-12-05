@@ -25,6 +25,20 @@ set ip_dir "$project_dir/ip"
 file mkdir $ip_dir
 set_property ip_repo_paths $ip_dir [current_project]
 
+puts "Creating Clocking Wizard IP..."
+
+# Create Clocking Wizard for 200 MHz clock
+create_ip -name clk_wiz -vendor xilinx.com -library ip -version 6.0 -module_name clk_wiz_0 -dir $ip_dir
+set_property -dict [list \
+    CONFIG.PRIM_IN_FREQ {100.000} \
+    CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {200.000} \
+    CONFIG.USE_RESET {true} \
+    CONFIG.RESET_TYPE {ACTIVE_HIGH} \
+    CONFIG.RESET_PORT {reset} \
+    CONFIG.USE_LOCKED {true} \
+    CONFIG.CLKOUT1_DRIVES {BUFG} \
+] [get_ips clk_wiz_0]
+
 puts "Creating Floating Point IP cores..."
 
 # 1. Create Square Root IP

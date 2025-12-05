@@ -1,9 +1,9 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- Vec3 package: Type definitions and constants
+-- Linear Algebra package: Type definitions and constants for Vec3 and fp32
 -- This package is fully synthesizable
-package vec3_pkg is
+package lin_alg_pkg is
     
     -- Single precision float as std_logic_vector (32 bits, IEEE 754)
     subtype fp32 is std_logic_vector(31 downto 0);
@@ -43,9 +43,9 @@ package vec3_pkg is
     -- Helper function: Create a Vec3 from three fp32 values
     function make_vec3(x, y, z : fp32) return Vec3;
     
-end package vec3_pkg;
+end package lin_alg_pkg;
 
-package body vec3_pkg is
+package body lin_alg_pkg is
     
     function make_vec3(x, y, z : fp32) return Vec3 is
         variable result : Vec3;
@@ -56,4 +56,4 @@ package body vec3_pkg is
         return result;
     end function;
     
-end package body vec3_pkg;
+end package body lin_alg_pkg;

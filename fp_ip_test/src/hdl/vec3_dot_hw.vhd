@@ -1,6 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use work.vec3_pkg.all;
+use work.lin_alg_pkg.all;
 
 -- Hardware Vec3 dot product: result = a.x*b.x + a.y*b.y + a.z*b.z
 -- Uses 3 floating-point multipliers and 2 floating-point adders

@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 use IEEE.MATH_REAL.ALL;
-use work.vec3_pkg.all;
+use work.lin_alg_pkg.all;
 
 -- Vec3 simulation package: Helper functions for testbenches
 -- WARNING: These functions are SIMULATION ONLY and will NOT synthesize

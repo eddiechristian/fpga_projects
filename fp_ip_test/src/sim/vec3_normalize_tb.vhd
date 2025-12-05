@@ -1,7 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
-use work.vec3_pkg.all;
+use work.lin_alg_pkg.all;
 
 entity vec3_normalize_tb is
 end vec3_normalize_tb;

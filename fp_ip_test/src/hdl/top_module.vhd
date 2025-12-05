@@ -1,7 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
-use work.vec3_pkg.all;
+use work.lin_alg_pkg.all;
 
 entity top_module is
     Port (
@@ -126,7 +126,22 @@ architecture Behavioral of top_module is
             valid_out : out std_logic
         );
     end component;
+    
+    -- Component declaration for Clocking Wizard
+    component clk_wiz_0
+        port (
+            clk_in1  : in  std_logic;  -- 100 MHz input
+            clk_out1 : out std_logic;  -- 200 MHz output
+            reset    : in  std_logic;  -- Active high reset
+            locked   : out std_logic   -- PLL locked indicator
+        );
+    end component;
 
+    -- Clock signals
+    signal clk_200mhz   : STD_LOGIC;  -- 200 MHz clock from Clocking Wizard
+    signal clk_locked   : STD_LOGIC;  -- PLL locked indicator
+    signal reset_sync   : STD_LOGIC;  -- Synchronized reset for 200 MHz domain
+    
     -- Valid signal for all operations
     signal valid_test   : STD_LOGIC := '1';
     
@@ -151,7 +166,7 @@ architecture Behavioral of top_module is
     --
     -- STEP 2: Compute U Vector (horizontal screen direction)
     --   a) Cross: alignmentVector × cameraUp = (0,1,0) × (0,0,1) = (1,0,0)
-    --   b) Normalize: (1,0,0) → (1,0,0)  [already unit length]
+    --   b) Normalize: (1,0,0) → (1,0,0)  [already unit length]                    << EDDIE YOU MAY BE ABLE TO GET RID OF THIS!!!!
     --   c) Scale: (1,0,0) * 0.25 = (0.25,0,0)
     --   Result: projectionScreenU = (0.25,0,0)
     --
@@ -335,7 +350,29 @@ architecture Behavioral of top_module is
 
 begin
 
-    -- Generate heartbeat signal
+    -- Instantiate Clocking Wizard: Generate 200 MHz from 100 MHz
+    clk_wiz_inst : clk_wiz_0
+        port map (
+            clk_in1  => clk,        -- 100 MHz input
+            clk_out1 => clk_200mhz, -- 200 MHz output
+            reset    => reset,      -- Reset input
+            locked   => clk_locked  -- PLL locked status
+        );
+    
+    -- Synchronize reset to 200 MHz clock domain
+    -- Hold reset until PLL is locked
+    process(clk_200mhz)
+    begin
+        if rising_edge(clk_200mhz) then
+            if clk_locked = '0' then
+                reset_sync <= '1';
+            else
+                reset_sync <= reset;
+            end if;
+        end if;
+    end process;
+
+    -- Generate heartbeat signal (runs on 100 MHz clock)
     process(clk)
     begin
         if rising_edge(clk) then
@@ -349,12 +386,14 @@ begin
     
     heartbeat <= counter(25);
     
+    -- All following processes run on 200 MHz clock for 2x speedup
+    
     -- Update norm_in from subtraction result
     -- This chains the operations: sub_result -> normalize
-    process(clk)
+    process(clk_200mhz)
     begin
-        if rising_edge(clk) then
-            if reset = '1' then
+        if rising_edge(clk_200mhz) then
+            if reset_sync = '1' then
                 norm_in <= VEC3_ZERO;
             elsif vec_sub_valid = '1' then
                 norm_in <= vec_sub_result;
@@ -364,10 +403,10 @@ begin
     
     -- Update cross_a from normalize result (alignment vector)
     -- This chains: normalize_result -> cross product
-    process(clk)
+    process(clk_200mhz)
     begin
-        if rising_edge(clk) then
-            if reset = '1' then
+        if rising_edge(clk_200mhz) then
+            if reset_sync = '1' then
                 cross_a <= VEC3_ZERO;
             elsif vec_norm_valid = '1' then
                 cross_a <= vec_norm_result;
@@ -377,10 +416,10 @@ begin
     
     -- Update norm_u_in from cross result
     -- This chains: cross_result -> normalize U vector
-    process(clk)
+    process(clk_200mhz)
     begin
-        if rising_edge(clk) then
-            if reset = '1' then
+        if rising_edge(clk_200mhz) then
+            if reset_sync = '1' then
                 norm_u_in <= VEC3_ZERO;
             elsif vec_cross_valid = '1' then
                 norm_u_in <= vec_cross_result;
@@ -390,10 +429,10 @@ begin
     
     -- Update cross_v inputs for V vector computation
     -- cross_v_a = normalized U, cross_v_b = alignment vector
-    process(clk)
+    process(clk_200mhz)
     begin
-        if rising_edge(clk) then
-            if reset = '1' then
+        if rising_edge(clk_200mhz) then
+            if reset_sync = '1' then
                 cross_v_a <= VEC3_ZERO;
                 cross_v_b <= VEC3_ZERO;
             else
@@ -411,10 +450,10 @@ begin
     
     -- Update norm_v_in from V cross result
     -- This chains: cross_v_result -> normalize V vector
-    process(clk)
+    process(clk_200mhz)
     begin
-        if rising_edge(clk) then
-            if reset = '1' then
+        if rising_edge(clk_200mhz) then
+            if reset_sync = '1' then
                 norm_v_in <= VEC3_ZERO;
             elsif vec_cross_v_valid = '1' then
                 norm_v_in <= vec_cross_v_result;
@@ -424,10 +463,10 @@ begin
     
     -- Update scale_alignment_in for screen center computation
     -- This chains: alignment vector -> scale by cameraLength
-    process(clk)
+    process(clk_200mhz)
     begin
-        if rising_edge(clk) then
-            if reset = '1' then
+        if rising_edge(clk_200mhz) then
+            if reset_sync = '1' then
                 scale_alignment_in <= VEC3_ZERO;
             elsif vec_norm_valid = '1' then
                 scale_alignment_in <= vec_norm_result;
@@ -437,10 +476,10 @@ begin
     
     -- Update add_center inputs for screen center computation
     -- add_center_a = cameraPosition, add_center_b = scaled alignment
-    process(clk)
+    process(clk_200mhz)
     begin
-        if rising_edge(clk) then
-            if reset = '1' then
+        if rising_edge(clk_200mhz) then
+            if reset_sync = '1' then
                 add_center_a <= VEC3_ZERO;
                 add_center_b <= VEC3_ZERO;
             else
@@ -458,8 +497,8 @@ begin
     -- Normalizes (0, 10, 0) -> (0, 1, 0) which is the alignment vector
     vec3_norm_inst : vec3_normalize_hw
         port map (
-            clk       => clk,
-            reset     => reset,
+            clk       => clk_200mhz,
+            reset     => reset_sync,
             valid_in  => valid_test,
             v         => norm_in,
             result    => vec_norm_result,
@@ -470,8 +509,8 @@ begin
     -- Scales (0,1,0) * 1.0 = (0,1,0)
     vec3_scale_alignment_inst : vec3_scale_hw
         port map (
-            clk       => clk,
-            reset     => reset,
+            clk       => clk_200mhz,
+            reset     => reset_sync,
             valid_in  => valid_test,
             v         => scale_alignment_in,
             scalar    => m_camera_length,
@@ -483,8 +522,8 @@ begin
     -- position + (alignment * length) = (0,-10,0) + (0,1,0) = (0,-9,0)
     vec3_add_inst : vec3_add_hw
         port map (
-            clk       => clk,
-            reset     => reset,
+            clk       => clk_200mhz,
+            reset     => reset_sync,
             valid_in  => valid_test,
             a         => add_center_a,
             b         => add_center_b,
@@ -496,8 +535,8 @@ begin
     -- This gives the camera direction vector before normalization
     vec3_sub_inst : vec3_sub_hw
         port map (
-            clk       => clk,
-            reset     => reset,
+            clk       => clk_200mhz,
+            reset     => reset_sync,
             valid_in  => valid_test,
             a         => sub_a,
             b         => sub_b,
@@ -508,8 +547,8 @@ begin
     -- Instantiate vec3 dot: (2,3,4) · (5,6,7) = 10+18+28 = 56
     vec3_dot_inst : vec3_dot_hw
         port map (
-            clk       => clk,
-            reset     => reset,
+            clk       => clk_200mhz,
+            reset     => reset_sync,
             valid_in  => valid_test,
             a         => dot_a,
             b         => dot_b,
@@ -522,8 +561,8 @@ begin
     -- This is the horizontal screen vector (unnormalized, already unit length in this case)
     vec3_cross_inst : vec3_cross_hw
         port map (
-            clk       => clk,
-            reset     => reset,
+            clk       => clk_200mhz,
+            reset     => reset_sync,
             valid_in  => valid_test,
             a         => cross_a,
             b         => cross_b,
@@ -535,8 +574,8 @@ begin
     -- Normalizes (1,0,0) -> (1,0,0) - already unit length, but required by algorithm
     vec3_norm_u_inst : vec3_normalize_hw
         port map (
-            clk       => clk,
-            reset     => reset,
+            clk       => clk_200mhz,
+            reset     => reset_sync,
             valid_in  => valid_test,
             v         => norm_u_in,
             result    => vec_norm_u_result,
@@ -547,8 +586,8 @@ begin
     -- Scales (1,0,0) * 0.25 = (0.25,0,0) - final projectionScreenU
     vec3_scale_u_inst : vec3_scale_hw
         port map (
-            clk       => clk,
-            reset     => reset,
+            clk       => clk_200mhz,
+            reset     => reset_sync,
             valid_in  => vec_norm_u_valid,
             v         => vec_norm_u_result,
             scalar    => m_camera_horz_size,
@@ -560,8 +599,8 @@ begin
     -- cross(projectionScreenU, alignmentVector) = cross((1,0,0), (0,1,0)) = (0,0,1)
     vec3_cross_v_inst : vec3_cross_hw
         port map (
-            clk       => clk,
-            reset     => reset,
+            clk       => clk_200mhz,
+            reset     => reset_sync,
             valid_in  => valid_test,
             a         => cross_v_a,
             b         => cross_v_b,
@@ -573,8 +612,8 @@ begin
     -- Normalizes (0,0,1) -> (0,0,1) - already unit length
     vec3_norm_v_inst : vec3_normalize_hw
         port map (
-            clk       => clk,
-            reset     => reset,
+            clk       => clk_200mhz,
+            reset     => reset_sync,
             valid_in  => valid_test,
             v         => norm_v_in,
             result    => vec_norm_v_result,
@@ -585,8 +624,8 @@ begin
     -- Scales (0,0,1) * 0.140625 = (0,0,0.140625) - final projectionScreenV
     vec3_scale_v_inst : vec3_scale_hw
         port map (
-            clk       => clk,
-            reset     => reset,
+            clk       => clk_200mhz,
+            reset     => reset_sync,
             valid_in  => vec_norm_v_valid,
             v         => vec_norm_v_result,
             scalar    => m_camera_vert_size,

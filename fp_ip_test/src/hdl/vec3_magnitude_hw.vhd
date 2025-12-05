@@ -1,6 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use work.vec3_pkg.all;
+use work.lin_alg_pkg.all;
 
 -- Hardware Vec3 magnitude (length): result = sqrt(v.x² + v.y² + v.z²)
 -- Implements the norm() function from qbVector.h
