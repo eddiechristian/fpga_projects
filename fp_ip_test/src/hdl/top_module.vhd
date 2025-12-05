@@ -136,6 +136,19 @@ architecture Behavioral of top_module is
             locked   : out std_logic   -- PLL locked indicator
         );
     end component;
+    
+    -- Component declaration for mat4_vec4_mult
+    component mat4_vec4_mult_hw
+        port (
+            clk       : in  std_logic;
+            reset     : in  std_logic;
+            m_in      : in  Mat4;
+            v_in      : in  Vec4;
+            valid_in  : in  std_logic;
+            v_out     : out Vec4;
+            valid_out : out std_logic
+        );
+    end component;
 
     -- Clock signals
     signal clk_200mhz   : STD_LOGIC;  -- 200 MHz clock from Clocking Wizard
@@ -347,6 +360,52 @@ architecture Behavioral of top_module is
     
     -- Heartbeat counter
     signal counter         : unsigned(25 downto 0) := (others => '0');
+    
+    -------------------------------------------------------------------------------
+    -- MATRIX-VECTOR TRANSFORM TEST SIGNALS
+    -------------------------------------------------------------------------------
+    -- Test transformation of a point by a 2x scale matrix
+    -- Test matrix: 2x scale (identity * 2)
+    signal test_matrix : Mat4 := (
+        x1 => X"40000000",  -- 2.0
+        y1 => X"00000000",  -- 0.0
+        z1 => X"00000000",  -- 0.0
+        w1 => X"00000000",  -- 0.0
+        x2 => X"00000000",  -- 0.0
+        y2 => X"40000000",  -- 2.0
+        z2 => X"00000000",  -- 0.0
+        w2 => X"00000000",  -- 0.0
+        x3 => X"00000000",  -- 0.0
+        y3 => X"00000000",  -- 0.0
+        z3 => X"40000000",  -- 2.0
+        w3 => X"00000000",  -- 0.0
+        x4 => X"00000000",  -- 0.0
+        y4 => X"00000000",  -- 0.0
+        z4 => X"00000000",  -- 0.0
+        w4 => X"3F800000"   -- 1.0
+    );
+    
+    -- Test vector: (1, 2, 3, 1)
+    signal test_vector : Vec4 := (
+        x => X"3F800000",  -- 1.0
+        y => X"40000000",  -- 2.0
+        z => X"40400000",  -- 3.0
+        w => X"3F800000"   -- 1.0
+    );
+    
+    -- Result: should be (2, 4, 6, 1)
+    signal transform_result : Vec4;
+    signal transform_valid : std_logic;
+    
+    attribute KEEP of test_matrix : signal is "TRUE";
+    attribute KEEP of test_vector : signal is "TRUE";
+    attribute KEEP of transform_result : signal is "TRUE";
+    attribute KEEP of transform_valid : signal is "TRUE";
+    
+    attribute MARK_DEBUG of test_matrix : signal is "TRUE";
+    attribute MARK_DEBUG of test_vector : signal is "TRUE";
+    attribute MARK_DEBUG of transform_result : signal is "TRUE";
+    attribute MARK_DEBUG of transform_valid : signal is "TRUE";
 
 begin
 
@@ -631,6 +690,27 @@ begin
             scalar    => m_camera_vert_size,
             result    => vec_scale_v_result,
             valid_out => vec_scale_v_valid
+        );
+
+    -------------------------------------------------------------------------------
+    -- MATRIX-VECTOR TRANSFORM TEST
+    -------------------------------------------------------------------------------
+    -- Test transformation of a point by a 2x scale matrix
+    -- Transform: v' = M * v where
+    --   M = 2x scale matrix (scale by 2 in x, y, z)
+    --   v = (1, 2, 3, 1) homogeneous point
+    -- Expected result: (2, 4, 6, 1)
+    -------------------------------------------------------------------------------
+    
+    mat4_vec4_mult_inst : mat4_vec4_mult_hw
+        port map (
+            clk       => clk_200mhz,
+            reset     => reset_sync,
+            m_in      => test_matrix,
+            v_in      => test_vector,
+            valid_in  => valid_test,
+            v_out     => transform_result,
+            valid_out => transform_valid
         );
 
 end Behavioral;

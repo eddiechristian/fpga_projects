@@ -108,7 +108,7 @@ set_property -dict [list \
     CONFIG.Has_RESULT_TREADY {false} \
 ] [get_ips floating_point_div]
 
-# Generate all IP
+# Generate all IP sequentially
 puts "Generating IP cores..."
 generate_target all [get_ips]
 set_property generate_synth_checkpoint true [get_files *.xci]
@@ -116,10 +116,12 @@ foreach ip [get_ips] {
     create_ip_run $ip
 }
 
-# Wait for IP generation
+# Wait for IP generation - SEQUENTIALLY to avoid memory issues
 foreach ip_run [get_runs *_synth_1] {
-    launch_runs $ip_run
+    puts "Launching IP run: $ip_run"
+    launch_runs $ip_run -jobs 1
     wait_on_run $ip_run
+    puts "Completed IP run: $ip_run"
 }
 
 puts "IP generation complete."
@@ -161,7 +163,7 @@ close_sim
 puts "Running synthesis..."
 
 # Run synthesis
-launch_runs synth_1 -jobs 4
+launch_runs synth_1 -jobs 1
 wait_on_run synth_1
 
 puts "Synthesis complete. Generating post-synthesis simulation files..."
@@ -172,7 +174,7 @@ set_property -name {xsim.simulate.runtime} -value {2000ns} -objects [get_fileset
 puts "Running implementation..."
 
 # Run implementation
-launch_runs impl_1 -jobs 4
+launch_runs impl_1 -jobs 1
 wait_on_run impl_1
 
 # Generate reports

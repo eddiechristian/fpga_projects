@@ -15,6 +15,14 @@ package lin_alg_pkg is
         z : fp32;
     end record;
     
+    -- 4D homogeneous vector (w is always 1.0 for points)
+    type Vec4 is record
+        x : fp32;
+        y : fp32;
+        z : fp32;
+        w : fp32;  -- Always 1.0 for homogeneous coordinates
+    end record;
+    
     -- 4x4 Matrix (column-major layout)
     -- | x1 x2 x3 x4 |
     -- | y1 y2 y3 y4 |
@@ -87,8 +95,24 @@ package lin_alg_pkg is
         z => X"3F800000"   -- 1.0 in IEEE 754
     );
     
+    constant VEC4_ZERO : Vec4 := (
+        x => X"00000000",
+        y => X"00000000",
+        z => X"00000000",
+        w => X"3F800000"   -- w = 1.0
+    );
+    
     -- Helper function: Create a Vec3 from three fp32 values
     function make_vec3(x, y, z : fp32) return Vec3;
+    
+    -- Helper function: Create a Vec4 from three fp32 values (w=1.0)
+    function make_vec4(x, y, z : fp32) return Vec4;
+    
+    -- Helper function: Convert Vec3 to Vec4 (w=1.0)
+    function vec3_to_vec4(v : Vec3) return Vec4;
+    
+    -- Helper function: Convert Vec4 to Vec3 (discard w)
+    function vec4_to_vec3(v : Vec4) return Vec3;
     
 end package lin_alg_pkg;
 
@@ -100,6 +124,35 @@ package body lin_alg_pkg is
         result.x := x;
         result.y := y;
         result.z := z;
+        return result;
+    end function;
+    
+    function make_vec4(x, y, z : fp32) return Vec4 is
+        variable result : Vec4;
+    begin
+        result.x := x;
+        result.y := y;
+        result.z := z;
+        result.w := X"3F800000";  -- 1.0
+        return result;
+    end function;
+    
+    function vec3_to_vec4(v : Vec3) return Vec4 is
+        variable result : Vec4;
+    begin
+        result.x := v.x;
+        result.y := v.y;
+        result.z := v.z;
+        result.w := X"3F800000";  -- 1.0
+        return result;
+    end function;
+    
+    function vec4_to_vec3(v : Vec4) return Vec3 is
+        variable result : Vec3;
+    begin
+        result.x := v.x;
+        result.y := v.y;
+        result.z := v.z;
         return result;
     end function;
     
