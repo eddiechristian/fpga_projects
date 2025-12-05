@@ -15,6 +15,53 @@ package lin_alg_pkg is
         z : fp32;
     end record;
     
+    -- 4x4 Matrix (column-major layout)
+    -- | x1 x2 x3 x4 |
+    -- | y1 y2 y3 y4 |
+    -- | z1 z2 z3 z4 |
+    -- | w1 w2 w3 w4 |
+
+    type Mat4 is record
+        x1: fp32;
+        y1: fp32;
+        z1: fp32;
+        w1: fp32;
+        
+        x2: fp32;
+        y2: fp32;
+        z2: fp32;
+        w2: fp32;
+        
+        x3: fp32;
+        y3: fp32;
+        z3: fp32;
+        w3: fp32;
+        
+        x4: fp32;
+        y4: fp32;
+        z4: fp32;
+        w4: fp32;
+    end record;
+
+    constant MAT4_IDENTITY: Mat4 := (
+        x1 => X"3F800000",   -- 1.0 in IEEE 754
+        y1 => X"00000000",
+        z1 => X"00000000",
+        w1 => X"00000000",
+        x2 => X"00000000",
+        y2 => X"3F800000",
+        z2 => X"00000000",
+        w2 => X"00000000",
+        x3 => X"00000000",
+        y3 => X"00000000",
+        z3 => X"3F800000",
+        w3 => X"00000000",
+        x4 => X"00000000",
+        y4 => X"00000000",
+        z4 => X"00000000",
+        w4 => X"3F800000"
+    );
+
     -- Useful constants
     constant VEC3_ZERO : Vec3 := (
         x => X"00000000",
