@@ -149,6 +149,28 @@ architecture Behavioral of top_module is
             valid_out : out std_logic
         );
     end component;
+    
+    -- Component declaration for TRS to matrix
+    component trs_to_matrix_hw
+        port (
+            clk              : in std_logic;
+            reset            : in std_logic;
+            scale_x          : in fp32;
+            scale_y          : in fp32;
+            scale_z          : in fp32;
+            rotation_x       : in fp32;
+            rotation_y       : in fp32;
+            rotation_z       : in fp32;
+            translate_x      : in fp32;
+            translate_y      : in fp32;
+            translate_z      : in fp32;
+            valid_in         : in std_logic;
+            transform_matrix : out Mat4;
+            inverse_matrix   : out Mat4;
+            valid_out        : out std_logic;
+            error            : out std_logic
+        );
+    end component;
 
     -- Clock signals
     signal clk_200mhz   : STD_LOGIC;  -- 200 MHz clock from Clocking Wizard
@@ -406,6 +428,40 @@ architecture Behavioral of top_module is
     attribute MARK_DEBUG of test_vector : signal is "TRUE";
     attribute MARK_DEBUG of transform_result : signal is "TRUE";
     attribute MARK_DEBUG of transform_valid : signal is "TRUE";
+    
+    -------------------------------------------------------------------------------
+    -- TRS TRANSFORM TEST SIGNALS
+    -------------------------------------------------------------------------------
+    -- Test vector: (1, 1, 0, 1)
+    signal trs_test_vector : Vec4 := (
+        x => X"3F800000",  -- 1.0
+        y => X"3F800000",  -- 1.0
+        z => X"00000000",  -- 0.0
+        w => X"3F800000"   -- 1.0
+    );
+    
+    signal trs_forward_matrix : Mat4;
+    signal trs_inverse_matrix : Mat4;
+    signal trs_valid : std_logic;
+    signal trs_error : std_logic;
+    signal trs_result : Vec4;  -- Expected: (1, 9, 5, 1)
+    signal trs_result_valid : std_logic;
+    
+    attribute KEEP of trs_test_vector : signal is "TRUE";
+    attribute KEEP of trs_forward_matrix : signal is "TRUE";
+    attribute KEEP of trs_inverse_matrix : signal is "TRUE";
+    attribute KEEP of trs_valid : signal is "TRUE";
+    attribute KEEP of trs_error : signal is "TRUE";
+    attribute KEEP of trs_result : signal is "TRUE";
+    attribute KEEP of trs_result_valid : signal is "TRUE";
+    
+    attribute MARK_DEBUG of trs_test_vector : signal is "TRUE";
+    attribute MARK_DEBUG of trs_forward_matrix : signal is "TRUE";
+    attribute MARK_DEBUG of trs_inverse_matrix : signal is "TRUE";
+    attribute MARK_DEBUG of trs_valid : signal is "TRUE";
+    attribute MARK_DEBUG of trs_error : signal is "TRUE";
+    attribute MARK_DEBUG of trs_result : signal is "TRUE";
+    attribute MARK_DEBUG of trs_result_valid : signal is "TRUE";
 
 begin
 
@@ -711,6 +767,52 @@ begin
             valid_in  => valid_test,
             v_out     => transform_result,
             valid_out => transform_valid
+        );
+
+    -------------------------------------------------------------------------------
+    -- TRS TRANSFORM TEST
+    -------------------------------------------------------------------------------
+    -- Test full TRS transformation pipeline:
+    --   Input vector: (1, 1, 0, 1)
+    --   Scale: 4x uniform
+    --   Rotate: 90° around Z axis
+    --   Translate: (5, 5, 5)
+    -- Expected: (1,1,0) -> scale -> (4,4,0) -> rotate -> (-4,4,0) -> translate -> (1,9,5)
+    -------------------------------------------------------------------------------
+    
+    trs_inst : trs_to_matrix_hw
+        port map (
+            clk => clk_200mhz,
+            reset => reset_sync,
+            -- Scale: 4x uniform
+            scale_x => X"40800000",  -- 4.0
+            scale_y => X"40800000",  -- 4.0
+            scale_z => X"40800000",  -- 4.0
+            -- Rotation: 90° = π/2 radians around Z
+            rotation_x => X"00000000",  -- 0.0
+            rotation_y => X"00000000",  -- 0.0
+            rotation_z => X"3FC90FDB",  -- π/2 ≈ 1.5708 radians
+            -- Translation: (5, 5, 5)
+            translate_x => X"40A00000",  -- 5.0
+            translate_y => X"40A00000",  -- 5.0
+            translate_z => X"40A00000",  -- 5.0
+            valid_in => valid_test,
+            transform_matrix => trs_forward_matrix,
+            inverse_matrix => trs_inverse_matrix,
+            valid_out => trs_valid,
+            error => trs_error
+        );
+    
+    -- Apply the forward transform to test vector (1, 1, 0, 1)
+    trs_transform_inst : mat4_vec4_mult_hw
+        port map (
+            clk => clk_200mhz,
+            reset => reset_sync,
+            m_in => trs_forward_matrix,
+            v_in => trs_test_vector,
+            valid_in => trs_valid,  -- Chain from TRS output
+            v_out => trs_result,
+            valid_out => trs_result_valid
         );
 
 end Behavioral;
