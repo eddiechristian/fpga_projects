@@ -2,10 +2,20 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use work.lin_alg_pkg.all;
 
--- 4x4 Matrix Multiplication: C = A * B
--- Computes all 16 elements in parallel (one row at a time)
+-- 4x4 Matrix Multiplication (Parallel): C = A * B
+-- Computes ALL 16 ELEMENTS in parallel
 -- Each element requires 4 multiplications + 3 additions
--- Total: 64 fp32 mults + 48 fp32 adds
+--
+-- Performance:
+--   Latency: ~30 cycles total (all rows computed together)
+--   Throughput: Can start new matrix every cycle (fully pipelined)
+--   Resource usage: 64x FP_MULT + 48x FP_ADD
+--
+-- Resource Estimate per module:
+--   - 64 fp_mult × 3 DSPs = 192 DSPs
+--   - 48 fp_add × 2 DSPs = 96 DSPs
+--   - Total: ~288 DSPs (39% of Artix-7 xc7a200t - can fit 2 modules)
+--   - LUTs: ~12K (9% of 134K available)
 
 entity mat4_mult_hw is
     port (
