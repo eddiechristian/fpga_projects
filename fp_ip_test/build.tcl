@@ -1,6 +1,7 @@
 # Vivado build script for Floating Point IP test project
-# This script creates the project, generates floating point IP cores,
-# and sets up for post-synthesis and post-implementation simulation
+# This script creates the project from scratch, generates floating point IP cores,
+# runs synthesis, implementation, and generates bitstream
+# NOTE: This script runs in batch mode and does NOT start GUI
 
 # Project settings
 set project_name "fp_ip_test"
@@ -9,7 +10,13 @@ set project_dir "./build"
 # Change this to your target FPGA part
 set part_number "xc7a200tsbg484-1"
 
-# Create project directory
+# Clean build directory if it exists
+if {[file exists $project_dir]} {
+    puts "Removing existing build directory..."
+    file delete -force $project_dir
+}
+
+# Create fresh project directory
 file mkdir $project_dir
 
 # Create project
@@ -108,20 +115,27 @@ set_property -dict [list \
     CONFIG.Has_RESULT_TREADY {false} \
 ] [get_ips floating_point_div]
 
-# Generate all IP sequentially
+# Generate all IP outputs and synthesis products
 puts "Generating IP cores..."
 generate_target all [get_ips]
+
+# Create synthesis checkpoints for all IPs
+puts "Creating synthesis runs for all IPs..."
 set_property generate_synth_checkpoint true [get_files *.xci]
 foreach ip [get_ips] {
+    set ip_name [get_property NAME $ip]
+    puts "Creating IP run for: $ip_name"
     create_ip_run $ip
 }
 
-# Wait for IP generation - SEQUENTIALLY to avoid memory issues
+# Launch and wait for IP synthesis runs - SEQUENTIALLY to avoid memory issues
+puts "Synthesizing all IP cores sequentially..."
 foreach ip_run [get_runs *_synth_1] {
     puts "Launching IP run: $ip_run"
     launch_runs $ip_run -jobs 1
     wait_on_run $ip_run
-    puts "Completed IP run: $ip_run"
+    set run_status [get_property STATUS $ip_run]
+    puts "Completed IP run: $ip_run - Status: $run_status"
 }
 
 puts "IP generation complete."
@@ -158,7 +172,8 @@ puts "Running synthesis..."
 launch_runs synth_1 -jobs 1
 wait_on_run synth_1
 
-puts "Synthesis complete. Generating post-synthesis simulation files..."
+set synth_status [get_property STATUS [get_runs synth_1]]
+puts "Synthesis complete - Status: $synth_status"
 
 # Set up post-synthesis simulation
 set_property -name {xsim.simulate.runtime} -value {2000ns} -objects [get_filesets sim_1]
@@ -169,16 +184,31 @@ puts "Running implementation..."
 launch_runs impl_1 -jobs 1
 wait_on_run impl_1
 
+set impl_status [get_property STATUS [get_runs impl_1]]
+puts "Implementation complete - Status: $impl_status"
+
+puts "Generating bitstream..."
+
+# Generate bitstream
+launch_runs impl_1 -to_step write_bitstream -jobs 1
+wait_on_run impl_1
+
+set bitstream_status [get_property STATUS [get_runs impl_1]]
+puts "Bitstream generation complete - Status: $bitstream_status"
+
 # Generate reports
 open_run impl_1
 report_utilization -file $project_dir/utilization.rpt
 report_timing_summary -file $project_dir/timing.rpt
 report_power -file $project_dir/power.rpt
 
-puts "Implementation complete!"
+puts "\n========================================"
 puts "Build complete!"
+puts "========================================"
 puts "Project location: $project_dir/$project_name.xpr"
+puts "Bitstream:        $project_dir/$project_name.runs/impl_1/top_module.bit"
 puts "Reports generated:"
 puts "  Utilization: $project_dir/utilization.rpt"
 puts "  Timing:      $project_dir/timing.rpt"
 puts "  Power:       $project_dir/power.rpt"
+puts "========================================"
