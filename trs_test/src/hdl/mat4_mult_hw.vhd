@@ -75,6 +75,11 @@ architecture behavioral of mat4_mult_hw is
     signal add_result : add_result_array;
     signal add_valid  : add_valid_array;
     
+    -- Debug attributes
+    attribute MARK_DEBUG : string;
+    attribute MARK_DEBUG of mult_valid : signal is "TRUE";
+    attribute MARK_DEBUG of add_valid : signal is "TRUE";
+    
     -- Matrix element accessors (row-major indexing)
     type mat4_accessor is array (0 to 3, 0 to 3) of fp32;
     

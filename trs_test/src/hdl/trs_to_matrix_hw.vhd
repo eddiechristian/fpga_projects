@@ -1,6 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use work.lin_alg_pkg.all;
+use work.conversion_pkg.all;
 
 -- TRS to Matrix Converter: Creates transformation matrix from Translation, Rotation, Scale
 -- 
@@ -63,14 +64,16 @@ end trs_to_matrix_hw;
 
 architecture Behavioral of trs_to_matrix_hw is
 
-    -- CORDIC component for sin/cos
-    component cordic_sincos is
+    -- Simple sin/cos LUT component (45° increments)
+    component sincos_lut_simple is
         port (
-            aclk                    : in std_logic;
-            s_axis_phase_tvalid     : in std_logic;
-            s_axis_phase_tdata      : in std_logic_vector(31 downto 0);
-            m_axis_dout_tvalid      : out std_logic;
-            m_axis_dout_tdata       : out std_logic_vector(63 downto 0)  -- cos in [63:32], sin in [31:0]
+            clk                     : in std_logic;
+            reset                   : in std_logic;
+            angle_valid             : in std_logic;
+            angle                   : in std_logic_vector(31 downto 0);
+            result_valid            : out std_logic;
+            sin_out                 : out std_logic_vector(31 downto 0);
+            cos_out                 : out std_logic_vector(31 downto 0)
         );
     end component;
     
@@ -128,10 +131,10 @@ architecture Behavioral of trs_to_matrix_hw is
     signal sin_x, cos_x : fp32;
     signal sin_y, cos_y : fp32;
     signal sin_z, cos_z : fp32;
-    signal cordic_phase_valid : std_logic;
-    signal cordic_phase : fp32;
-    signal cordic_result_valid : std_logic;
-    signal cordic_result : std_logic_vector(63 downto 0);
+    signal lut_angle_valid : std_logic;
+    signal lut_angle : fp32;
+    signal lut_result_valid : std_logic;
+    signal lut_sin_out, lut_cos_out : fp32;
     signal sincos_counter : integer range 0 to 2 := 0;
     
     -- Scale inverse values
@@ -163,16 +166,35 @@ architecture Behavioral of trs_to_matrix_hw is
     signal temp_mat1, temp_mat2, temp_mat3 : Mat4;
     
     signal wait_counter : integer := 0;
+    
+    -- Debug/Preserve attributes
+    attribute MARK_DEBUG : string;
+    attribute KEEP       : string;
+    attribute DONT_TOUCH : string;
+
+    attribute MARK_DEBUG of state           : signal is "TRUE";
+    attribute MARK_DEBUG of wait_counter    : signal is "TRUE";
+    attribute MARK_DEBUG of lut_result_valid : signal is "TRUE";
+    attribute MARK_DEBUG of div_valid_out   : signal is "TRUE";
+    attribute MARK_DEBUG of mult_valid_in   : signal is "TRUE";
+    attribute MARK_DEBUG of mult_valid_out  : signal is "TRUE";
+
+    attribute KEEP       of mult_valid_in   : signal is "TRUE";
+    attribute DONT_TOUCH of mult_valid_in   : signal is "TRUE";
+    attribute KEEP       of mult_valid_out  : signal is "TRUE";
+    attribute DONT_TOUCH of mult_valid_out  : signal is "TRUE";
 
 begin
 
-    -- Instantiate CORDIC for sin/cos
-    cordic_inst: cordic_sincos port map (
-        aclk => clk,
-        s_axis_phase_tvalid => cordic_phase_valid,
-        s_axis_phase_tdata => cordic_phase,
-        m_axis_dout_tvalid => cordic_result_valid,
-        m_axis_dout_tdata => cordic_result
+    -- Instantiate simple sin/cos LUT
+    lut_inst: sincos_lut_simple port map (
+        clk => clk,
+        reset => reset,
+        angle_valid => lut_angle_valid,
+        angle => lut_angle,
+        result_valid => lut_result_valid,
+        sin_out => lut_sin_out,
+        cos_out => lut_cos_out
     );
     
     -- Instantiate divider for scale inverse
@@ -206,7 +228,7 @@ begin
                 next_state <= IDLE;
                 valid_out <= '0';
                 error <= '0';
-                cordic_phase_valid <= '0';
+                lut_angle_valid <= '0';
                 div_valid_in <= '0';
                 mult_valid_in <= '0';
                 mult_reset <= '0';
@@ -216,7 +238,7 @@ begin
             else
                 -- Default: clear valid signals
                 valid_out <= '0';
-                cordic_phase_valid <= '0';
+                lut_angle_valid <= '0';
                 div_valid_in <= '0';
                 mult_valid_in <= '0';
                 mult_reset <= '0';
@@ -224,7 +246,7 @@ begin
                 case state is
                     when IDLE =>
                         if valid_in = '1' then
-                            error <= '0';  -- clear sticky error on new start
+                            error <= '0';  -- Clear error on new computation
                             sincos_counter <= 0;
                             wait_counter <= 0;
                             state <= COMPUTE_SINCOS_X;
@@ -232,43 +254,43 @@ begin
                     
                     -- ==== COMPUTE SIN/COS FOR ROTATIONS ====
                     when COMPUTE_SINCOS_X =>
-                        cordic_phase <= rotation_x;
-                        cordic_phase_valid <= '1';
+                        lut_angle <= rotation_x;
+                        lut_angle_valid <= '1';
                         next_state <= COMPUTE_SINCOS_Y;
                         state <= WAIT_SINCOS;
                         wait_counter <= 0;
                     
                     when COMPUTE_SINCOS_Y =>
-                        cordic_phase <= rotation_y;
-                        cordic_phase_valid <= '1';
+                        lut_angle <= rotation_y;
+                        lut_angle_valid <= '1';
                         next_state <= COMPUTE_SINCOS_Z;
                         state <= WAIT_SINCOS;
                         wait_counter <= 0;
                     
                     when COMPUTE_SINCOS_Z =>
-                        cordic_phase <= rotation_z;
-                        cordic_phase_valid <= '1';
+                        lut_angle <= rotation_z;
+                        lut_angle_valid <= '1';
                         next_state <= COMPUTE_SCALE_INV;
                         state <= WAIT_SINCOS;
                         wait_counter <= 0;
                     
                     when WAIT_SINCOS =>
-                        if cordic_result_valid = '1' then
-                            -- CORDIC output: cos in [63:32], sin in [31:0]
+                        if lut_result_valid = '1' then
+                            -- LUT output: sin and cos directly as FP32
                             case sincos_counter is
                                 when 0 =>
-                                    cos_x <= cordic_result(63 downto 32);
-                                    sin_x <= cordic_result(31 downto 0);
+                                    sin_x <= lut_sin_out;
+                                    cos_x <= lut_cos_out;
                                 when 1 =>
-                                    cos_y <= cordic_result(63 downto 32);
-                                    sin_y <= cordic_result(31 downto 0);
+                                    sin_y <= lut_sin_out;
+                                    cos_y <= lut_cos_out;
                                 when 2 =>
-                                    cos_z <= cordic_result(63 downto 32);
-                                    sin_z <= cordic_result(31 downto 0);
+                                    sin_z <= lut_sin_out;
+                                    cos_z <= lut_cos_out;
                             end case;
                             sincos_counter <= sincos_counter + 1;
                             state <= next_state;
-                        elsif wait_counter < 100 then
+                        elsif wait_counter < 10 then
                             wait_counter <= wait_counter + 1;
                         else
                             -- Timeout
@@ -512,36 +534,36 @@ begin
                     
                     -- ==== FORWARD TRANSFORM: M = T * Rz * Ry * Rx * S ====
                     when MULT_FORWARD_1 =>
-                        -- Compute: temp_mat1 = S * Rx
-                        mult_a <= mat_scale;
-                        mult_b <= mat_rotate_x;
+                        -- Compute: temp_mat1 = Rx * S (rightmost S applied first)
+                        mult_a <= mat_rotate_x;
+                        mult_b <= mat_scale;
                         mult_valid_in <= '1';
                         next_state <= MULT_FORWARD_2;
                         state <= WAIT_MULT;
                         wait_counter <= 0;
                     
                     when MULT_FORWARD_2 =>
-                        -- Compute: temp_mat2 = (S*Rx) * Ry
-                        mult_a <= temp_mat1;
-                        mult_b <= mat_rotate_y;
+                        -- Compute: temp_mat2 = Ry * (Rx*S)
+                        mult_a <= mat_rotate_y;
+                        mult_b <= temp_mat1;
                         mult_valid_in <= '1';
                         next_state <= MULT_FORWARD_3;
                         state <= WAIT_MULT;
                         wait_counter <= 0;
                     
                     when MULT_FORWARD_3 =>
-                        -- Compute: temp_mat3 = (S*Rx*Ry) * Rz
-                        mult_a <= temp_mat2;
-                        mult_b <= mat_rotate_z;
+                        -- Compute: temp_mat3 = Rz * (Ry*Rx*S)
+                        mult_a <= mat_rotate_z;
+                        mult_b <= temp_mat2;
                         mult_valid_in <= '1';
                         next_state <= MULT_FORWARD_4;
                         state <= WAIT_MULT;
                         wait_counter <= 0;
                     
                     when MULT_FORWARD_4 =>
-                        -- Compute: transform_matrix = (S*Rx*Ry*Rz) * T
-                        mult_a <= temp_mat3;
-                        mult_b <= mat_translate;
+                        -- Compute: transform_matrix = T * (Rz*Ry*Rx*S)
+                        mult_a <= mat_translate;
+                        mult_b <= temp_mat3;
                         mult_valid_in <= '1';
                         next_state <= MULT_INVERSE_1;
                         state <= WAIT_MULT;

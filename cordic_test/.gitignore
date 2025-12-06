@@ -1,0 +1,16 @@
+# Build directory
+build/
+
+# Vivado files
+*.jou
+*.log
+*.backup.jou
+*.backup.log
+.Xil/
+*.wcfg
+vivado*.jou
+vivado*.log
+
+# Temporary files
+*~
+*.swp

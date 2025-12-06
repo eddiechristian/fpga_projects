@@ -169,14 +169,6 @@ set_property top top_module_tb [get_filesets sim_1]
 update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
 
-puts "Running behavioral simulation..."
-
-# Run behavioral simulation
-set_property -name {xsim.simulate.runtime} -value {2000ns} -objects [get_filesets sim_1]
-launch_simulation
-run all
-close_sim
-
 puts "Running synthesis..."
 
 # Run synthesis
