@@ -1,7 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use work.lin_alg_pkg.all;
-use work.conversion_pkg.all;
 
 -- TRS to Matrix Converter: Creates transformation matrix from Translation, Rotation, Scale
 -- 
