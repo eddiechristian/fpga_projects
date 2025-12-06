@@ -1,6 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use work.lin_alg_pkg.all;
+use work.conversion_pkg.all;
 
 -- TRS to Matrix Converter: Creates transformation matrix from Translation, Rotation, Scale
 -- 
@@ -63,16 +64,16 @@ end trs_to_matrix_hw;
 
 architecture Behavioral of trs_to_matrix_hw is
 
-    -- Simple sine/cosine LUT
+    -- Simple sin/cos LUT component (45° increments)
     component sincos_lut_simple is
         port (
-            clk             : in  std_logic;
-            reset           : in  std_logic;
-            angle_valid     : in  std_logic;
-            angle           : in  std_logic_vector(31 downto 0);
-            result_valid    : out std_logic;
-            sin_out         : out std_logic_vector(31 downto 0);
-            cos_out         : out std_logic_vector(31 downto 0)
+            clk                     : in std_logic;
+            reset                   : in std_logic;
+            angle_valid             : in std_logic;
+            angle                   : in std_logic_vector(31 downto 0);
+            result_valid            : out std_logic;
+            sin_out                 : out std_logic_vector(31 downto 0);
+            cos_out                 : out std_logic_vector(31 downto 0)
         );
     end component;
     
@@ -133,8 +134,7 @@ architecture Behavioral of trs_to_matrix_hw is
     signal lut_angle_valid : std_logic;
     signal lut_angle : fp32;
     signal lut_result_valid : std_logic;
-    signal lut_sin_out : fp32;
-    signal lut_cos_out : fp32;
+    signal lut_sin_out, lut_cos_out : fp32;
     signal sincos_counter : integer range 0 to 2 := 0;
     
     -- Scale inverse values
@@ -166,10 +166,27 @@ architecture Behavioral of trs_to_matrix_hw is
     signal temp_mat1, temp_mat2, temp_mat3 : Mat4;
     
     signal wait_counter : integer := 0;
+    
+    -- Debug/Preserve attributes
+    attribute MARK_DEBUG : string;
+    attribute KEEP       : string;
+    attribute DONT_TOUCH : string;
+
+    attribute MARK_DEBUG of state           : signal is "TRUE";
+    attribute MARK_DEBUG of wait_counter    : signal is "TRUE";
+    attribute MARK_DEBUG of lut_result_valid : signal is "TRUE";
+    attribute MARK_DEBUG of div_valid_out   : signal is "TRUE";
+    attribute MARK_DEBUG of mult_valid_in   : signal is "TRUE";
+    attribute MARK_DEBUG of mult_valid_out  : signal is "TRUE";
+
+    attribute KEEP       of mult_valid_in   : signal is "TRUE";
+    attribute DONT_TOUCH of mult_valid_in   : signal is "TRUE";
+    attribute KEEP       of mult_valid_out  : signal is "TRUE";
+    attribute DONT_TOUCH of mult_valid_out  : signal is "TRUE";
 
 begin
 
-    -- Instantiate LUT for sin/cos
+    -- Instantiate simple sin/cos LUT
     lut_inst: sincos_lut_simple port map (
         clk => clk,
         reset => reset,
@@ -229,7 +246,7 @@ begin
                 case state is
                     when IDLE =>
                         if valid_in = '1' then
-                            error <= '0';  -- clear sticky error on new start
+                            error <= '0';  -- Clear error on new computation
                             sincos_counter <= 0;
                             wait_counter <= 0;
                             state <= COMPUTE_SINCOS_X;
@@ -259,21 +276,21 @@ begin
                     
                     when WAIT_SINCOS =>
                         if lut_result_valid = '1' then
-                            -- LUT output: sin and cos
+                            -- LUT output: sin and cos directly as FP32
                             case sincos_counter is
                                 when 0 =>
-                                    cos_x <= lut_cos_out;
                                     sin_x <= lut_sin_out;
+                                    cos_x <= lut_cos_out;
                                 when 1 =>
-                                    cos_y <= lut_cos_out;
                                     sin_y <= lut_sin_out;
+                                    cos_y <= lut_cos_out;
                                 when 2 =>
-                                    cos_z <= lut_cos_out;
                                     sin_z <= lut_sin_out;
+                                    cos_z <= lut_cos_out;
                             end case;
                             sincos_counter <= sincos_counter + 1;
                             state <= next_state;
-                        elsif wait_counter < 100 then
+                        elsif wait_counter < 10 then
                             wait_counter <= wait_counter + 1;
                         else
                             -- Timeout
@@ -517,36 +534,36 @@ begin
                     
                     -- ==== FORWARD TRANSFORM: M = T * Rz * Ry * Rx * S ====
                     when MULT_FORWARD_1 =>
-                        -- Compute: temp_mat1 = S * Rx
-                        mult_a <= mat_scale;
-                        mult_b <= mat_rotate_x;
+                        -- Compute: temp_mat1 = Rx * S (rightmost S applied first)
+                        mult_a <= mat_rotate_x;
+                        mult_b <= mat_scale;
                         mult_valid_in <= '1';
                         next_state <= MULT_FORWARD_2;
                         state <= WAIT_MULT;
                         wait_counter <= 0;
                     
                     when MULT_FORWARD_2 =>
-                        -- Compute: temp_mat2 = (S*Rx) * Ry
-                        mult_a <= temp_mat1;
-                        mult_b <= mat_rotate_y;
+                        -- Compute: temp_mat2 = Ry * (Rx*S)
+                        mult_a <= mat_rotate_y;
+                        mult_b <= temp_mat1;
                         mult_valid_in <= '1';
                         next_state <= MULT_FORWARD_3;
                         state <= WAIT_MULT;
                         wait_counter <= 0;
                     
                     when MULT_FORWARD_3 =>
-                        -- Compute: temp_mat3 = (S*Rx*Ry) * Rz
-                        mult_a <= temp_mat2;
-                        mult_b <= mat_rotate_z;
+                        -- Compute: temp_mat3 = Rz * (Ry*Rx*S)
+                        mult_a <= mat_rotate_z;
+                        mult_b <= temp_mat2;
                         mult_valid_in <= '1';
                         next_state <= MULT_FORWARD_4;
                         state <= WAIT_MULT;
                         wait_counter <= 0;
                     
                     when MULT_FORWARD_4 =>
-                        -- Compute: transform_matrix = (S*Rx*Ry*Rz) * T
-                        mult_a <= temp_mat3;
-                        mult_b <= mat_translate;
+                        -- Compute: transform_matrix = T * (Rz*Ry*Rx*S)
+                        mult_a <= mat_translate;
+                        mult_b <= temp_mat3;
                         mult_valid_in <= '1';
                         next_state <= MULT_INVERSE_1;
                         state <= WAIT_MULT;
