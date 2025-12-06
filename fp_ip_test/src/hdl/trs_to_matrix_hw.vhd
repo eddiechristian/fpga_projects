@@ -63,14 +63,16 @@ end trs_to_matrix_hw;
 
 architecture Behavioral of trs_to_matrix_hw is
 
-    -- CORDIC component for sin/cos
-    component cordic_sincos is
+    -- Simple sine/cosine LUT
+    component sincos_lut_simple is
         port (
-            aclk                    : in std_logic;
-            s_axis_phase_tvalid     : in std_logic;
-            s_axis_phase_tdata      : in std_logic_vector(31 downto 0);
-            m_axis_dout_tvalid      : out std_logic;
-            m_axis_dout_tdata       : out std_logic_vector(63 downto 0)  -- cos in [63:32], sin in [31:0]
+            clk             : in  std_logic;
+            reset           : in  std_logic;
+            angle_valid     : in  std_logic;
+            angle           : in  std_logic_vector(31 downto 0);
+            result_valid    : out std_logic;
+            sin_out         : out std_logic_vector(31 downto 0);
+            cos_out         : out std_logic_vector(31 downto 0)
         );
     end component;
     
@@ -128,10 +130,11 @@ architecture Behavioral of trs_to_matrix_hw is
     signal sin_x, cos_x : fp32;
     signal sin_y, cos_y : fp32;
     signal sin_z, cos_z : fp32;
-    signal cordic_phase_valid : std_logic;
-    signal cordic_phase : fp32;
-    signal cordic_result_valid : std_logic;
-    signal cordic_result : std_logic_vector(63 downto 0);
+    signal lut_angle_valid : std_logic;
+    signal lut_angle : fp32;
+    signal lut_result_valid : std_logic;
+    signal lut_sin_out : fp32;
+    signal lut_cos_out : fp32;
     signal sincos_counter : integer range 0 to 2 := 0;
     
     -- Scale inverse values
@@ -166,13 +169,15 @@ architecture Behavioral of trs_to_matrix_hw is
 
 begin
 
-    -- Instantiate CORDIC for sin/cos
-    cordic_inst: cordic_sincos port map (
-        aclk => clk,
-        s_axis_phase_tvalid => cordic_phase_valid,
-        s_axis_phase_tdata => cordic_phase,
-        m_axis_dout_tvalid => cordic_result_valid,
-        m_axis_dout_tdata => cordic_result
+    -- Instantiate LUT for sin/cos
+    lut_inst: sincos_lut_simple port map (
+        clk => clk,
+        reset => reset,
+        angle_valid => lut_angle_valid,
+        angle => lut_angle,
+        result_valid => lut_result_valid,
+        sin_out => lut_sin_out,
+        cos_out => lut_cos_out
     );
     
     -- Instantiate divider for scale inverse
@@ -206,7 +211,7 @@ begin
                 next_state <= IDLE;
                 valid_out <= '0';
                 error <= '0';
-                cordic_phase_valid <= '0';
+                lut_angle_valid <= '0';
                 div_valid_in <= '0';
                 mult_valid_in <= '0';
                 mult_reset <= '0';
@@ -216,7 +221,7 @@ begin
             else
                 -- Default: clear valid signals
                 valid_out <= '0';
-                cordic_phase_valid <= '0';
+                lut_angle_valid <= '0';
                 div_valid_in <= '0';
                 mult_valid_in <= '0';
                 mult_reset <= '0';
@@ -232,39 +237,39 @@ begin
                     
                     -- ==== COMPUTE SIN/COS FOR ROTATIONS ====
                     when COMPUTE_SINCOS_X =>
-                        cordic_phase <= rotation_x;
-                        cordic_phase_valid <= '1';
+                        lut_angle <= rotation_x;
+                        lut_angle_valid <= '1';
                         next_state <= COMPUTE_SINCOS_Y;
                         state <= WAIT_SINCOS;
                         wait_counter <= 0;
                     
                     when COMPUTE_SINCOS_Y =>
-                        cordic_phase <= rotation_y;
-                        cordic_phase_valid <= '1';
+                        lut_angle <= rotation_y;
+                        lut_angle_valid <= '1';
                         next_state <= COMPUTE_SINCOS_Z;
                         state <= WAIT_SINCOS;
                         wait_counter <= 0;
                     
                     when COMPUTE_SINCOS_Z =>
-                        cordic_phase <= rotation_z;
-                        cordic_phase_valid <= '1';
+                        lut_angle <= rotation_z;
+                        lut_angle_valid <= '1';
                         next_state <= COMPUTE_SCALE_INV;
                         state <= WAIT_SINCOS;
                         wait_counter <= 0;
                     
                     when WAIT_SINCOS =>
-                        if cordic_result_valid = '1' then
-                            -- CORDIC output: cos in [63:32], sin in [31:0]
+                        if lut_result_valid = '1' then
+                            -- LUT output: sin and cos
                             case sincos_counter is
                                 when 0 =>
-                                    cos_x <= cordic_result(63 downto 32);
-                                    sin_x <= cordic_result(31 downto 0);
+                                    cos_x <= lut_cos_out;
+                                    sin_x <= lut_sin_out;
                                 when 1 =>
-                                    cos_y <= cordic_result(63 downto 32);
-                                    sin_y <= cordic_result(31 downto 0);
+                                    cos_y <= lut_cos_out;
+                                    sin_y <= lut_sin_out;
                                 when 2 =>
-                                    cos_z <= cordic_result(63 downto 32);
-                                    sin_z <= cordic_result(31 downto 0);
+                                    cos_z <= lut_cos_out;
+                                    sin_z <= lut_sin_out;
                             end case;
                             sincos_counter <= sincos_counter + 1;
                             state <= next_state;
