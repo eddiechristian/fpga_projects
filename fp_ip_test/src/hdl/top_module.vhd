@@ -178,7 +178,8 @@ architecture Behavioral of top_module is
     signal reset_sync   : STD_LOGIC;  -- Synchronized reset for 200 MHz domain
     
     -- Valid signal for all operations
-    signal valid_test   : STD_LOGIC := '1';
+    signal valid_test   : STD_LOGIC := '0';
+    signal test_counter : integer := 0;
     
     -------------------------------------------------------------------------------
     -- CAMERA GEOMETRY COMPUTATION PIPELINE
@@ -500,6 +501,26 @@ begin
     end process;
     
     heartbeat <= counter(25);
+    
+    -- Pulse valid_test once after reset to trigger operations
+    process(clk_200mhz)
+    begin
+        if rising_edge(clk_200mhz) then
+            if reset_sync = '1' then
+                test_counter <= 0;
+                valid_test <= '0';
+            else
+                test_counter <= test_counter + 1;
+                
+                -- Trigger operations at cycle 10
+                if test_counter = 10 then
+                    valid_test <= '1';
+                else
+                    valid_test <= '0';
+                end if;
+            end if;
+        end if;
+    end process;
     
     -- All following processes run on 200 MHz clock for 2x speedup
     
