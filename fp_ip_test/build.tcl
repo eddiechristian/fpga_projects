@@ -108,23 +108,6 @@ set_property -dict [list \
     CONFIG.Has_RESULT_TREADY {false} \
 ] [get_ips floating_point_div]
 
-puts "Creating CORDIC IP for sin/cos..."
-
-# 6. Create CORDIC IP for sin/cos computation
-create_ip -name cordic -vendor xilinx.com -library ip -version 6.0 -module_name cordic_sincos -dir $ip_dir
-set_property -dict [list \
-    CONFIG.Functional_Selection {Sin_and_Cos} \
-    CONFIG.Architectural_Configuration {Word_Serial} \
-    CONFIG.Pipelining_Mode {Optimal} \
-    CONFIG.Data_Format {SignedFraction} \
-    CONFIG.Phase_Format {Radians} \
-    CONFIG.Input_Width {32} \
-    CONFIG.Output_Width {32} \
-    CONFIG.Round_Mode {Truncate} \
-    CONFIG.Coarse_Rotation {true} \
-    CONFIG.Compensation_Scaling {No_Scale_Compensation} \
-] [get_ips cordic_sincos]
-
 # Generate all IP sequentially
 puts "Generating IP cores..."
 generate_target all [get_ips]
