@@ -141,17 +141,19 @@ ARCHITECTURE behavioral OF sphere_intersection_hw IS
         );
     END COMPONENT;
 
-    SIGNAL v_hat_normalized          : Vec3 := VEC3_ZERO;
-    SIGNAL vhat_normalize_valid      : STD_LOGIC;
-    SIGNAL calculate_bdot_valid      : STD_LOGIC;
-    SIGNAL calculate_cdot_valid      : STD_LOGIC;
-    SIGNAL calculate_b_valid         : STD_LOGIC;
-    SIGNAL calculate_c_valid         : STD_LOGIC;
-    SIGNAL calculate_b_squared_valid : STD_LOGIC;
-    SIGNAL calculate_4ac_valid       : STD_LOGIC;
-    SIGNAL qsrt_inttest_valid        : STD_LOGIC;
-    SIGNAL t1_add_b_valid            : STD_LOGIC;
-    SIGNAL t2_add_b_valid            : STD_LOGIC;
+    SIGNAL v_hat_normalized                  : Vec3 := VEC3_ZERO;
+    SIGNAL vhat_normalize_valid              : STD_LOGIC;
+    SIGNAL calculate_bdot_valid              : STD_LOGIC;
+    SIGNAL calculate_cdot_valid              : STD_LOGIC;
+    SIGNAL calculate_b_valid                 : STD_LOGIC;
+    SIGNAL calculate_c_valid                 : STD_LOGIC;
+    SIGNAL calculate_b_squared_valid         : STD_LOGIC;
+    SIGNAL calculate_4ac_valid               : STD_LOGIC;
+    SIGNAL qsrt_inttest_valid                : STD_LOGIC;
+    SIGNAL t1_add_b_valid                    : STD_LOGIC;
+    SIGNAL t2_add_b_valid                    : STD_LOGIC;
+    SIGNAL t1_compare_zero_valid             : STD_LOGIC;
+    SIGNAL t2_compare_zero_valid             : STD_LOGIC;
 
     SIGNAL trigger_vhat_normalize            : STD_LOGIC;
     SIGNAL trigger_calculate_bdot            : STD_LOGIC;
@@ -164,19 +166,21 @@ ARCHITECTURE behavioral OF sphere_intersection_hw IS
     SIGNAL trigger_sqrt_inttest              : STD_LOGIC;
     SIGNAL trigger_t1_add_b                  : STD_LOGIC;
     SIGNAL trigger_t2_add_b                  : STD_LOGIC;
+    SIGNAL trigger_t1_comp_zero              : STD_LOGIC;
+    SIGNAL trigger_t2_comp_zero              : STD_LOGIC;
 
-    SIGNAL b_dot                       : fp32;
-    SIGNAL calculate_b_result          : fp32;
-    SIGNAL negated_b_result            : fp32
-    SIGNAL calculate_c_result          : fp32;
-    SIGNAL calculate_b_squared_result  : fp32;
-    SIGNAL calculate_4ac_result        : fp32;
-    SIGNAL calculate_inttest_result    : fp32;
-    SIGNAL qsrt_inttest_result         : fp32;
-    SIGNAL negated_qsrt_inttest_result : fp32;
-    SIGNAL inttest_compare_result      : STD_LOGIC;
-    SIGNAL t2_add_b_result             : fp32;
-    SIGNAL t2_add_b_result             : fp32;
+    SIGNAL b_dot                             : fp32;
+    SIGNAL calculate_b_result                : fp32;
+    SIGNAL negated_b_result                  : fp32
+    SIGNAL calculate_c_result                : fp32;
+    SIGNAL calculate_b_squared_result        : fp32;
+    SIGNAL calculate_4ac_result              : fp32;
+    SIGNAL calculate_inttest_result          : fp32;
+    SIGNAL qsrt_inttest_result               : fp32;
+    SIGNAL negated_qsrt_inttest_result       : fp32;
+    SIGNAL inttest_compare_result            : STD_LOGIC;
+    SIGNAL t2_add_b_result                   : fp32;
+    SIGNAL t2_add_b_result                   : fp32;
 
     -- State machine
     TYPE state_type IS (
@@ -191,12 +195,15 @@ ARCHITECTURE behavioral OF sphere_intersection_hw IS
         NO_HIT,
         CALCULATE_SQRT_INTTEST,
         CALCULATE_T1_AND_T2_ADDS,
+        CALCULATE_T1_AND_T2_MULTS,
+        CALCULATE_COMPARE_T1_T2_ZERO,
+        BEHIND_CAMERA,
         DONE
     );
 
-    SIGNAL state : state_type := IDLE;
+    SIGNAL state      : state_type := IDLE;
 
-    CONSTANT FP32_NAN : fp32 := X"0xFF800001";
+    CONSTANT FP32_NAN : fp32       := X"0xFF800001";
 
 BEGIN
     vhat_normalize_inst : vec3_normalize_hw
@@ -288,13 +295,13 @@ BEGIN
 
     inttest_compare_inst : floating_point_compare
     PORT MAP(
-        aclk            =>
-        s_axis_a_tvalid => calculate_inttest_valid AND trigger_calculate_compare_inttest,
-        s_axis_a_tdata calculate_inttest_result,
+        aclk                    => clk,
+        s_axis_a_tvalid         => calculate_inttest_valid AND trigger_calculate_compare_inttest,
+        s_axis_a_tdata          => calculate_inttest_result,
         s_axis_b_tvalid         => trigger_calculate_compare_inttest,
-        s_axis_b_tdata          => X"00000000" -- 0.0,
+        s_axis_b_tdata          => X"00000000", -- 0.0,
         s_axis_operation_tvalid => trigger_calculate_compare_inttest,
-        s_axis_operation_tdata  => X"04",
+        s_axis_operation_tdata  => "00000100", --greater than
         m_axis_result_tvalid    => inttest_compare_valid,
         m_axis_result_tdata     => inttest_compare_result
     );
@@ -330,6 +337,67 @@ BEGIN
         m_axis_result_tdata  => t2_add_b_result
     );
 
+    multiply_t1_inst : floating_point_mult
+    PORT MAP(
+        aclk                 => clk,
+        s_axis_a_tvalid      => t1_add_b_valid AND trigger_t1_multiply,
+        s_axis_a_tdata       => t1_add_b_result,
+        s_axis_b_tvalid      => trigger_t1_multiply,
+        s_axis_b_tdata       => X"3f000000", -- 0.5
+        m_axis_result_tvalid => multiply_t1_valid,
+        m_axis_result_tdata  => multiply_t1_result
+    );
+
+    multiply_t2_inst : floating_point_mult
+    PORT MAP(
+        aclk                 => clk,
+        s_axis_a_tvalid      => t2_add_b_valid AND trigger_t2_multiply,
+        s_axis_a_tdata       => t2_add_b_result,
+        s_axis_b_tvalid      => trigger_t2_multiply,
+        s_axis_b_tdata       => X"3f000000", -- 0.5
+        m_axis_result_tvalid => multiply_t2_valid,
+        m_axis_result_tdata  => multiply_t2_result
+    );
+
+    t1_compare_zero_inst : floating_point_compare
+    PORT MAP(
+        aclk                    => clk,
+        s_axis_a_tvalid         => multiply_t1_valid AND trigger_t1_comp_zero,
+        s_axis_a_tdata          => multiply_t1_result,
+        s_axis_b_tvalid         => trigger_t1_comp_zero,
+        s_axis_b_tdata          => X"00000000", -- 0.0,
+        s_axis_operation_tvalid => trigger_t1_comp_zero,
+        s_axis_operation_tdata  => "00000001" --less than
+        m_axis_result_tvalid    => t1_compare_zero_valid,
+        m_axis_result_tdata     => t1_compare_zero_result
+    );
+
+    t2_compare_zero_inst : floating_point_compare
+    PORT MAP(
+        aclk                    => clk,
+        s_axis_a_tvalid         => multiply_t2_valid AND trigger_t2_comp_zero,
+        s_axis_a_tdata          => multiply_t2_result,
+        s_axis_b_tvalid         => trigger_t2_comp_zero,
+        s_axis_b_tdata          => X"00000000", -- 0.0,
+        s_axis_operation_tvalid => trigger_t2_comp_zero,
+        s_axis_operation_tdata  => "00000001", --less than
+        m_axis_result_tvalid    => t2_compare_zero_valid,
+        m_axis_result_tdata     => t2_compare_zero_result
+    );
+
+    t1_t2_compare_inst : floating_point_compare
+    PORT MAP(
+        aclk                    => clk,
+        s_axis_a_tvalid         => multiply_t1_valid AND trigger_compare_t1_t2,
+        s_axis_a_tdata          => multiply_t1_result,
+        s_axis_b_tvalid         => multiply_t2_valid AND trigger_compare_t1_t2,
+        s_axis_b_tdata          => multiply_t2_result,
+        s_axis_operation_tvalid => trigger_compare_t1_t2,
+        s_axis_operation_tdata  => "00000001", --less than
+        m_axis_result_tvalid    => t1_t2_compare_valid,
+        m_axis_result_tdata     => t1_t2_compare_result
+    );
+
     -- State Machine Process (Controller)
     PROCESS (clk, reset)
     BEGIN
@@ -355,6 +423,13 @@ BEGIN
             t2_add_b_result                   <= '0';
             t1_add_b_valid                    <= '0';
             t2_add_b_valid                    <= '0';
+            trigger_t1_multiply               <= '0';
+            trigger_t2_multiply               <= '0';
+            trigger_t1_comp_zero              <= '0';
+            trigger_t2_comp_zero              <= '0';
+            t1_compare_zero_result            <= '0';
+            t2_compare_zero_result            <= '0';
+            trigger_compare_t1_t2             <= '0';
         ELSIF rising_edge(clk) THEN
             -- Default outputs for the current cycle
             valid_out <= '0';
@@ -412,7 +487,40 @@ BEGIN
                         trigger_t2_add_b            <= '1';
                     END IF;
                 WHEN CALCULATE_T1_AND_T2_ADDS =>
-
+                    IF t1_add_b_valid = '1' AND t2_add_b_valid THEN
+                        trigger_t1_multiply <= '1';
+                        trigger_t2_multiply <= '1';
+                        state               <= CALCULATE_T1_AND_T2_MULTS;
+                    END IF;
+                WHEN CALCULATE_T1_AND_T2_MULTS =>
+                    IF multiply_t1_valid AND multiply_t2_valid THEN
+                        trigger_t1_comp_zero <= '1';
+                        trigger_t2_comp_zero <= '1';
+                        state                <= CALCULATE_COMPARE_T1_T2_ZERO;
+                    END IF;
+                WHEN CALCULATE_COMPARE_T1_T2_ZERO =>
+                    IF t1_compare_zero_valid AND t2_compare_zero_valid THEN
+                        IF t1_compare_zero_result OR t1_compare_zero_result THEN
+                            state <= BEHIND_CAMERA;
+                        ELSE
+                            trigger_compare_t1_t2 <= '1';
+                            state                 <= COMPARE_T1_T2;
+                        END IF;
+                    END IF;
+                WHEN COMPARE_T1_T2 =>
+                    IF t1_t2_compare_valid THEN
+                        IF t1_t2_compare_result THEN
+                        
+                        ELSE
+                        END IF;
+                    END IF;
+                WHEN BEHIND_CAMERA =>
+                    does_intersect <= '0';
+                    valid_out      <= '1';
+                    IF valid_in = '0' THEN
+                        state     <= IDLE;
+                        valid_out <= '0';
+                    END IF;
                 WHEN NO_HIT =>
                     does_intersect <= '0';
                     valid_out      <= '1';
