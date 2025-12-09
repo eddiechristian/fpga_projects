@@ -141,6 +141,30 @@ ARCHITECTURE behavioral OF sphere_intersection_hw IS
         );
     END COMPONENT;
 
+    COMPONENT vec3_scale_hw
+        PORT (
+            clk       : IN STD_LOGIC;
+            reset     : IN STD_LOGIC;
+            valid_in  : IN STD_LOGIC;
+            v         : IN Vec3;
+            scalar    : IN fp32;
+            result    : OUT Vec3;
+            valid_out : OUT STD_LOGIC
+        );
+    END COMPONENT;
+
+    COMPONENT vec3_add_hw
+        PORT (
+            clk       : IN STD_LOGIC;
+            reset     : IN STD_LOGIC;
+            valid_in  : IN STD_LOGIC;
+            a         : IN Vec3;
+            b         : IN Vec3;
+            result    : OUT Vec3;
+            valid_out : OUT STD_LOGIC
+        );
+    END COMPONENT;
+
     SIGNAL v_hat_normalized                  : Vec3 := VEC3_ZERO;
     SIGNAL vhat_normalize_valid              : STD_LOGIC;
     SIGNAL calculate_bdot_valid              : STD_LOGIC;
@@ -196,6 +220,12 @@ ARCHITECTURE behavioral OF sphere_intersection_hw IS
     SIGNAL trigger_t1_multiply               : STD_LOGIC;
     SIGNAL trigger_t2_multiply               : STD_LOGIC;
     SIGNAL trigger_compare_t1_t2             : STD_LOGIC;
+    SIGNAL selected_t_value                  : fp32;
+    SIGNAL trigger_scale_vhat                : STD_LOGIC;
+    SIGNAL scale_vhat_valid                  : STD_LOGIC;
+    SIGNAL scaled_vhat                       : Vec3;
+    SIGNAL trigger_add_intersection          : STD_LOGIC;
+    SIGNAL add_intersection_valid            : STD_LOGIC;
 
     -- State machine
     TYPE state_type IS (
@@ -213,6 +243,8 @@ ARCHITECTURE behavioral OF sphere_intersection_hw IS
         CALCULATE_T1_AND_T2_MULTS,
         CALCULATE_COMPARE_T1_T2_ZERO,
         COMPARE_T1_T2,
+        CALCULATE_SCALE_VHAT,
+        CALCULATE_INTERSECTION_POINT,
         BEHIND_CAMERA,
         DONE
     );
@@ -414,6 +446,28 @@ BEGIN
         m_axis_result_tdata     => t1_t2_compare_result
     );
 
+    scale_vhat_inst : vec3_scale_hw
+    PORT MAP(
+        clk       => clk,
+        reset     => reset,
+        valid_in  => trigger_scale_vhat,
+        v         => v_hat_normalized,
+        scalar    => selected_t_value,
+        result    => scaled_vhat,
+        valid_out => scale_vhat_valid
+    );
+
+    add_intersection_inst : vec3_add_hw
+    PORT MAP(
+        clk       => clk,
+        reset     => reset,
+        valid_in  => trigger_add_intersection,
+        a         => ray.point1,
+        b         => scaled_vhat,
+        result    => intersect_pt,
+        valid_out => add_intersection_valid
+    );
+
     -- State Machine Process (Controller)
     PROCESS (clk, reset)
     BEGIN
@@ -446,6 +500,9 @@ BEGIN
             t1_compare_zero_result            <= (OTHERS => '0');
             t2_compare_zero_result            <= (OTHERS => '0');
             trigger_compare_t1_t2             <= '0';
+            selected_t_value                  <= (OTHERS => '0');
+            trigger_scale_vhat                <= '0';
+            trigger_add_intersection          <= '0';
         ELSIF rising_edge(clk) THEN
             -- Default outputs for the current cycle
             valid_out <= '0';
@@ -525,10 +582,27 @@ BEGIN
                     END IF;
                 WHEN COMPARE_T1_T2 =>
                     IF t1_t2_compare_valid = '1' THEN
+                        -- If t1 < t2, use t1, otherwise use t2
                         IF t1_t2_compare_result(0) = '1' THEN
-                        
+                            selected_t_value <= multiply_t1_result;
                         ELSE
+                            selected_t_value <= multiply_t2_result;
                         END IF;
+                        trigger_scale_vhat <= '1';
+                        state              <= CALCULATE_SCALE_VHAT;
+                    END IF;
+                WHEN CALCULATE_SCALE_VHAT =>
+                    IF scale_vhat_valid = '1' THEN
+                        trigger_add_intersection <= '1';
+                        state                    <= CALCULATE_INTERSECTION_POINT;
+                    END IF;
+                WHEN CALCULATE_INTERSECTION_POINT =>
+                    IF add_intersection_valid = '1' THEN
+                        does_intersect <= '1';
+                        color          <= obj.base_color;
+                        localNormal    <= intersect_pt; -- For sphere at origin, normal = intersection point
+                        valid_out      <= '1';
+                        state          <= DONE;
                     END IF;
                 WHEN BEHIND_CAMERA =>
                     does_intersect <= '0';
