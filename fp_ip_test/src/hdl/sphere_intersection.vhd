@@ -117,6 +117,20 @@ ARCHITECTURE behavioral OF sphere_intersection_hw IS
         );
     END COMPONENT;
 
+    COMPONENT floating_point_compare
+        PORT (
+            aclk                    : IN STD_LOGIC;
+            s_axis_a_tvalid         : IN STD_LOGIC;
+            s_axis_a_tdata          : IN STD_LOGIC_VECTOR (31 DOWNTO 0);
+            s_axis_b_tvalid         : IN STD_LOGIC;
+            s_axis_b_tdata          : IN STD_LOGIC_VECTOR (31 DOWNTO 0);
+            s_axis_operation_tvalid : IN STD_LOGIC;
+            s_axis_operation_tdata  : IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+            m_axis_result_tvalid    : OUT STD_LOGIC;
+            m_axis_result_tdata     : OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
+        );
+    END COMPONENT;
+
     SIGNAL v_hat_normalized                  : Vec3 := VEC3_ZERO;
     SIGNAL vhat_normalize_valid              : STD_LOGIC;
     SIGNAL calculate_bdot_valid              : STD_LOGIC;
@@ -303,7 +317,9 @@ BEGIN
                         trigger_calculate_compare_inttest <= '1';
                         state                             <= CALCULATE_COMPARE_INT_TEST;
                     END IF;
-                WHEN DONE =>
+                WHEN CALCULATE_COMPARE_INT_TEST =>
+
+                WHEN DONE                       =>
                     -- Stay in DONE state until reset or valid_in drops and comes back up
                     -- If we want continuous processing, we need a mechanism to return to IDLE after one cycle of valid_out='1'
                     IF valid_in = '0' THEN
