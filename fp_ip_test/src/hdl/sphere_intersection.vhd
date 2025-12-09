@@ -165,15 +165,18 @@ ARCHITECTURE behavioral OF sphere_intersection_hw IS
     SIGNAL trigger_t1_add_b                  : STD_LOGIC;
     SIGNAL trigger_t2_add_b                  : STD_LOGIC;
 
-    SIGNAL b_dot                      : fp32;
-    SIGNAL calculate_b_result         : fp32;
-    SIGNAL calculate_c_result         : fp32;
-    SIGNAL calculate_b_squared_result : fp32;
-    SIGNAL calculate_4ac_result       : fp32;
-    SIGNAL calculate_inttest_result   : fp32;
-    SIGNAL inttest_compare_result     : STD_LOGIC;
-    SIGNAL t2_add_b_result            : fp32;
-    SIGNAL t2_add_b_result            : fp32;
+    SIGNAL b_dot                       : fp32;
+    SIGNAL calculate_b_result          : fp32;
+    SIGNAL negated_b_result            : fp32
+    SIGNAL calculate_c_result          : fp32;
+    SIGNAL calculate_b_squared_result  : fp32;
+    SIGNAL calculate_4ac_result        : fp32;
+    SIGNAL calculate_inttest_result    : fp32;
+    SIGNAL qsrt_inttest_result         : fp32;
+    SIGNAL negated_qsrt_inttest_result : fp32;
+    SIGNAL inttest_compare_result      : STD_LOGIC;
+    SIGNAL t2_add_b_result             : fp32;
+    SIGNAL t2_add_b_result             : fp32;
 
     -- State machine
     TYPE state_type IS (
@@ -311,7 +314,7 @@ BEGIN
         s_axis_a_tvalid      => qsrt_inttest_valid AND trigger_t1_add_b,
         s_axis_a_tdata       => qsrt_inttest_result
         s_axis_b_tvalid      => trigger_t1_add_b,
-        s_axis_b_tdata       => calculate_b_result, --need to negate this
+        s_axis_b_tdata       => negated_b_result,
         m_axis_result_tvalid => t1_add_b_valid,
         m_axis_result_tdata  => t1_add_b_result
     );
@@ -320,9 +323,9 @@ BEGIN
     PORT MAP(
         aclk                 => clk,
         s_axis_a_tvalid      => qsrt_inttest_valid AND trigger_t1_add_b,
-        s_axis_a_tdata       => qsrt_inttest_result, --need to negate this
+        s_axis_a_tdata       => negated_qsrt_inttest_result,
         s_axis_b_tvalid      => trigger_t2_add_b
-        s_axis_b_tdata       => calculate_b_result, --need to negate this
+        s_axis_b_tdata       => negated_b_result,
         m_axis_result_tvalid => t2_add_b_valid,
         m_axis_result_tdata  => t2_add_b_result
     );
@@ -378,6 +381,7 @@ BEGIN
                     IF calculate_b_valid = '1' AND calculate_c_valid = '1' THEN
                         trigger_calculate_b_squared <= '1';
                         trigger_calculate_4ac       <= '1';
+                        negated_b_result            <= calculate_b_result XOR X"80000000";
                         state                       <= CALCULATE_B_SQUARED_AND_4AC;
                     END IF;
                 WHEN CALCULATE_B_SQUARED_AND_4AC =>
@@ -402,16 +406,19 @@ BEGIN
                     END IF;
                 WHEN HIT_SUCCESS =>
                     IF qsrt_inttest_result = '1' THEN
-                        state            <= CALCULATE_T1_AND_T2;
-                        trigger_t1_add_b <= '1';
-                        trigger_t2_add_b <= '1';
+                        state                       <= CALCULATE_T1_AND_T2;
+                        negated_qsrt_inttest_result <= qsrt_inttest_result XOR X"80000000";
+                        trigger_t1_add_b            <= '1';
+                        trigger_t2_add_b            <= '1';
                     END IF;
                 WHEN CALCULATE_T1_AND_T2_ADDS =>
 
                 WHEN NO_HIT =>
                     does_intersect <= '0';
+                    valid_out      <= '1';
                     IF valid_in = '0' THEN
-                        state <= IDLE;
+                        state     <= IDLE;
+                        valid_out <= '0';
                     END IF;
                 WHEN DONE =>
                     -- Stay in DONE state until reset or valid_in drops and comes back up
