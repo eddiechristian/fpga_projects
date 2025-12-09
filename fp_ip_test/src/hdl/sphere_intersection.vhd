@@ -131,14 +131,27 @@ ARCHITECTURE behavioral OF sphere_intersection_hw IS
         );
     END COMPONENT;
 
-    SIGNAL v_hat_normalized                  : Vec3 := VEC3_ZERO;
-    SIGNAL vhat_normalize_valid              : STD_LOGIC;
-    SIGNAL calculate_bdot_valid              : STD_LOGIC;
-    SIGNAL calculate_cdot_valid              : STD_LOGIC;
-    SIGNAL calculate_b_valid                 : STD_LOGIC;
-    SIGNAL calculate_c_valid                 : STD_LOGIC;
-    SIGNAL calculate_b_squared_valid         : STD_LOGIC;
-    SIGNAL calculate_4ac_valid               : STD_LOGIC;
+    COMPONENT floating_point_sqrt
+        PORT (
+            aclk                 : IN STD_LOGIC;
+            s_axis_a_tvalid      : IN STD_LOGIC;
+            s_axis_a_tdata       : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+            m_axis_result_tvalid : OUT STD_LOGIC;
+            m_axis_result_tdata  : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
+        );
+    END COMPONENT;
+
+    SIGNAL v_hat_normalized          : Vec3 := VEC3_ZERO;
+    SIGNAL vhat_normalize_valid      : STD_LOGIC;
+    SIGNAL calculate_bdot_valid      : STD_LOGIC;
+    SIGNAL calculate_cdot_valid      : STD_LOGIC;
+    SIGNAL calculate_b_valid         : STD_LOGIC;
+    SIGNAL calculate_c_valid         : STD_LOGIC;
+    SIGNAL calculate_b_squared_valid : STD_LOGIC;
+    SIGNAL calculate_4ac_valid       : STD_LOGIC;
+    SIGNAL qsrt_inttest_valid        : STD_LOGIC;
+    SIGNAL t1_add_b_valid            : STD_LOGIC;
+    SIGNAL t2_add_b_valid            : STD_LOGIC;
 
     SIGNAL trigger_vhat_normalize            : STD_LOGIC;
     SIGNAL trigger_calculate_bdot            : STD_LOGIC;
@@ -148,13 +161,19 @@ ARCHITECTURE behavioral OF sphere_intersection_hw IS
     SIGNAL trigger_calculate_b_squared       : STD_LOGIC;
     SIGNAL trigger_calculate_4ac             : STD_LOGIC;
     SIGNAL trigger_calculate_compare_inttest : STD_LOGIC;
+    SIGNAL trigger_sqrt_inttest              : STD_LOGIC;
+    SIGNAL trigger_t1_add_b                  : STD_LOGIC;
+    SIGNAL trigger_t2_add_b                  : STD_LOGIC;
 
-    SIGNAL b_dot                             : fp32;
-    SIGNAL calculate_b_result                : fp32;
-    SIGNAL calculate_c_result                : fp32;
-    SIGNAL calculate_b_squared_result        : fp32;
-    SIGNAL calculate_4ac_result              : fp32;
-    SIGNAL calculate_inttest_result          : fp32;
+    SIGNAL b_dot                      : fp32;
+    SIGNAL calculate_b_result         : fp32;
+    SIGNAL calculate_c_result         : fp32;
+    SIGNAL calculate_b_squared_result : fp32;
+    SIGNAL calculate_4ac_result       : fp32;
+    SIGNAL calculate_inttest_result   : fp32;
+    SIGNAL inttest_compare_result     : STD_LOGIC;
+    SIGNAL t2_add_b_result            : fp32;
+    SIGNAL t2_add_b_result            : fp32;
 
     -- State machine
     TYPE state_type IS (
@@ -164,13 +183,17 @@ ARCHITECTURE behavioral OF sphere_intersection_hw IS
         CALCULATE_B_AND_C,
         CALCULATE_B_SQUARED_AND_4AC,
         CALCULATE_INT_TEST,
-        CALCULATE_COMPARE_INT_TEST
+        CALCULATE_COMPARE_INT_TEST,
+        HIT_SUCCESS,
+        NO_HIT,
+        CALCULATE_SQRT_INTTEST,
+        CALCULATE_T1_AND_T2_ADDS,
         DONE
     );
 
-    SIGNAL state      : state_type := IDLE;
+    SIGNAL state : state_type := IDLE;
 
-    CONSTANT FP32_NAN : fp32       := X"0xFF800001";
+    CONSTANT FP32_NAN : fp32 := X"0xFF800001";
 
 BEGIN
     vhat_normalize_inst : vec3_normalize_hw
@@ -260,6 +283,50 @@ BEGIN
         m_axis_result_tdata  => calculate_inttest_result
     );
 
+    inttest_compare_inst : floating_point_compare
+    PORT MAP(
+        aclk            =>
+        s_axis_a_tvalid => calculate_inttest_valid AND trigger_calculate_compare_inttest,
+        s_axis_a_tdata calculate_inttest_result,
+        s_axis_b_tvalid         => trigger_calculate_compare_inttest,
+        s_axis_b_tdata          => X"00000000" -- 0.0,
+        s_axis_operation_tvalid => trigger_calculate_compare_inttest,
+        s_axis_operation_tdata  => X"04",
+        m_axis_result_tvalid    => inttest_compare_valid,
+        m_axis_result_tdata     => inttest_compare_result
+    );
+
+    qsrt_inttest_inst : floating_point_sqrt
+    PORT MAP(
+        aclk                 => clk,
+        s_axis_a_tvalid      => calculate_inttest_valid AND trigger_sqrt_inttest,
+        s_axis_a_tdata       => calculate_inttest_result,
+        m_axis_result_tvalid => qsrt_inttest_valid,
+        m_axis_result_tdata : qsrt_inttest_result
+    );
+
+    t1_add_b_inst : floating_point_add
+    PORT MAP(
+        aclk                 => clk,
+        s_axis_a_tvalid      => qsrt_inttest_valid AND trigger_t1_add_b,
+        s_axis_a_tdata       => qsrt_inttest_result
+        s_axis_b_tvalid      => trigger_t1_add_b,
+        s_axis_b_tdata       => calculate_b_result, --need to negate this
+        m_axis_result_tvalid => t1_add_b_valid,
+        m_axis_result_tdata  => t1_add_b_result
+    );
+
+    t2_add_b_inst : floating_point_add
+    PORT MAP(
+        aclk                 => clk,
+        s_axis_a_tvalid      => qsrt_inttest_valid AND trigger_t1_add_b,
+        s_axis_a_tdata       => qsrt_inttest_result, --need to negate this
+        s_axis_b_tvalid      => trigger_t2_add_b
+        s_axis_b_tdata       => calculate_b_result, --need to negate this
+        m_axis_result_tvalid => t2_add_b_valid,
+        m_axis_result_tdata  => t2_add_b_result
+    );
+
     -- State Machine Process (Controller)
     PROCESS (clk, reset)
     BEGIN
@@ -279,6 +346,12 @@ BEGIN
             calculate_4ac_valid               <= '0';
             calculate_4ac_result              <= FP32_NAN;
             trigger_calculate_compare_inttest <= '0';
+            inttest_compare_valid             <= '0';
+            trigger_sqrt_inttest              <= '0';
+            t1_add_b_result                   <= '0';
+            t2_add_b_result                   <= '0';
+            t1_add_b_valid                    <= '0';
+            t2_add_b_valid                    <= '0';
         ELSIF rising_edge(clk) THEN
             -- Default outputs for the current cycle
             valid_out <= '0';
@@ -318,8 +391,29 @@ BEGIN
                         state                             <= CALCULATE_COMPARE_INT_TEST;
                     END IF;
                 WHEN CALCULATE_COMPARE_INT_TEST =>
+                    IF inttest_compare_valid = '1' THEN
+                        IF inttest_compare_result = '1' THEN
+                            state                <= HIT_SUCCESS;
+                            trigger_sqrt_inttest <= '1';
+                        ELSE
+                            state <= NO_HIT;
+                        END IF;
 
-                WHEN DONE                       =>
+                    END IF;
+                WHEN HIT_SUCCESS =>
+                    IF qsrt_inttest_result = '1' THEN
+                        state            <= CALCULATE_T1_AND_T2;
+                        trigger_t1_add_b <= '1';
+                        trigger_t2_add_b <= '1';
+                    END IF;
+                WHEN CALCULATE_T1_AND_T2_ADDS =>
+
+                WHEN NO_HIT =>
+                    does_intersect <= '0';
+                    IF valid_in = '0' THEN
+                        state <= IDLE;
+                    END IF;
+                WHEN DONE =>
                     -- Stay in DONE state until reset or valid_in drops and comes back up
                     -- If we want continuous processing, we need a mechanism to return to IDLE after one cycle of valid_out='1'
                     IF valid_in = '0' THEN
