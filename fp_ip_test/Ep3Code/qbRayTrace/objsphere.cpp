@@ -65,14 +65,12 @@ bool qbRT::ObjSphere::TestIntersection(const qbRT::Ray &castRay, qbVector<float>
 		float t2 = (-b - numSQRT) / 2.0;
 		if (cnt < 3)
 		{
-			printf("castRay.m_lab.x=%.6f castRay.m_lab.y=%.6f castRay.m_lab.z=%.6f\n" , castRay.m_lab.GetElement(0), castRay.m_lab.GetElement(1) , castRay.m_lab.GetElement(2));
-			printf("vhat.x=%.6f vhat.y=%.6f vhat.z=%.6f\n" , vhat.GetElement(0), vhat.GetElement(1) , vhat.GetElement(2));
-			printf("castRay.m_point1.x=%.6f castRay.m_point1.y=%.6f castRay.m_point1.z=%.6f\n" , castRay.m_point1.GetElement(0), castRay.m_point1.GetElement(1) , castRay.m_point1.GetElement(2));
-			printf("castRay.m_point2.x=%.6f castRay.m_point2.y=%.6f castRay.m_point2.z=%.6f\n" , castRay.m_point2.GetElement(0), castRay.m_point2.GetElement(1) , castRay.m_point2.GetElement(2));
-			printf("b=%.6f c=%.6f b*b=%.8f 4*c=%.8f\n", b, c, b*b, 4*c);
+			printf("castRay.m_lab.x=%.6f castRay.m_lab.y=%.6f castRay.m_lab.z=%.6f\n", castRay.m_lab.GetElement(0), castRay.m_lab.GetElement(1), castRay.m_lab.GetElement(2));
+			printf("vhat.x=%.6f vhat.y=%.6f vhat.z=%.6f\n", vhat.GetElement(0), vhat.GetElement(1), vhat.GetElement(2));
+			printf("castRay.m_point1.x=%.6f castRay.m_point1.y=%.6f castRay.m_point1.z=%.6f\n", castRay.m_point1.GetElement(0), castRay.m_point1.GetElement(1), castRay.m_point1.GetElement(2));
+			printf("castRay.m_point2.x=%.6f castRay.m_point2.y=%.6f castRay.m_point2.z=%.6f\n", castRay.m_point2.GetElement(0), castRay.m_point2.GetElement(1), castRay.m_point2.GetElement(2));
+			printf("b=%.6f c=%.6f b*b=%.8f 4*c=%.8f\n", b, c, b * b, 4 * c);
 			printf("inttest=%.6f\n", intTest);
-			printf("\n");
-			cnt++;
 		}
 
 		/* If either t1 or t2 are negative, then at least part of the object is
@@ -92,8 +90,13 @@ bool qbRT::ObjSphere::TestIntersection(const qbRT::Ray &castRay, qbVector<float>
 			{
 				intPoint = castRay.m_point1 + (vhat * t2);
 			}
+			if (cnt < 3)
+			{
+				printf("intPoint.x=%.6f intPoint.y=%.6f intPoint.z=%.6f\n", intPoint.GetElement(0), intPoint.GetElement(1), intPoint.GetElement(2));
+				printf("\n");
+			}
 		}
-
+		cnt++;
 		return true;
 	}
 	else

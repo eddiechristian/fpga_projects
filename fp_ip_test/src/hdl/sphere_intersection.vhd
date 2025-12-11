@@ -576,8 +576,6 @@ BEGIN
             trigger_calculate_4ac             <= '0';
             trigger_calculate_compare_inttest <= '0';
             trigger_sqrt_inttest              <= '0';
-            t1_add_b_valid                    <= '0';
-            t2_add_b_valid                    <= '0';
             trigger_t1_multiply               <= '0';
             trigger_t2_multiply               <= '0';
             trigger_t1_comp_zero              <= '0';
