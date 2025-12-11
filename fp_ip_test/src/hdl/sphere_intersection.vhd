@@ -14,9 +14,36 @@ ENTITY sphere_intersection_hw IS
         intersect_pt   : OUT Vec3;
         localNormal    : OUT Vec3;
         color          : OUT Color;
-        valid_out      : OUT STD_LOGIC;
+        valid_out      : OUT STD_LOGIC
     );
 END ENTITY sphere_intersection_hw;
+
+
+-- correct values we should get in test case.
+-- castRay.m_lab.x=-0.100391 castRay.m_lab.y=1.000000 castRay.m_lab.z=-0.004687
+-- vhat.x=-0.099887 vhat.y=0.994988 vhat.z=-0.004664
+-- castRay.m_point1.x=0.000000 castRay.m_point1.y=-10.000000 castRay.m_point1.z=0.000000
+-- castRay.m_point2.x=-0.100391 castRay.m_point2.y=-9.000000 castRay.m_point2.z=-0.004687
+-- b=-19.899754 c=99.000000 b*b=396.00018311 4*c=396.00000000
+-- inttest=0.000183
+
+-- castRay.m_lab.x=-0.100391 castRay.m_lab.y=1.000000 castRay.m_lab.z=-0.004297
+-- vhat.x=-0.099888 vhat.y=0.994990 vhat.z=-0.004275
+-- castRay.m_point1.x=0.000000 castRay.m_point1.y=-10.000000 castRay.m_point1.z=0.000000
+-- castRay.m_point2.x=-0.100391 castRay.m_point2.y=-9.000000 castRay.m_point2.z=-0.004297
+-- b=-19.899790 c=99.000000 b*b=396.00164795 4*c=396.00000000
+-- inttest=0.001648
+
+-- castRay.m_lab.x=-0.100391 castRay.m_lab.y=1.000000 castRay.m_lab.z=-0.003906
+-- vhat.x=-0.099888 vhat.y=0.994991 vhat.z=-0.003887
+-- castRay.m_point1.x=0.000000 castRay.m_point1.y=-10.000000 castRay.m_point1.z=0.000000
+-- castRay.m_point2.x=-0.100391 castRay.m_point2.y=-9.000000 castRay.m_point2.z=-0.003906
+-- b=-19.899822 c=99.000000 b*b=396.00292969 4*c=396.00000000
+-- inttest=0.002930
+
+
+
+
 
 -- // Compute the values of a, b and c.
 -- 	qbVector<double> vhat = castRay.m_lab;
@@ -69,6 +96,10 @@ END ENTITY sphere_intersection_hw;
 -- 	}
 
 ARCHITECTURE behavioral OF sphere_intersection_hw IS
+
+    -- Attributes to prevent optimization
+    ATTRIBUTE KEEP : STRING;
+    ATTRIBUTE MARK_DEBUG : STRING;
 
     COMPONENT vec3_normalize_hw
         PORT (
@@ -226,7 +257,7 @@ ARCHITECTURE behavioral OF sphere_intersection_hw IS
     SIGNAL scaled_vhat                       : Vec3;
     SIGNAL trigger_add_intersection          : STD_LOGIC;
     SIGNAL add_intersection_valid            : STD_LOGIC;
-
+    SIGNAL intersect_pt_re : Vec3;
     -- State machine
     TYPE state_type IS (
         IDLE,
@@ -251,7 +282,69 @@ ARCHITECTURE behavioral OF sphere_intersection_hw IS
 
     SIGNAL state      : state_type := IDLE;
 
-    CONSTANT FP32_NAN : fp32       := X"0xFF800001";
+    CONSTANT FP32_NAN : fp32       := X"FFFFFFFF";
+
+    -- Apply KEEP attribute to all signals to prevent optimization
+    ATTRIBUTE KEEP OF v_hat_normalized : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF vhat_normalize_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF calculate_bdot_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF calculate_cdot_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF calculate_b_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF calculate_c_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF calculate_b_squared_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF calculate_4ac_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF qsrt_inttest_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF t1_add_b_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF t2_add_b_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF t1_compare_zero_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF t2_compare_zero_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_vhat_normalize : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_calculate_bdot : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_calculate_cdot : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_calculate_b : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_calculate_c : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_calculate_b_squared : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_calculate_4ac : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_calculate_compare_inttest : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_sqrt_inttest : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_t1_add_b : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_t2_add_b : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_t1_comp_zero : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_t2_comp_zero : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF b_dot : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF calculate_b_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF negated_b_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF c_dot : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF calculate_c_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF calculate_b_squared_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF calculate_4ac_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF calculate_inttest_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF qsrt_inttest_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF negated_qsrt_inttest_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF calculate_inttest_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF inttest_compare_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF inttest_compare_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF t1_add_b_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF t2_add_b_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF multiply_t1_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF multiply_t2_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF multiply_t1_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF multiply_t2_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF t1_compare_zero_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF t2_compare_zero_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF t1_t2_compare_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF t1_t2_compare_result : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_calculate_inttest : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_t1_multiply : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_t2_multiply : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_compare_t1_t2 : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF selected_t_value : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_scale_vhat : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF scale_vhat_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF scaled_vhat : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF trigger_add_intersection : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF add_intersection_valid : SIGNAL IS "TRUE";
+    ATTRIBUTE KEEP OF state : SIGNAL IS "TRUE";
 
 BEGIN
     vhat_normalize_inst : vec3_normalize_hw
@@ -281,7 +374,7 @@ BEGIN
         reset     => reset,
         valid_in  => trigger_calculate_cdot,
         a         => ray.point1,
-        b         => v_hat_normalized,
+        b         => ray.point1,
         result    => c_dot,
         valid_out => calculate_cdot_valid
     );
@@ -289,7 +382,7 @@ BEGIN
     calculate_b_inst : floating_point_mult
     PORT MAP(
         aclk                 => clk,
-        s_axis_a_tvalid      => calculate_bdot_valid AND trigger_calculate_b,
+        s_axis_a_tvalid      => trigger_calculate_b,
         s_axis_a_tdata       => b_dot,
         s_axis_b_tvalid      => trigger_calculate_b,
         s_axis_b_tdata       => X"40000000", -- 2.0
@@ -300,7 +393,7 @@ BEGIN
     calculate_c_inst : floating_point_add
     PORT MAP(
         aclk                 => clk,
-        s_axis_a_tvalid      => calculate_cdot_valid AND trigger_calculate_c,
+        s_axis_a_tvalid      => trigger_calculate_c,
         s_axis_a_tdata       => c_dot,
         s_axis_b_tvalid      => trigger_calculate_c,
         s_axis_b_tdata       => X"BF800000", -- -1.0
@@ -311,9 +404,9 @@ BEGIN
     calculate_b_squared_inst : floating_point_mult
     PORT MAP(
         aclk                 => clk,
-        s_axis_a_tvalid      => calculate_b_valid AND trigger_calculate_b_squared,
+        s_axis_a_tvalid      => trigger_calculate_b_squared,
         s_axis_a_tdata       => calculate_b_result,
-        s_axis_b_tvalid      => calculate_b_valid AND trigger_calculate_b_squared,
+        s_axis_b_tvalid      => trigger_calculate_b_squared,
         s_axis_b_tdata       => calculate_b_result,
         m_axis_result_tvalid => calculate_b_squared_valid,
         m_axis_result_tdata  => calculate_b_squared_result
@@ -322,7 +415,7 @@ BEGIN
     calculate_4ac_inst : floating_point_mult
     PORT MAP(
         aclk                 => clk,
-        s_axis_a_tvalid      => calculate_c_valid AND trigger_calculate_4ac,
+        s_axis_a_tvalid      => trigger_calculate_4ac,
         s_axis_a_tdata       => calculate_c_result,
         s_axis_b_tvalid      => trigger_calculate_4ac,
         s_axis_b_tdata       => X"c0800000", -- -4.0
@@ -333,9 +426,9 @@ BEGIN
     calculate_inttest_inst : floating_point_add
     PORT MAP(
         aclk                 => clk,
-        s_axis_a_tvalid      => calculate_b_squared_valid AND trigger_calculate_inttest,
+        s_axis_a_tvalid      => trigger_calculate_inttest,
         s_axis_a_tdata       => calculate_b_squared_result,
-        s_axis_b_tvalid      => calculate_4ac_valid AND trigger_calculate_inttest,
+        s_axis_b_tvalid      => trigger_calculate_inttest,
         s_axis_b_tdata       => calculate_4ac_result,
         m_axis_result_tvalid => calculate_inttest_valid,
         m_axis_result_tdata  => calculate_inttest_result
@@ -344,12 +437,12 @@ BEGIN
     inttest_compare_inst : floating_point_compare
     PORT MAP(
         aclk                    => clk,
-        s_axis_a_tvalid         => calculate_inttest_valid AND trigger_calculate_compare_inttest,
+        s_axis_a_tvalid         => trigger_calculate_compare_inttest,
         s_axis_a_tdata          => calculate_inttest_result,
         s_axis_b_tvalid         => trigger_calculate_compare_inttest,
         s_axis_b_tdata          => X"00000000", -- 0.0,
         s_axis_operation_tvalid => trigger_calculate_compare_inttest,
-        s_axis_operation_tdata  => "00000100", --greater than
+        s_axis_operation_tdata  => "00100100", --greater than
         m_axis_result_tvalid    => inttest_compare_valid,
         m_axis_result_tdata     => inttest_compare_result
     );
@@ -357,7 +450,7 @@ BEGIN
     qsrt_inttest_inst : floating_point_sqrt
     PORT MAP(
         aclk                 => clk,
-        s_axis_a_tvalid      => calculate_inttest_valid AND trigger_sqrt_inttest,
+        s_axis_a_tvalid      => trigger_sqrt_inttest,
         s_axis_a_tdata       => calculate_inttest_result,
         m_axis_result_tvalid => qsrt_inttest_valid,
         m_axis_result_tdata  => qsrt_inttest_result
@@ -366,7 +459,7 @@ BEGIN
     t1_add_b_inst : floating_point_add
     PORT MAP(
         aclk                 => clk,
-        s_axis_a_tvalid      => qsrt_inttest_valid AND trigger_t1_add_b,
+        s_axis_a_tvalid      => trigger_t1_add_b,
         s_axis_a_tdata       => qsrt_inttest_result,
         s_axis_b_tvalid      => trigger_t1_add_b,
         s_axis_b_tdata       => negated_b_result,
@@ -377,7 +470,7 @@ BEGIN
     t2_add_b_inst : floating_point_add
     PORT MAP(
         aclk                 => clk,
-        s_axis_a_tvalid      => qsrt_inttest_valid AND trigger_t2_add_b,
+        s_axis_a_tvalid      => trigger_t2_add_b,
         s_axis_a_tdata       => negated_qsrt_inttest_result,
         s_axis_b_tvalid      => trigger_t2_add_b,
         s_axis_b_tdata       => negated_b_result,
@@ -388,7 +481,7 @@ BEGIN
     multiply_t1_inst : floating_point_mult
     PORT MAP(
         aclk                 => clk,
-        s_axis_a_tvalid      => t1_add_b_valid AND trigger_t1_multiply,
+        s_axis_a_tvalid      => trigger_t1_multiply,
         s_axis_a_tdata       => t1_add_b_result,
         s_axis_b_tvalid      => trigger_t1_multiply,
         s_axis_b_tdata       => X"3f000000", -- 0.5
@@ -399,7 +492,7 @@ BEGIN
     multiply_t2_inst : floating_point_mult
     PORT MAP(
         aclk                 => clk,
-        s_axis_a_tvalid      => t2_add_b_valid AND trigger_t2_multiply,
+        s_axis_a_tvalid      => trigger_t2_multiply,
         s_axis_a_tdata       => t2_add_b_result,
         s_axis_b_tvalid      => trigger_t2_multiply,
         s_axis_b_tdata       => X"3f000000", -- 0.5
@@ -410,12 +503,12 @@ BEGIN
     t1_compare_zero_inst : floating_point_compare
     PORT MAP(
         aclk                    => clk,
-        s_axis_a_tvalid         => multiply_t1_valid AND trigger_t1_comp_zero,
+        s_axis_a_tvalid         => trigger_t1_comp_zero,
         s_axis_a_tdata          => multiply_t1_result,
         s_axis_b_tvalid         => trigger_t1_comp_zero,
         s_axis_b_tdata          => X"00000000", -- 0.0,
         s_axis_operation_tvalid => trigger_t1_comp_zero,
-        s_axis_operation_tdata  => "00000001", --less than
+        s_axis_operation_tdata  => "00001100", --less than
         m_axis_result_tvalid    => t1_compare_zero_valid,
         m_axis_result_tdata     => t1_compare_zero_result
     );
@@ -423,12 +516,12 @@ BEGIN
     t2_compare_zero_inst : floating_point_compare
     PORT MAP(
         aclk                    => clk,
-        s_axis_a_tvalid         => multiply_t2_valid AND trigger_t2_comp_zero,
+        s_axis_a_tvalid         => trigger_t2_comp_zero,
         s_axis_a_tdata          => multiply_t2_result,
         s_axis_b_tvalid         => trigger_t2_comp_zero,
         s_axis_b_tdata          => X"00000000", -- 0.0,
         s_axis_operation_tvalid => trigger_t2_comp_zero,
-        s_axis_operation_tdata  => "00000001", --less than
+        s_axis_operation_tdata  => "00001100", --less than
         m_axis_result_tvalid    => t2_compare_zero_valid,
         m_axis_result_tdata     => t2_compare_zero_result
     );
@@ -436,9 +529,9 @@ BEGIN
     t1_t2_compare_inst : floating_point_compare
     PORT MAP(
         aclk                    => clk,
-        s_axis_a_tvalid         => multiply_t1_valid AND trigger_compare_t1_t2,
+        s_axis_a_tvalid         => trigger_compare_t1_t2,
         s_axis_a_tdata          => multiply_t1_result,
-        s_axis_b_tvalid         => multiply_t2_valid AND trigger_compare_t1_t2,
+        s_axis_b_tvalid         => trigger_compare_t1_t2,
         s_axis_b_tdata          => multiply_t2_result,
         s_axis_operation_tvalid => trigger_compare_t1_t2,
         s_axis_operation_tdata  => "00000001", --less than
@@ -464,7 +557,7 @@ BEGIN
         valid_in  => trigger_add_intersection,
         a         => ray.point1,
         b         => scaled_vhat,
-        result    => intersect_pt,
+        result    => intersect_pt_re,
         valid_out => add_intersection_valid
     );
 
@@ -479,26 +572,16 @@ BEGIN
             trigger_calculate_cdot            <= '0';
             trigger_calculate_b               <= '0';
             trigger_calculate_c               <= '0';
-            calculate_b_result                <= FP32_NAN;
-            calculate_c_result                <= FP32_NAN;
             trigger_calculate_b_squared       <= '0';
-            calculate_b_squared_valid         <= '0';
             trigger_calculate_4ac             <= '0';
-            calculate_4ac_valid               <= '0';
-            calculate_4ac_result              <= FP32_NAN;
             trigger_calculate_compare_inttest <= '0';
-            inttest_compare_valid             <= '0';
             trigger_sqrt_inttest              <= '0';
-            t1_add_b_result                   <= (OTHERS => '0');
-            t2_add_b_result                   <= (OTHERS => '0');
             t1_add_b_valid                    <= '0';
             t2_add_b_valid                    <= '0';
             trigger_t1_multiply               <= '0';
             trigger_t2_multiply               <= '0';
             trigger_t1_comp_zero              <= '0';
             trigger_t2_comp_zero              <= '0';
-            t1_compare_zero_result            <= (OTHERS => '0');
-            t2_compare_zero_result            <= (OTHERS => '0');
             trigger_compare_t1_t2             <= '0';
             selected_t_value                  <= (OTHERS => '0');
             trigger_scale_vhat                <= '0';
@@ -527,6 +610,8 @@ BEGIN
                     END IF;
                 WHEN CALCULATE_B_AND_C =>
                     IF calculate_b_valid = '1' AND calculate_c_valid = '1' THEN
+                        trigger_calculate_b <= '0';
+                        trigger_calculate_c <= '0';
                         trigger_calculate_b_squared <= '1';
                         trigger_calculate_4ac       <= '1';
                         negated_b_result            <= calculate_b_result XOR X"80000000";
@@ -599,8 +684,9 @@ BEGIN
                 WHEN CALCULATE_INTERSECTION_POINT =>
                     IF add_intersection_valid = '1' THEN
                         does_intersect <= '1';
-                        color          <= obj.base_color;
-                        localNormal    <= intersect_pt; -- For sphere at origin, normal = intersection point
+                        color          <= obj.color;
+                        localNormal    <= intersect_pt_re; -- For sphere at origin, normal = intersection point
+                        intersect_pt <= intersect_pt_re;
                         valid_out      <= '1';
                         state          <= DONE;
                     END IF;
@@ -624,7 +710,10 @@ BEGIN
                     IF valid_in = '0' THEN
                         state <= IDLE;
                     END IF;
-
+                WHEN OTHERS =>
+                IF valid_in = '0' THEN
+                    state <= IDLE;
+                END IF;
             END CASE;
         END IF;
     END PROCESS;

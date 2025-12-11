@@ -152,6 +152,12 @@ if {[llength $sim_files] > 0} {
     add_files -fileset sim_1 $sim_files
 }
 
+# Add waveform configuration files
+set wcfg_files [glob -nocomplain ./src/sim/*.wcfg]
+if {[llength $wcfg_files] > 0} {
+    add_files -fileset sim_1 $wcfg_files
+}
+
 # Add constraints (if any exist)
 set xdc_files [glob -nocomplain ./src/constraints/*.xdc]
 if {[llength $xdc_files] > 0} {

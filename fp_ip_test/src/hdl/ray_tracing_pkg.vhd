@@ -7,7 +7,7 @@ USE work.lin_alg_pkg.ALL;
 PACKAGE ray_tracing_pkg IS
 
     -- Single precision float as std_logic_vector (32 bits, IEEE 754)
-    SUBTYPE fp32 IS STD_LOGIC_VECTOR(31 DOWNTO 0);
+    --SUBTYPE fp32 IS STD_LOGIC_VECTOR(31 DOWNTO 0);
 
     TYPE ObjectType IS (
         SPHERE,
@@ -20,10 +20,10 @@ PACKAGE ray_tracing_pkg IS
         lab    : Vec3;
     END RECORD;
 
-    TYPE BBox IS RECORD
-        _min : Vec3;
-        _max : Vec3;
-    END RECORD;
+    -- TYPE BBox IS RECORD
+    --     _min : Vec3;
+    --     _max : Vec3;
+    -- END RECORD;
 
     TYPE Color IS RECORD
         red   : fp32;
@@ -33,7 +33,7 @@ PACKAGE ray_tracing_pkg IS
 
     -- I am thinking we could store these in bram??
     TYPE RTObject IS RECORD
-        bbox     : BBox;
+        -- bbox     : BBox;
         trans    : Mat4;
         obj_type : ObjectType;
         color    : Color;

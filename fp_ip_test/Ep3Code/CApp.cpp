@@ -35,7 +35,7 @@ CApp::CApp()
 
 bool CApp::OnInit()
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		return false;
 	}
@@ -90,6 +90,9 @@ int CApp::OnExecute()
 		OnLoop();
 		OnRender();
 	}
+	
+	OnExit();
+	return 0;
 }
 
 void CApp::OnEvent(SDL_Event *event)
@@ -131,7 +134,7 @@ void CApp::OnExit()
 }
 
 // PRIVATE FUNCTIONS.
-void CApp::PrintVector(const qbVector<double> &inputVector)
+void CApp::PrintVector(const qbVector<float> &inputVector)
 {
 	int nRows = inputVector.GetNumDims();
 	for (int row=0; row<nRows; ++row)

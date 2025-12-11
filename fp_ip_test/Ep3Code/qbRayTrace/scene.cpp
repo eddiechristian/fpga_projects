@@ -29,9 +29,9 @@
 qbRT::Scene::Scene()
 {
 	// Configure the camera.
-	m_camera.SetPosition(	qbVector<double>{std::vector<double> {0.0, -10.0, 0.0}} );
-	m_camera.SetLookAt	( qbVector<double>{std::vector<double> {0.0, 0.0, 0.0}} );
-	m_camera.SetUp			( qbVector<double>{std::vector<double> {0.0, 0.0, 1.0}} );
+	m_camera.SetPosition(	qbVector<float>{std::vector<float> {0.0, -10.0, 0.0}} );
+	m_camera.SetLookAt	( qbVector<float>{std::vector<float> {0.0, 0.0, 0.0}} );
+	m_camera.SetUp			( qbVector<float>{std::vector<float> {0.0, 0.0, 1.0}} );
 	m_camera.SetHorzSize(0.25);
 	m_camera.SetAspect(16.0 / 9.0);
 	m_camera.UpdateCameraGeometry();
@@ -46,20 +46,20 @@ bool qbRT::Scene::Render(qbImage &outputImage)
 	
 	// Loop over each pixel in our image.
 	qbRT::Ray cameraRay;
-	qbVector<double> intPoint			(3);
-	qbVector<double> localNormal	(3);
-	qbVector<double> localColor		(3);
-	double xFact = 1.0 / (static_cast<double>(xSize) / 2.0);
-	double yFact = 1.0 / (static_cast<double>(ySize) / 2.0);
-	double minDist = 1e6;
-	double maxDist = 0.0;
+	qbVector<float> intPoint			(3);
+	qbVector<float> localNormal	(3);
+	qbVector<float> localColor		(3);
+	float xFact = 1.0 / (static_cast<float>(xSize) / 2.0);
+	float yFact = 1.0 / (static_cast<float>(ySize) / 2.0);
+	float minDist = 1e6;
+	float maxDist = 0.0;
 	for (int x=0; x<xSize; ++x)
 	{
 		for (int y=0; y<ySize; ++y)
 		{
 			// Normalize the x and y coordinates.
-			double normX = (static_cast<double>(x) * xFact) - 1.0;
-			double normY = (static_cast<double>(y) * yFact) - 1.0;
+			float normX = (static_cast<float>(x) * xFact) - 1.0;
+			float normY = (static_cast<float>(y) * yFact) - 1.0;
 			
 			// Generate the ray for this pixel.
 			m_camera.GenerateRay(normX, normY, cameraRay);
@@ -71,7 +71,7 @@ bool qbRT::Scene::Render(qbImage &outputImage)
 			if (validInt)
 			{
 				// Compute the distance between the camera and the point of intersection.
-				double dist = (intPoint - cameraRay.m_point1).norm();
+				float dist = (intPoint - cameraRay.m_point1).norm();
 				if (dist > maxDist)
 					maxDist = dist;
 				

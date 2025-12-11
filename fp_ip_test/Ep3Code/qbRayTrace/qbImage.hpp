@@ -41,7 +41,7 @@ class qbImage
 		void Initialize(const int xSize, const int ySize, SDL_Renderer *pRenderer);
 		
 		// Function to set the colour of a pixel.
-		void SetPixel(const int x, const int y, const double red, const double green, const double blue);
+		void SetPixel(const int x, const int y, const float red, const float green, const float blue);
 		
 		// Function to return the image for display.
 		void Display();
@@ -51,14 +51,14 @@ class qbImage
 		int GetYSize();
 	
 	private:
-		Uint32 ConvertColor(const double red, const double green, const double blue);
+		Uint32 ConvertColor(const float red, const float green, const float blue);
 		void InitTexture();
 		
 	private:
 		// Arrays to store image data.
-		std::vector<std::vector<double>> m_rChannel;
-		std::vector<std::vector<double>> m_gChannel;
-		std::vector<std::vector<double>> m_bChannel;
+		std::vector<std::vector<float>> m_rChannel;
+		std::vector<std::vector<float>> m_gChannel;
+		std::vector<std::vector<float>> m_bChannel;
 		
 		// Store the dimensions of the image.
 		int m_xSize, m_ySize;

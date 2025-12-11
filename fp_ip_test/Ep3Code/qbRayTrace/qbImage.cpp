@@ -42,9 +42,9 @@ qbImage::~qbImage()
 void qbImage::Initialize(const int xSize, const int ySize, SDL_Renderer *pRenderer)
 {
 	// Resize the image arrays.
-	m_rChannel.resize(xSize, std::vector<double>(ySize, 0.0));
-	m_gChannel.resize(xSize, std::vector<double>(ySize, 0.0));
-	m_bChannel.resize(xSize, std::vector<double>(ySize, 0.0));
+	m_rChannel.resize(xSize, std::vector<float>(ySize, 0.0));
+	m_gChannel.resize(xSize, std::vector<float>(ySize, 0.0));
+	m_bChannel.resize(xSize, std::vector<float>(ySize, 0.0));
 	
 	// Store the dimensions.
 	m_xSize = xSize;
@@ -58,7 +58,7 @@ void qbImage::Initialize(const int xSize, const int ySize, SDL_Renderer *pRender
 }
 
 // Function to set pixels.
-void qbImage::SetPixel(const int x, const int y, const double red, const double green, const double blue)
+void qbImage::SetPixel(const int x, const int y, const float red, const float green, const float blue)
 {
 	m_rChannel.at(x).at(y) = red;
 	m_gChannel.at(x).at(y) = green;
@@ -137,7 +137,7 @@ void qbImage::InitTexture()
 }
 
 // Function to convert colours to Uint32
-Uint32 qbImage::ConvertColor(const double red, const double green, const double blue)
+Uint32 qbImage::ConvertColor(const float red, const float green, const float blue)
 {
 	// Convert the colours to unsigned integers.
 	unsigned char r = static_cast<unsigned char>(red);

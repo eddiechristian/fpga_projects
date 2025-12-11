@@ -42,7 +42,7 @@ class CApp
 		void OnExit();
 		
 	private:
-		void PrintVector(const qbVector<double> &inputVector);
+		void PrintVector(const qbVector<float> &inputVector);
 		
 	private:
 		// An instance of the qbImage class to store the image.

@@ -39,15 +39,15 @@ namespace qbRT
 			virtual ~ObjectBase();
 			
 			// Function to test for intersections.
-			virtual bool TestIntersection(const Ray &castRay, qbVector<double> &intPoint, qbVector<double> &localNormal, qbVector<double> &localColor);
+			virtual bool TestIntersection(const Ray &castRay, qbVector<float> &intPoint, qbVector<float> &localNormal, qbVector<float> &localColor);
 			
 			// Function to test whether two floating-point numbers are close to being equal.
-			bool CloseEnough(const double f1, const double f2);
+			bool CloseEnough(const float f1, const float f2);
 			
 		// Public member variables.
 		public:
 			// The base colour of the object.
-			qbVector<double> m_baseColor {3};
+			qbVector<float> m_baseColor {3};
 	};
 }
 
