@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="multiply_fifo_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="multiply_fifo_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="2,237.578 ns"></ZoomStartTime>
+      <ZoomEndTime time="2,357.485 ns"></ZoomEndTime>
+      <Cursor1Time time="2,332.500 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="250"></NameColumnWidth>
+      <ValueColumnWidth column_width="88"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="10" />
+   <wave_markers>
+      <marker label="" time="2337500" />
+   </wave_markers>
+   <wvobject fp_name="divider1" type="divider">
+      <obj_property name="label">Testbench Control</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/multiply_fifo_tb/clk_in">
+      <obj_property name="ElementShortName">clk_in</obj_property>
+      <obj_property name="ObjectShortName">clk_in</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/multiply_fifo_tb/reset">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/multiply_fifo_tb/clk_locked">
+      <obj_property name="ElementShortName">clk_locked</obj_property>
+      <obj_property name="ObjectShortName">clk_locked</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/multiply_fifo_tb/input_count">
+      <obj_property name="ElementShortName">input_count</obj_property>
+      <obj_property name="ObjectShortName">input_count</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/multiply_fifo_tb/output_count">
+      <obj_property name="ElementShortName">output_count</obj_property>
+      <obj_property name="ObjectShortName">output_count</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/current_operand_a">
+      <obj_property name="ElementShortName">current_operand_a[31:0]</obj_property>
+      <obj_property name="ObjectShortName">current_operand_a[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/current_operand_b">
+      <obj_property name="ElementShortName">current_operand_b[31:0]</obj_property>
+      <obj_property name="ObjectShortName">current_operand_b[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/output_tdata">
+      <obj_property name="ElementShortName">output_tdata[31:0]</obj_property>
+      <obj_property name="ObjectShortName">output_tdata[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider2" type="divider">
+      <obj_property name="label">DUT Input</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+</wave_config>
