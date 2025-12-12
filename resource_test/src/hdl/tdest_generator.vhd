@@ -14,12 +14,14 @@ entity tdest_generator is
         
         -- Input stream (from external source)
         s_axis_tdata    : in  std_logic_vector(63 downto 0); -- {operand_b, operand_a}
+        s_axis_tid      : in  std_logic_vector(15 downto 0); -- Transaction ID
         s_axis_tvalid   : in  std_logic;
         s_axis_tready   : out std_logic;
         
         -- Output stream (to AXI interconnect with TDEST)
         m_axis_tdata    : out std_logic_vector(63 downto 0);
         m_axis_tdest    : out std_logic_vector(3 downto 0);  -- Destination multiplier (0-9)
+        m_axis_tid      : out std_logic_vector(15 downto 0); -- Transaction ID (passthrough)
         m_axis_tvalid   : out std_logic;
         m_axis_tready   : in  std_logic
     );
@@ -29,8 +31,9 @@ architecture Behavioral of tdest_generator is
     signal current_dest : unsigned(3 downto 0) := (others => '0');
 begin
     
-    -- Pass through data and valid
+    -- Pass through data, TID, and valid
     m_axis_tdata <= s_axis_tdata;
+    m_axis_tid <= s_axis_tid;
     m_axis_tvalid <= s_axis_tvalid;
     s_axis_tready <= m_axis_tready;
     

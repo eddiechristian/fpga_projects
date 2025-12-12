@@ -86,6 +86,7 @@ set_property -dict [list \
     CONFIG.INTERFACE_TYPE {AXI_STREAM} \
     CONFIG.TDATA_NUM_BYTES {8} \
     CONFIG.TUSER_WIDTH {4} \
+    CONFIG.TID_WIDTH {16} \
     CONFIG.Enable_TLAST {false} \
     CONFIG.HAS_TKEEP {false} \
     CONFIG.HAS_TSTRB {false} \
@@ -111,6 +112,7 @@ set_property -dict [list \
     CONFIG.INTERFACE_TYPE {AXI_STREAM} \
     CONFIG.TDATA_NUM_BYTES {4} \
     CONFIG.TUSER_WIDTH {0} \
+    CONFIG.TID_WIDTH {16} \
     CONFIG.Enable_TLAST {false} \
     CONFIG.HAS_TKEEP {false} \
     CONFIG.HAS_TSTRB {false} \
@@ -128,7 +130,8 @@ set_property -dict [list \
     CONFIG.HAS_TSTRB {false} \
     CONFIG.HAS_TKEEP {false} \
     CONFIG.HAS_TLAST {false} \
-    CONFIG.HAS_TID {false} \
+    CONFIG.HAS_TID {true} \
+    CONFIG.C_SWITCH_TID_WIDTH {16} \
     CONFIG.C_M00_AXIS_BASETDEST {0x00000000} \
     CONFIG.C_M00_AXIS_HIGHTDEST {0x00000000} \
     CONFIG.C_M01_AXIS_BASETDEST {0x00000001} \
@@ -151,19 +154,18 @@ set_property -dict [list \
     CONFIG.C_M09_AXIS_HIGHTDEST {0x00000009} \
 ] [get_ips axis_interconnect_0]
 
-puts "Creating AXI4-Stream Combiner (10-to-1 results collection)..."
-
+# puts "Creating AXI4-Stream Combiner (10-to-1 results collection)..."
 # Create AXI4-Stream Combiner to collect results from 10 multipliers
-create_ip -name axis_combiner -vendor xilinx.com -library ip -version 1.1 -module_name axis_combiner_0 -dir $ip_dir
-set_property -dict [list \
-    CONFIG.NUM_SI {10} \
-    CONFIG.TDATA_NUM_BYTES {4} \
-    CONFIG.HAS_TKEEP {0} \
-    CONFIG.HAS_TLAST {0} \
-    CONFIG.HAS_TSTRB {0} \
-    CONFIG.TDEST_WIDTH {0} \
-    CONFIG.TID_WIDTH {0} \
-] [get_ips axis_combiner_0]
+# create_ip -name axis_combiner -vendor xilinx.com -library ip -version 1.1 -module_name axis_combiner_0 -dir $ip_dir
+# set_property -dict [list \
+#     CONFIG.NUM_SI {10} \
+#     CONFIG.TDATA_NUM_BYTES {4} \
+#     CONFIG.HAS_TKEEP {0} \
+#     CONFIG.HAS_TLAST {0} \
+#     CONFIG.HAS_TSTRB {0} \
+#     CONFIG.TDEST_WIDTH {0} \
+#     CONFIG.TID_WIDTH {0} \
+# ] [get_ips axis_combiner_0]
 
 # Generate all IP outputs and synthesis products
 puts "Generating IP cores..."

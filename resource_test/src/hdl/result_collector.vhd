@@ -16,11 +16,13 @@ entity result_collector is
         s_tvalid        : in  std_logic_vector(NUM_INPUTS-1 downto 0);
         s_tready        : out std_logic_vector(NUM_INPUTS-1 downto 0);
         s_tdata         : in  std_logic_vector(NUM_INPUTS*32-1 downto 0);
+        s_tid           : in  std_logic_vector(NUM_INPUTS*16-1 downto 0);
         
         -- Output
         m_tvalid        : out std_logic;
         m_tready        : in  std_logic;
-        m_tdata         : out std_logic_vector(31 downto 0)
+        m_tdata         : out std_logic_vector(31 downto 0);
+        m_tid           : out std_logic_vector(15 downto 0)
     );
 end result_collector;
 
@@ -28,6 +30,7 @@ architecture Behavioral of result_collector is
     signal current_input : integer range 0 to NUM_INPUTS-1 := 0;
     signal selected_valid : std_logic;
     signal selected_data : std_logic_vector(31 downto 0);
+    signal selected_tid : std_logic_vector(15 downto 0);
     signal m_tvalid_int : std_logic;
 begin
 
@@ -48,10 +51,11 @@ begin
         end if;
     end process;
     
-    -- Mux for data selection
-    process(s_tdata, current_input)
+    -- Mux for data and TID selection
+    process(s_tdata, s_tid, current_input)
     begin
         selected_data <= s_tdata((current_input*32+31) downto (current_input*32));
+        selected_tid  <= s_tid((current_input*16+15) downto (current_input*16));
     end process;
     
     -- Valid selection
@@ -61,6 +65,7 @@ begin
     -- Output assignments
     m_tvalid <= m_tvalid_int;
     m_tdata  <= selected_data;
+    m_tid    <= selected_tid;
     
     -- Ready signals - only selected input sees ready
     gen_ready : for i in 0 to NUM_INPUTS-1 generate

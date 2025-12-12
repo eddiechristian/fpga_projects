@@ -17,9 +17,11 @@ architecture Behavioral of multiply_fifo_tb is
             clk_in             : in  std_logic;
             reset              : in  std_logic;
             input_tdata        : in  std_logic_vector(63 downto 0);
+            input_tid          : in  std_logic_vector(15 downto 0);
             input_tvalid       : in  std_logic;
             input_tready       : out std_logic;
             output_tdata       : out std_logic_vector(31 downto 0);
+            output_tid         : out std_logic_vector(15 downto 0);
             output_tvalid      : out std_logic;
             output_tready      : in  std_logic;
             clk_locked         : out std_logic
@@ -39,9 +41,11 @@ architecture Behavioral of multiply_fifo_tb is
     signal clk_in             : std_logic := '0';
     signal reset              : std_logic := '1';
     signal input_tdata        : std_logic_vector(63 downto 0) := (others => '0');
+    signal input_tid          : std_logic_vector(15 downto 0) := (others => '0');
     signal input_tvalid       : std_logic := '0';
     signal input_tready       : std_logic;
     signal output_tdata       : std_logic_vector(31 downto 0);
+    signal output_tid         : std_logic_vector(15 downto 0);
     signal output_tvalid      : std_logic;
     signal output_tready      : std_logic := '0';
     signal clk_locked         : std_logic;
@@ -131,19 +135,22 @@ begin
             clk_in            => clk_in,
             reset             => reset,
             input_tdata       => input_tdata,
+            input_tid         => input_tid,
             input_tvalid      => input_tvalid,
             input_tready      => input_tready,
             output_tdata      => output_tdata,
+            output_tid        => output_tid,
             output_tvalid     => output_tvalid,
             output_tready     => output_tready,
             clk_locked        => clk_locked
         );
     
-    -- Stimulus process (input generation)
+    -- Stimulus process (input generation with TID)
     stimulus : process
         variable seed1, seed2 : positive := 1;
         variable rand_val : real;
         variable operand_a, operand_b : std_logic_vector(31 downto 0);
+        variable current_tid : integer := 0;
     begin
         -- Reset
         reset <= '1';
@@ -173,8 +180,9 @@ begin
             current_operand_a <= operand_a;
             current_operand_b <= operand_b;
             
-            -- Send operation to input
+            -- Send operation to input with sequential TID
             input_tdata <= operand_b & operand_a;
+            input_tid <= std_logic_vector(to_unsigned(current_tid, 16));
             input_tvalid <= '1';
             
             -- Wait for handshake (keep trying until accepted)
@@ -185,6 +193,10 @@ begin
                 if input_tready = '1' then
                     -- Transaction completed
                     input_count <= input_count + 1;
+                    current_tid := current_tid + 1;
+                    if current_tid >= 65536 then
+                        current_tid := 0; -- Wrap around
+                    end if;
                     exit;
                 else
                     -- Backpressure detected!
@@ -237,9 +249,10 @@ begin
             if output_tvalid = '1' and output_tready = '1' then
                 output_count <= output_count + 1;
                 
-                -- Report progress every 100 operations
+                -- Report progress every 100 operations with TID info
                 if (output_count + 1) mod 100 = 0 then
-                    report "Received " & integer'image(output_count + 1) & " results";
+                    report "Received " & integer'image(output_count + 1) & " results (last TID: " & 
+                           integer'image(to_integer(unsigned(output_tid))) & ")";
                 end if;
             end if;
         end loop;
