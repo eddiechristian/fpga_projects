@@ -6,6 +6,7 @@
 # Project settings
 set project_name "fp_ip_test"
 set project_dir "./build"
+set_param general.maxThreads 8
 
 # Change this to your target FPGA part
 set part_number "xc7a200tsbg484-1"
@@ -128,14 +129,12 @@ foreach ip [get_ips] {
     create_ip_run $ip
 }
 
-# Launch and wait for IP synthesis runs - SEQUENTIALLY to avoid memory issues
-puts "Synthesizing all IP cores sequentially..."
-foreach ip_run [get_runs *_synth_1] {
-    puts "Launching IP run: $ip_run"
-    launch_runs $ip_run -jobs 1
-    wait_on_run $ip_run
-    set run_status [get_property STATUS $ip_run]
-    puts "Completed IP run: $ip_run - Status: $run_status"
+puts "Launching parallel IP synthesis..."
+set ip_runs [get_runs *_synth_1]
+if {[llength $ip_runs] > 0} {
+    # Adjust jobs to your CPU capacity
+    launch_runs $ip_runs -jobs 8
+    foreach run $ip_runs { wait_on_run $run }
 }
 
 puts "IP generation complete."
@@ -175,8 +174,14 @@ update_compile_order -fileset sim_1
 puts "Running synthesis..."
 
 # Run synthesis
-launch_runs synth_1 -jobs 1
+launch_runs synth_1 -jobs 8
 wait_on_run synth_1
+
+# Check for synthesis success before proceeding
+if {[get_property PROGRESS [get_runs synth_1]] != "100%"} {
+    error "Synthesis failed!"
+}
+
 
 set synth_status [get_property STATUS [get_runs synth_1]]
 puts "Synthesis complete - Status: $synth_status"
@@ -187,7 +192,7 @@ set_property -name {xsim.simulate.runtime} -value {2000ns} -objects [get_fileset
 puts "Running implementation..."
 
 # Run implementation
-launch_runs impl_1 -jobs 1
+launch_runs impl_1 -jobs 8
 wait_on_run impl_1
 
 set impl_status [get_property STATUS [get_runs impl_1]]
@@ -196,7 +201,7 @@ puts "Implementation complete - Status: $impl_status"
 puts "Generating bitstream..."
 
 # Generate bitstream
-launch_runs impl_1 -to_step write_bitstream -jobs 1
+launch_runs impl_1 -to_step write_bitstream -jobs 8
 wait_on_run impl_1
 
 set bitstream_status [get_property STATUS [get_runs impl_1]]

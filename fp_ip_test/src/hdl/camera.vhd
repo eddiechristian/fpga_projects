@@ -1,6 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use work.lin_alg_pkg.all;
+USE work.ray_tracing_pkg.ALL;
 
 -- Camera entity - stores camera parameters and geometry
 -- Similar to the Camera class in camera.hpp from Ep3Code
@@ -13,7 +14,7 @@ use work.lin_alg_pkg.all;
 -- Resource usage:
 --   - ~770 flip-flops for all camera parameters
 --   - 0.3% of Artix-7 xc7a200t registers
-entity camera is
+entity camera_hw is
     port (
         clk   : in  std_logic;
         reset : in  std_logic;
@@ -21,17 +22,12 @@ entity camera is
         -- Camera parameter inputs (for future updates)
         update_position : in  std_logic;  -- Enable position update
         
-        -- Camera outputs (for ray generation)
-        position      : out Vec3;
-        lookat        : out Vec3;
-        up            : out Vec3;
-        screen_centre : out Vec3;
-        screen_u      : out Vec3;
-        screen_v      : out Vec3
-    );
-end entity camera;
+        camera_val: out Camera
 
-architecture behavioral of camera is
+    );
+end entity camera_hw;
+
+architecture behavioral of camera_hw is
     
     -- Camera position and orientation (like C++ member variables)
     -- These synthesize to registers (flip-flops)
@@ -133,11 +129,11 @@ begin
     end process;
     
     -- Output current camera state
-    position      <= m_camera_position;
-    lookat        <= m_camera_lookat;
-    up            <= m_camera_up;
-    screen_centre <= m_projection_screen_centre;
-    screen_u      <= m_projection_screen_u;
-    screen_v      <= m_projection_screen_v;
+    camera_val.position      <= m_camera_position;
+    camera_val.lookat        <= m_camera_lookat;
+    camera_val.up            <= m_camera_up;
+    camera_val.screen_centre <= m_projection_screen_centre;
+    camera_val.screen_u      <= m_projection_screen_u;
+    camera_val.screen_v      <= m_projection_screen_v;
     
 end architecture behavioral;

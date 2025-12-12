@@ -20,10 +20,19 @@ PACKAGE ray_tracing_pkg IS
         lab    : Vec3;
     END RECORD;
 
-    -- TYPE BBox IS RECORD
-    --     _min : Vec3;
-    --     _max : Vec3;
-    -- END RECORD;
+    TYPE Camera IS RECORD
+        position      : Vec3;
+        lookat        : Vec3;
+        up            : Vec3;
+        screen_centre : Vec3;
+        screen_u      : Vec3;
+        screen_v      : Vec3;
+    END RECORD;
+
+    TYPE BBox IS RECORD
+        min_bound : Vec3;
+        max_bound : Vec3;
+    END RECORD;
 
     TYPE Color IS RECORD
         red   : fp32;
