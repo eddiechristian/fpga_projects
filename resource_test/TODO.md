@@ -209,7 +209,6 @@ Cycle 3: [b.w (32 bits) | b.z (32 bits)]
 
 **Implementation Notes:**
 - Input sequencer accumulates 4 cycles before submitting to dot product unit
-- Units internally reconstruct Vec3/Vec4 records from flattened input
 - Same 4-cycle latency for both Vec3 and Vec4 simplifies control logic
 - Total operation latency: 4 input cycles + 8-10 compute cycles = 12-14 cycles
 - Throughput: Can start new dot product every 4 cycles (50 MHz effective rate at 200 MHz clock)
@@ -308,11 +307,6 @@ end vec3_dot_product_core;
 - Execute all multiplies in parallel: a₀×b₀, a₁×b₁, a₂×b₂
 - Final tree reduction with adds
 - Balance between latency and resource usage
-
-**Recommendation:**
-- Start with **Option B** (sequential FMA) - reuses hardware
-- Profile ray tracer to measure dot product bottleneck
-- If dot products dominate, upgrade to **Option A** (dedicated units)
 
 **OpCode Extensions:**
 - 0x8: Vec3 Dot Product (3× 32-bit vectors in, 32-bit scalar out)

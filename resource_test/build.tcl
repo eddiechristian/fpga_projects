@@ -1,6 +1,5 @@
-# Vivado build script for FP32 Multiply FIFO (Stage 1)
-# This script creates the project from scratch, generates floating point multiplier IP,
-# BRAM FIFOs, and runs synthesis/implementation to measure resource usage
+# Vivado build script for pipeline_hw with custom FIFOs
+# Simplified - no AXIS FIFOs needed, only FP IPs
 # NOTE: This script runs in batch mode and does NOT start GUI
 
 # Project settings
@@ -10,33 +9,48 @@ set project_dir "./build"
 # Change this to your target FPGA part
 set part_number "xc7a200tsbg484-1"
 
-# Configurable number of multipliers (4, 8, 10, 16, etc.)
-set NUM_MULTIPLIERS 20
-
-# Configurable number of producers (output routing destinations)
+# Configuration
+set NUM_MULT_UNITS 8
+set NUM_FMA_UNITS 5
+set NUM_ADD_UNITS 3
 set NUM_PRODUCERS 5
 
-# Calculate TDEST width based on number of multipliers
-# Need ceiling of log2(NUM_MULTIPLIERS) to address all multipliers
-set TDEST_WIDTH [expr {int(ceil(log($NUM_MULTIPLIERS)/log(2.0)))}]
-if {$TDEST_WIDTH < 1} {
-    set TDEST_WIDTH 1
-}
-# For exactly power-of-2, we still need that many bits
-# e.g., 8 multipliers need 3 bits (0-7), not 4
-
-# Calculate PRODUCER_ID_WIDTH based on number of producers
-# Producer ID is encoded in upper TID bits
-set PRODUCER_ID_WIDTH [expr {int(ceil(log($NUM_PRODUCERS)/log(2.0)))}]
-if {$PRODUCER_ID_WIDTH < 1} {
-    set PRODUCER_ID_WIDTH 1
-}
-
 puts "Configuration:"
-puts "  Number of multipliers: $NUM_MULTIPLIERS"
-puts "  TDEST width: $TDEST_WIDTH bits"
-puts "  Number of producers: $NUM_PRODUCERS"
-puts "  Producer ID width: $PRODUCER_ID_WIDTH bits"
+puts "  Multiplier units: $NUM_MULT_UNITS"
+puts "  FMA units: $NUM_FMA_UNITS"
+puts "  AddSub units: $NUM_ADD_UNITS"
+puts "  Producers: $NUM_PRODUCERS"
+puts ""
+
+# Quick VHDL syntax check before spending time on IP generation
+puts "========================================"
+puts "Checking VHDL syntax..."
+puts "========================================"
+set hdl_files [glob -nocomplain ./src/hdl/*.vhd]
+if {[llength $hdl_files] == 0} {
+    puts "WARNING: No VHDL files found in ./src/hdl/"
+} else {
+    set syntax_ok 1
+    foreach vhdl_file $hdl_files {
+        puts "Checking: $vhdl_file"
+        if {[catch {read_vhdl -vhdl2008 $vhdl_file} err]} {
+            puts "ERROR in $vhdl_file:"
+            puts $err
+            set syntax_ok 0
+        }
+    }
+    if {!$syntax_ok} {
+        puts ""
+        puts "========================================"
+        puts "VHDL syntax errors detected!"
+        puts "Fix syntax errors before running build."
+        puts "========================================"
+        exit 1
+    }
+    puts "All VHDL files passed syntax check."
+    puts "========================================"
+    puts ""
+}
 
 # Clean build directory if it exists
 if {[file exists $project_dir]} {
@@ -62,7 +76,7 @@ set_property ip_repo_paths $ip_dir [current_project]
 
 puts "Creating Clocking Wizard IP..."
 
-# Create Clocking Wizard for 300 MHz clock (1.5x performance improvement)
+# Create Clocking Wizard for 200 MHz clock
 create_ip -name clk_wiz -vendor xilinx.com -library ip -version 6.0 -module_name clk_wiz_0 -dir $ip_dir
 set_property -dict [list \
     CONFIG.PRIM_IN_FREQ {100.000} \
@@ -75,7 +89,7 @@ set_property -dict [list \
 
 puts "Creating Floating Point Multiplier IP..."
 
-# Create FP32 Multiplication IP with 8-cycle latency (max supported) for 300 MHz operation
+# Create FP32 Multiplication IP with 8-cycle latency, NonBlocking mode
 create_ip -name floating_point -vendor xilinx.com -library ip -version 7.1 -module_name floating_point_mult -dir $ip_dir
 set_property -dict [list \
     CONFIG.Operation_Type {Multiply} \
@@ -84,88 +98,45 @@ set_property -dict [list \
     CONFIG.C_Latency {8} \
     CONFIG.C_Mult_Usage {Full_Usage} \
     CONFIG.C_Rate {1} \
-    CONFIG.Flow_Control {Blocking} \
+    CONFIG.Flow_Control {NonBlocking} \
     CONFIG.Maximum_Latency {false} \
-    CONFIG.Has_RESULT_TREADY {true} \
+    CONFIG.Has_A_TUSER {true} \
+    CONFIG.A_TUSER_Width {16} \
 ] [get_ips floating_point_mult]
 
+puts "Creating Floating Point FMA (Fused Multiply-Add) IP..."
 
-puts "Creating AXI4-Stream FIFO IPs..."
-
-# Create Input FIFO with AXI4-Stream interface
-# TDATA width = 64 bits (32-bit operand_a + 32-bit operand_b)
-# TUSER width = TDEST_WIDTH bits (for routing to multipliers)
-create_ip -name fifo_generator -vendor xilinx.com -library ip -version 13.2 -module_name axis_input_fifo -dir $ip_dir
+# Create FP32 FMA IP - 2 cycle latency, NonBlocking mode
+create_ip -name floating_point -vendor xilinx.com -library ip -version 7.1 -module_name floating_point_fma -dir $ip_dir
 set_property -dict [list \
-    CONFIG.Fifo_Implementation {Common_Clock_Block_RAM} \
-    CONFIG.Performance_Options {First_Word_Fall_Through} \
-    CONFIG.Input_Data_Width {32} \
-    CONFIG.Input_Depth {64} \
-    CONFIG.Output_Data_Width {32} \
-    CONFIG.Output_Depth {64} \
-    CONFIG.Reset_Type {Asynchronous_Reset} \
-    CONFIG.Full_Flags_Reset_Value {1} \
-    CONFIG.Use_Extra_Logic {true} \
-    CONFIG.Data_Count {true} \
-    CONFIG.Data_Count_Width {7} \
-    CONFIG.Write_Data_Count_Width {7} \
-    CONFIG.Read_Data_Count_Width {7} \
-    CONFIG.INTERFACE_TYPE {AXI_STREAM} \
-    CONFIG.TDATA_NUM_BYTES {8} \
-    CONFIG.TUSER_WIDTH $TDEST_WIDTH \
-    CONFIG.TID_WIDTH {16} \
-    CONFIG.Enable_TLAST {false} \
-    CONFIG.HAS_TKEEP {false} \
-    CONFIG.HAS_TSTRB {false} \
-    CONFIG.Enable_Data_Counts_axis {true} \
-] [get_ips axis_input_fifo]
+    CONFIG.Operation_Type {FMA} \
+    CONFIG.A_Precision_Type {Single} \
+    CONFIG.Result_Precision_Type {Single} \
+    CONFIG.C_Latency {2} \
+    CONFIG.C_Mult_Usage {Full_Usage} \
+    CONFIG.C_Rate {1} \
+    CONFIG.Flow_Control {NonBlocking} \
+    CONFIG.Maximum_Latency {false} \
+    CONFIG.Has_A_TUSER {true} \
+    CONFIG.A_TUSER_Width {16} \
+] [get_ips floating_point_fma]
 
-# Create Output FIFOs with AXI4-Stream interface (one per producer)
-# TDATA width = 32 bits (FP32 result)
-puts "Creating $NUM_PRODUCERS output FIFOs (one per producer)..."
-for {set i 0} {$i < $NUM_PRODUCERS} {incr i} {
-    puts "  Creating output FIFO $i..."
-    create_ip -name fifo_generator -vendor xilinx.com -library ip -version 13.2 -module_name axis_output_fifo_$i -dir $ip_dir
-    set_property -dict [list \
-        CONFIG.Fifo_Implementation {Common_Clock_Block_RAM} \
-        CONFIG.Performance_Options {First_Word_Fall_Through} \
-        CONFIG.Input_Data_Width {32} \
-        CONFIG.Input_Depth {64} \
-        CONFIG.Output_Data_Width {32} \
-        CONFIG.Output_Depth {64} \
-        CONFIG.Reset_Type {Asynchronous_Reset} \
-        CONFIG.Full_Flags_Reset_Value {1} \
-        CONFIG.Use_Extra_Logic {true} \
-        CONFIG.Data_Count {true} \
-        CONFIG.Data_Count_Width {7} \
-        CONFIG.Write_Data_Count_Width {7} \
-        CONFIG.Read_Data_Count_Width {7} \
-        CONFIG.INTERFACE_TYPE {AXI_STREAM} \
-        CONFIG.TDATA_NUM_BYTES {4} \
-        CONFIG.TUSER_WIDTH {0} \
-        CONFIG.TID_WIDTH {16} \
-        CONFIG.Enable_TLAST {false} \
-        CONFIG.HAS_TKEEP {false} \
-        CONFIG.HAS_TSTRB {false} \
-        CONFIG.Enable_Data_Counts_axis {true} \
-    ] [get_ips axis_output_fifo_$i]
-}
+puts "Creating Floating Point Add/Subtract IP..."
 
-# NOTE: Xilinx axis_interconnect IP is no longer used
-# Using custom VHDL axis_interconnect_wrapper instead for full parameterizability
-
-# puts "Creating AXI4-Stream Combiner (10-to-1 results collection)..."
-# Create AXI4-Stream Combiner to collect results from 10 multipliers
-# create_ip -name axis_combiner -vendor xilinx.com -library ip -version 1.1 -module_name axis_combiner_0 -dir $ip_dir
-# set_property -dict [list \
-#     CONFIG.NUM_SI {10} \
-#     CONFIG.TDATA_NUM_BYTES {4} \
-#     CONFIG.HAS_TKEEP {0} \
-#     CONFIG.HAS_TLAST {0} \
-#     CONFIG.HAS_TSTRB {0} \
-#     CONFIG.TDEST_WIDTH {0} \
-#     CONFIG.TID_WIDTH {0} \
-# ] [get_ips axis_combiner_0]
+# Create FP32 Add/Subtract IP - 2 cycle latency, NonBlocking mode
+create_ip -name floating_point -vendor xilinx.com -library ip -version 7.1 -module_name floating_point_addsub -dir $ip_dir
+set_property -dict [list \
+    CONFIG.Operation_Type {Add_Subtract} \
+    CONFIG.A_Precision_Type {Single} \
+    CONFIG.Result_Precision_Type {Single} \
+    CONFIG.C_Latency {2} \
+    CONFIG.C_Rate {1} \
+    CONFIG.Flow_Control {NonBlocking} \
+    CONFIG.Maximum_Latency {false} \
+    CONFIG.Add_Sub_Value {Both} \
+    CONFIG.Has_A_TUSER {true} \
+    CONFIG.A_TUSER_Width {16} \
+] [get_ips floating_point_addsub]
 
 # Generate all IP outputs and synthesis products
 puts "Generating IP cores..."
@@ -220,7 +191,7 @@ if {[llength $xdc_files] > 0} {
 
 # Set top module
 set_property top top_module [current_fileset]
-set_property top multiply_fifo_tb [get_filesets sim_1]
+set_property top pipeline_hw_tb [get_filesets sim_1]
 
 # Update compile order
 update_compile_order -fileset sources_1
@@ -236,31 +207,6 @@ set synth_status [get_property STATUS [get_runs synth_1]]
 puts "Synthesis complete - Status: $synth_status"
 
 # Set up post-synthesis simulation
-set_property -name {xsim.simulate.runtime} -value {100us} -objects [get_filesets sim_1]
+set_property -name {xsim.simulate.runtime} -value {200us} -objects [get_filesets sim_1]
 
-puts "Running implementation..."
-
-# Run implementation with parallel jobs
-launch_runs impl_1 -jobs 8
-wait_on_run impl_1
-
-set impl_status [get_property STATUS [get_runs impl_1]]
-puts "Implementation complete - Status: $impl_status"
-
-# Generate reports (skip bitstream for resource test)
-puts "Generating resource utilization reports..."
-open_run impl_1
-report_utilization -file $project_dir/utilization.rpt
-report_timing_summary -file $project_dir/timing.rpt
-report_power -file $project_dir/power.rpt
-
-puts "\n========================================"
-puts "Resource test complete!"
-puts "========================================"
-puts "Project location: $project_dir/$project_name.xpr"
-puts "Reports generated:"
-puts "  Utilization: $project_dir/utilization.rpt"
-puts "  Timing:      $project_dir/timing.rpt"
-puts "  Power:       $project_dir/power.rpt"
-puts "========================================"
-puts "Note: Bitstream generation skipped (no I/O constraints)"
+exit 1

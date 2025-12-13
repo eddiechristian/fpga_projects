@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="pipeline_hw_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="pipeline_hw_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0 ps"></ZoomStartTime>
+      <ZoomEndTime time="1,098 ps"></ZoomEndTime>
+      <Cursor1Time time="500 ps"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="250"></NameColumnWidth>
+      <ValueColumnWidth column_width="116"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="69" />
+   <wvobject type="logic" fp_name="/pipeline_hw_tb/clk_in">
+      <obj_property name="ElementShortName">clk_in</obj_property>
+      <obj_property name="ObjectShortName">clk_in</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/pipeline_hw_tb/reset">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/pipeline_hw_tb/clk_locked">
+      <obj_property name="ElementShortName">clk_locked</obj_property>
+      <obj_property name="ObjectShortName">clk_locked</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/pipeline_hw_tb/sim_done">
+      <obj_property name="ElementShortName">sim_done</obj_property>
+      <obj_property name="ObjectShortName">sim_done</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider1" type="divider">
+      <obj_property name="label">Mult Unit 0</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/mult_wr_data">
+      <obj_property name="ElementShortName">mult_wr_data[511:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_wr_data[511:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/mult_wr_data">
+      <obj_property name="ElementShortName">mult_wr_data[511:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_wr_data[511:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[63:32]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/mult_wr_tid">
+      <obj_property name="ElementShortName">mult_wr_tid[127:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_wr_tid[127:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="DisplayRange">[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/mult_wr_tid">
+      <obj_property name="ElementShortName">mult_wr_tid[127:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_wr_tid[127:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="DisplayRange">[15:13]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/mult_wr_valid">
+      <obj_property name="ElementShortName">mult_wr_valid[7:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_wr_valid[7:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/mult_wr_ready">
+      <obj_property name="ElementShortName">mult_wr_ready[7:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_wr_ready[7:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/mult_result_data">
+      <obj_property name="ElementShortName">mult_result_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_result_data[255:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/mult_result_valid">
+      <obj_property name="ElementShortName">mult_result_valid[7:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_result_valid[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider1b" type="divider">
+      <obj_property name="label">Mult Unit 1</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/mult_wr_data">
+      <obj_property name="ElementShortName">mult_wr_data[511:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_wr_data[511:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[95:64]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/mult_wr_data">
+      <obj_property name="ElementShortName">mult_wr_data[511:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_wr_data[511:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[127:96]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/mult_wr_tid">
+      <obj_property name="ElementShortName">mult_wr_tid[127:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_wr_tid[127:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="DisplayRange">[31:16]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/mult_wr_tid">
+      <obj_property name="ElementShortName">mult_wr_tid[127:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_wr_tid[127:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="DisplayRange">[31:29]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/mult_wr_valid">
+      <obj_property name="ElementShortName">mult_wr_valid[7:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_wr_valid[7:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/mult_wr_ready">
+      <obj_property name="ElementShortName">mult_wr_ready[7:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_wr_ready[7:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/mult_result_data">
+      <obj_property name="ElementShortName">mult_result_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_result_data[255:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[63:32]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/mult_result_valid">
+      <obj_property name="ElementShortName">mult_result_valid[7:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_result_valid[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider2" type="divider">
+      <obj_property name="label">FMA Unit 0</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/fma_wr_data">
+      <obj_property name="ElementShortName">fma_wr_data[479:0]</obj_property>
+      <obj_property name="ObjectShortName">fma_wr_data[479:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/fma_wr_data">
+      <obj_property name="ElementShortName">fma_wr_data[479:0]</obj_property>
+      <obj_property name="ObjectShortName">fma_wr_data[479:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[63:32]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/fma_wr_data">
+      <obj_property name="ElementShortName">fma_wr_data[479:0]</obj_property>
+      <obj_property name="ObjectShortName">fma_wr_data[479:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[95:64]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/fma_wr_tid">
+      <obj_property name="ElementShortName">fma_wr_tid[79:0]</obj_property>
+      <obj_property name="ObjectShortName">fma_wr_tid[79:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="DisplayRange">[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/fma_wr_tid">
+      <obj_property name="ElementShortName">fma_wr_tid[79:0]</obj_property>
+      <obj_property name="ObjectShortName">fma_wr_tid[79:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="DisplayRange">[15:13]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/fma_wr_valid">
+      <obj_property name="ElementShortName">fma_wr_valid[4:0]</obj_property>
+      <obj_property name="ObjectShortName">fma_wr_valid[4:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/fma_wr_ready">
+      <obj_property name="ElementShortName">fma_wr_ready[4:0]</obj_property>
+      <obj_property name="ObjectShortName">fma_wr_ready[4:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/fma_result_data">
+      <obj_property name="ElementShortName">fma_result_data[159:0]</obj_property>
+      <obj_property name="ObjectShortName">fma_result_data[159:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/fma_result_valid">
+      <obj_property name="ElementShortName">fma_result_valid[4:0]</obj_property>
+      <obj_property name="ObjectShortName">fma_result_valid[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider3" type="divider">
+      <obj_property name="label">AddSub Unit 0</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/addsub_wr_data">
+      <obj_property name="ElementShortName">addsub_wr_data[194:0]</obj_property>
+      <obj_property name="ObjectShortName">addsub_wr_data[194:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/addsub_wr_data">
+      <obj_property name="ElementShortName">addsub_wr_data[194:0]</obj_property>
+      <obj_property name="ObjectShortName">addsub_wr_data[194:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[63:32]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/addsub_wr_data">
+      <obj_property name="ElementShortName">addsub_wr_data[194:0]</obj_property>
+      <obj_property name="ObjectShortName">addsub_wr_data[194:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/addsub_wr_tid">
+      <obj_property name="ElementShortName">addsub_wr_tid[47:0]</obj_property>
+      <obj_property name="ObjectShortName">addsub_wr_tid[47:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="DisplayRange">[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/addsub_wr_tid">
+      <obj_property name="ElementShortName">addsub_wr_tid[47:0]</obj_property>
+      <obj_property name="ObjectShortName">addsub_wr_tid[47:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="DisplayRange">[15:13]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/addsub_wr_valid">
+      <obj_property name="ElementShortName">addsub_wr_valid[2:0]</obj_property>
+      <obj_property name="ObjectShortName">addsub_wr_valid[2:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/addsub_wr_ready">
+      <obj_property name="ElementShortName">addsub_wr_ready[2:0]</obj_property>
+      <obj_property name="ObjectShortName">addsub_wr_ready[2:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/addsub_result_data">
+      <obj_property name="ElementShortName">addsub_result_data[95:0]</obj_property>
+      <obj_property name="ObjectShortName">addsub_result_data[95:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/addsub_result_valid">
+      <obj_property name="ElementShortName">addsub_result_valid[2:0]</obj_property>
+      <obj_property name="ObjectShortName">addsub_result_valid[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider4" type="divider">
+      <obj_property name="label">Output Producer 0</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/output_rd_data">
+      <obj_property name="ElementShortName">output_rd_data[159:0]</obj_property>
+      <obj_property name="ObjectShortName">output_rd_data[159:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/output_rd_tid">
+      <obj_property name="ElementShortName">output_rd_tid[79:0]</obj_property>
+      <obj_property name="ObjectShortName">output_rd_tid[79:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="DisplayRange">[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/output_rd_tid">
+      <obj_property name="ElementShortName">output_rd_tid[79:0]</obj_property>
+      <obj_property name="ObjectShortName">output_rd_tid[79:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="DisplayRange">[15:13]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/output_rd_valid">
+      <obj_property name="ElementShortName">output_rd_valid[4:0]</obj_property>
+      <obj_property name="ObjectShortName">output_rd_valid[4:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/output_rd_ready">
+      <obj_property name="ElementShortName">output_rd_ready[4:0]</obj_property>
+      <obj_property name="ObjectShortName">output_rd_ready[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider4b" type="divider">
+      <obj_property name="label">Output Producer 1</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/output_rd_data">
+      <obj_property name="ElementShortName">output_rd_data[159:0]</obj_property>
+      <obj_property name="ObjectShortName">output_rd_data[159:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="DisplayRange">[63:32]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/output_rd_tid">
+      <obj_property name="ElementShortName">output_rd_tid[79:0]</obj_property>
+      <obj_property name="ObjectShortName">output_rd_tid[79:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="DisplayRange">[31:16]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/output_rd_tid">
+      <obj_property name="ElementShortName">output_rd_tid[79:0]</obj_property>
+      <obj_property name="ObjectShortName">output_rd_tid[79:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="DisplayRange">[31:29]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/output_rd_valid">
+      <obj_property name="ElementShortName">output_rd_valid[4:0]</obj_property>
+      <obj_property name="ObjectShortName">output_rd_valid[4:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/output_rd_ready">
+      <obj_property name="ElementShortName">output_rd_ready[4:0]</obj_property>
+      <obj_property name="ObjectShortName">output_rd_ready[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider5" type="divider">
+      <obj_property name="label">DUT Mult Unit 0 Internal</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/mult_result_data">
+      <obj_property name="ElementShortName">mult_result_data[255:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_result_data[255:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/mult_result_tid">
+      <obj_property name="ElementShortName">mult_result_tid[127:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_result_tid[127:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/mult_result_valid">
+      <obj_property name="ElementShortName">mult_result_valid[7:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_result_valid[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider6" type="divider">
+      <obj_property name="label">DUT FMA Results</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/fma_result_data">
+      <obj_property name="ElementShortName">fma_result_data[159:0]</obj_property>
+      <obj_property name="ObjectShortName">fma_result_data[159:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/fma_result_tid">
+      <obj_property name="ElementShortName">fma_result_tid[79:0]</obj_property>
+      <obj_property name="ObjectShortName">fma_result_tid[79:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/fma_result_valid">
+      <obj_property name="ElementShortName">fma_result_valid[4:0]</obj_property>
+      <obj_property name="ObjectShortName">fma_result_valid[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider7" type="divider">
+      <obj_property name="label">DUT AddSub Results</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/addsub_result_data">
+      <obj_property name="ElementShortName">addsub_result_data[95:0]</obj_property>
+      <obj_property name="ObjectShortName">addsub_result_data[95:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/addsub_result_tid">
+      <obj_property name="ElementShortName">addsub_result_tid[47:0]</obj_property>
+      <obj_property name="ObjectShortName">addsub_result_tid[47:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/addsub_result_valid">
+      <obj_property name="ElementShortName">addsub_result_valid[2:0]</obj_property>
+      <obj_property name="ObjectShortName">addsub_result_valid[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider8" type="divider">
+      <obj_property name="label">Combined Results (before output routing)</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/all_results_valid">
+      <obj_property name="ElementShortName">all_results_valid[15:0]</obj_property>
+      <obj_property name="ObjectShortName">all_results_valid[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/pipeline_hw_tb/dut/all_results_tid">
+      <obj_property name="ElementShortName">all_results_tid[255:0]</obj_property>
+      <obj_property name="ObjectShortName">all_results_tid[255:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+</wave_config>

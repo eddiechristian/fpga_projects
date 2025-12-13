@@ -59,3 +59,6 @@ __pycache__/
 .idea/
 *.code-workspace
 *.zip
+
+c files
+*.o
