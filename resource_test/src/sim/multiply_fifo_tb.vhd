@@ -11,7 +11,8 @@ architecture Behavioral of multiply_fifo_tb is
     -- Component declaration
     component top_module is
         generic (
-            NUM_MULTIPLIERS : integer := 10
+            NUM_MULTIPLIERS : integer := 20;
+            TDEST_WIDTH     : integer := 5
         );
         port (
             clk_in             : in  std_logic;
@@ -29,7 +30,7 @@ architecture Behavioral of multiply_fifo_tb is
     end component;
     
     -- Test parameters
-    constant NUM_MULTIPLIERS : integer := 10;
+    constant NUM_MULTIPLIERS : integer := 20;
     constant NUM_TEST_OPS    : integer := 2000; -- Increased to 2000 to fill 1024-deep FIFOs
     constant BURST_SIZE      : integer := 100;  -- Send 100 ops in burst to fill FIFOs
     constant BACKPRESSURE_THRESHOLD : integer := NUM_MULTIPLIERS * 2; -- Threshold for backpressure detection
@@ -129,7 +130,8 @@ begin
     -- DUT instantiation
     dut : top_module
         generic map (
-            NUM_MULTIPLIERS => NUM_MULTIPLIERS
+            NUM_MULTIPLIERS => NUM_MULTIPLIERS,
+            TDEST_WIDTH     => 5
         )
         port map (
             clk_in            => clk_in,

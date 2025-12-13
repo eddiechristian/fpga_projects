@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="10,434.533 ns"></ZoomStartTime>
-      <ZoomEndTime time="10,527.338 ns"></ZoomEndTime>
-      <Cursor1Time time="10,439.819 ns"></Cursor1Time>
+      <ZoomStartTime time="10,290.128 ns"></ZoomStartTime>
+      <ZoomEndTime time="10,394.364 ns"></ZoomEndTime>
+      <Cursor1Time time="10,307.500 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="250"></NameColumnWidth>
-      <ValueColumnWidth column_width="84"></ValueColumnWidth>
+      <ValueColumnWidth column_width="80"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="13" />
+   <WVObjectSize size="15" />
    <wave_markers>
       <marker label="" time="2337500" />
    </wave_markers>
@@ -86,5 +86,13 @@
    <wvobject type="array" fp_name="/multiply_fifo_tb/dut/input_tid">
       <obj_property name="ElementShortName">input_tid[15:0]</obj_property>
       <obj_property name="ObjectShortName">input_tid[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/multiply_fifo_tb/backpressure_detected">
+      <obj_property name="ElementShortName">backpressure_detected</obj_property>
+      <obj_property name="ObjectShortName">backpressure_detected</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/multiply_fifo_tb/dut/input_tready">
+      <obj_property name="ElementShortName">input_tready</obj_property>
+      <obj_property name="ObjectShortName">input_tready</obj_property>
    </wvobject>
 </wave_config>

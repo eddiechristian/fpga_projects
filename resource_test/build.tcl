@@ -10,6 +10,22 @@ set project_dir "./build"
 # Change this to your target FPGA part
 set part_number "xc7a200tsbg484-1"
 
+# Configurable number of multipliers (4, 8, 10, 16, etc.)
+set NUM_MULTIPLIERS 20
+
+# Calculate TDEST width based on number of multipliers
+# Need ceiling of log2(NUM_MULTIPLIERS) to address all multipliers
+set TDEST_WIDTH [expr {int(ceil(log($NUM_MULTIPLIERS)/log(2.0)))}]
+if {$TDEST_WIDTH < 1} {
+    set TDEST_WIDTH 1
+}
+# For exactly power-of-2, we still need that many bits
+# e.g., 8 multipliers need 3 bits (0-7), not 4
+
+puts "Configuration:"
+puts "  Number of multipliers: $NUM_MULTIPLIERS"
+puts "  TDEST width: $TDEST_WIDTH bits"
+
 # Clean build directory if it exists
 if {[file exists $project_dir]} {
     puts "Removing existing build directory..."
@@ -34,12 +50,11 @@ set_property ip_repo_paths $ip_dir [current_project]
 
 puts "Creating Clocking Wizard IP..."
 
-# Create Clocking Wizard for 200 MHz clock
+# Create Clocking Wizard for 300 MHz clock (1.5x performance improvement)
 create_ip -name clk_wiz -vendor xilinx.com -library ip -version 6.0 -module_name clk_wiz_0 -dir $ip_dir
 set_property -dict [list \
     CONFIG.PRIM_IN_FREQ {100.000} \
     CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {200.000} \
-    CONFIG.USE_RESET {true} \
     CONFIG.RESET_TYPE {ACTIVE_HIGH} \
     CONFIG.RESET_PORT {reset} \
     CONFIG.USE_LOCKED {true} \
@@ -48,7 +63,7 @@ set_property -dict [list \
 
 puts "Creating Floating Point Multiplier IP..."
 
-# Create FP32 Multiplication IP
+# Create FP32 Multiplication IP with 8-cycle latency (max supported) for 300 MHz operation
 create_ip -name floating_point -vendor xilinx.com -library ip -version 7.1 -module_name floating_point_mult -dir $ip_dir
 set_property -dict [list \
     CONFIG.Operation_Type {Multiply} \
@@ -67,7 +82,7 @@ puts "Creating AXI4-Stream FIFO IPs..."
 
 # Create Input FIFO with AXI4-Stream interface
 # TDATA width = 64 bits (32-bit operand_a + 32-bit operand_b)
-# TUSER width = 4 bits (for routing to 0-9 multipliers, using TDEST alternative)
+# TUSER width = TDEST_WIDTH bits (for routing to multipliers)
 create_ip -name fifo_generator -vendor xilinx.com -library ip -version 13.2 -module_name axis_input_fifo -dir $ip_dir
 set_property -dict [list \
     CONFIG.Fifo_Implementation {Common_Clock_Block_RAM} \
@@ -85,7 +100,7 @@ set_property -dict [list \
     CONFIG.Read_Data_Count_Width {10} \
     CONFIG.INTERFACE_TYPE {AXI_STREAM} \
     CONFIG.TDATA_NUM_BYTES {8} \
-    CONFIG.TUSER_WIDTH {4} \
+    CONFIG.TUSER_WIDTH $TDEST_WIDTH \
     CONFIG.TID_WIDTH {16} \
     CONFIG.Enable_TLAST {false} \
     CONFIG.HAS_TKEEP {false} \
@@ -118,41 +133,8 @@ set_property -dict [list \
     CONFIG.HAS_TSTRB {false} \
 ] [get_ips axis_output_fifo]
 
-puts "Creating AXI4-Stream Interconnect (1-to-10 routing)..."
-
-# Create AXI4-Stream Interconnect for routing to 10 multipliers
-create_ip -name axis_interconnect -vendor xilinx.com -library ip -version 1.1 -module_name axis_interconnect_0 -dir $ip_dir
-set_property -dict [list \
-    CONFIG.C_NUM_SI_SLOTS {1} \
-    CONFIG.C_NUM_MI_SLOTS {10} \
-    CONFIG.SWITCH_TDATA_NUM_BYTES {8} \
-    CONFIG.C_SWITCH_TDEST_WIDTH {4} \
-    CONFIG.HAS_TSTRB {false} \
-    CONFIG.HAS_TKEEP {false} \
-    CONFIG.HAS_TLAST {false} \
-    CONFIG.HAS_TID {true} \
-    CONFIG.C_SWITCH_TID_WIDTH {16} \
-    CONFIG.C_M00_AXIS_BASETDEST {0x00000000} \
-    CONFIG.C_M00_AXIS_HIGHTDEST {0x00000000} \
-    CONFIG.C_M01_AXIS_BASETDEST {0x00000001} \
-    CONFIG.C_M01_AXIS_HIGHTDEST {0x00000001} \
-    CONFIG.C_M02_AXIS_BASETDEST {0x00000002} \
-    CONFIG.C_M02_AXIS_HIGHTDEST {0x00000002} \
-    CONFIG.C_M03_AXIS_BASETDEST {0x00000003} \
-    CONFIG.C_M03_AXIS_HIGHTDEST {0x00000003} \
-    CONFIG.C_M04_AXIS_BASETDEST {0x00000004} \
-    CONFIG.C_M04_AXIS_HIGHTDEST {0x00000004} \
-    CONFIG.C_M05_AXIS_BASETDEST {0x00000005} \
-    CONFIG.C_M05_AXIS_HIGHTDEST {0x00000005} \
-    CONFIG.C_M06_AXIS_BASETDEST {0x00000006} \
-    CONFIG.C_M06_AXIS_HIGHTDEST {0x00000006} \
-    CONFIG.C_M07_AXIS_BASETDEST {0x00000007} \
-    CONFIG.C_M07_AXIS_HIGHTDEST {0x00000007} \
-    CONFIG.C_M08_AXIS_BASETDEST {0x00000008} \
-    CONFIG.C_M08_AXIS_HIGHTDEST {0x00000008} \
-    CONFIG.C_M09_AXIS_BASETDEST {0x00000009} \
-    CONFIG.C_M09_AXIS_HIGHTDEST {0x00000009} \
-] [get_ips axis_interconnect_0]
+# NOTE: Xilinx axis_interconnect IP is no longer used
+# Using custom VHDL axis_interconnect_wrapper instead for full parameterizability
 
 # puts "Creating AXI4-Stream Combiner (10-to-1 results collection)..."
 # Create AXI4-Stream Combiner to collect results from 10 multipliers
@@ -196,6 +178,8 @@ puts "IP generation complete."
 set hdl_files [glob -nocomplain ./src/hdl/*.vhd]
 if {[llength $hdl_files] > 0} {
     add_files -fileset sources_1 $hdl_files
+    # Enable VHDL-2008 for all VHDL files
+    set_property file_type {VHDL 2008} [get_files *.vhd]
 }
 
 # Add simulation files

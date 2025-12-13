@@ -4,9 +4,15 @@ use IEEE.NUMERIC_STD.ALL;
 
 -- Top module for FP32 multiply FIFO (Stage 1)
 -- Uses AXI4-Stream infrastructure with Xilinx IPs for routing
+--
+-- VHDL-2008 Refactored Version:
+-- - Fully parameterizable NUM_MULTIPLIERS without code changes
+-- - Uses unconstrained arrays and generate statements
+-- - Custom interconnect wrapper replaces hardcoded Xilinx IP
 entity top_module is
     generic (
-        NUM_MULTIPLIERS : integer := 10  -- Configurable number of parallel multipliers
+        NUM_MULTIPLIERS : integer := 20;  -- Number of parallel multipliers
+        TDEST_WIDTH     : integer := 5    -- TDEST width (ceil(log2(NUM_MULTIPLIERS)))
     );
     port (
         -- Clock and reset
@@ -45,7 +51,8 @@ architecture Behavioral of top_module is
     -- TDEST generator component
     component tdest_generator is
         generic (
-            NUM_MULTIPLIERS : integer := 10
+            NUM_MULTIPLIERS : integer := 10;
+            TDEST_WIDTH     : integer := 4
         );
         port (
             clk             : in  std_logic;
@@ -55,14 +62,14 @@ architecture Behavioral of top_module is
             s_axis_tvalid   : in  std_logic;
             s_axis_tready   : out std_logic;
             m_axis_tdata    : out std_logic_vector(63 downto 0);
-            m_axis_tdest    : out std_logic_vector(3 downto 0);
+            m_axis_tdest    : out std_logic_vector(TDEST_WIDTH-1 downto 0);
             m_axis_tid      : out std_logic_vector(15 downto 0);
             m_axis_tvalid   : out std_logic;
             m_axis_tready   : in  std_logic
         );
     end component;
     
-    -- AXI4-Stream Input FIFO component
+    -- AXI4-Stream Input FIFO component (uses IP-generated stub)
     component axis_input_fifo is
         port (
             wr_rst_busy     : out std_logic;
@@ -72,88 +79,36 @@ architecture Behavioral of top_module is
             s_axis_tvalid   : in  std_logic;
             s_axis_tready   : out std_logic;
             s_axis_tdata    : in  std_logic_vector(63 downto 0);
-            s_axis_tuser    : in  std_logic_vector(3 downto 0);
+            s_axis_tuser    : in  std_logic_vector(TDEST_WIDTH-1 downto 0);
             s_axis_tid      : in  std_logic_vector(15 downto 0);
             m_axis_tvalid   : out std_logic;
             m_axis_tready   : in  std_logic;
             m_axis_tdata    : out std_logic_vector(63 downto 0);
-            m_axis_tuser    : out std_logic_vector(3 downto 0);
+            m_axis_tuser    : out std_logic_vector(TDEST_WIDTH-1 downto 0);
             m_axis_tid      : out std_logic_vector(15 downto 0)
         );
     end component;
     
-    -- AXI4-Stream Interconnect component (1-to-10)
-    component axis_interconnect_0 is
+    -- Parameterizable AXI4-Stream Interconnect Wrapper
+    component axis_interconnect_wrapper is
+        generic (
+            NUM_MASTERS : integer := 10;
+            TDEST_WIDTH : integer := 4;
+            TDATA_WIDTH : integer := 64;
+            TID_WIDTH   : integer := 16
+        );
         port (
-            ACLK    : in  std_logic;
-            ARESETN : in  std_logic;
-            S00_AXIS_ACLK    : in  std_logic;
-            S00_AXIS_ARESETN : in  std_logic;
-            S00_AXIS_TVALID  : in  std_logic;
-            S00_AXIS_TREADY  : out std_logic;
-            S00_AXIS_TDATA   : in  std_logic_vector(63 downto 0);
-            S00_AXIS_TDEST   : in  std_logic_vector(3 downto 0);
-            S00_AXIS_TID     : in  std_logic_vector(15 downto 0);
-            M00_AXIS_ACLK    : in  std_logic;
-            M00_AXIS_ARESETN : in  std_logic;
-            M00_AXIS_TVALID  : out std_logic;
-            M00_AXIS_TREADY  : in  std_logic;
-            M00_AXIS_TDATA   : out std_logic_vector(63 downto 0);
-            M00_AXIS_TID     : out std_logic_vector(15 downto 0);
-            M01_AXIS_ACLK    : in  std_logic;
-            M01_AXIS_ARESETN : in  std_logic;
-            M01_AXIS_TVALID  : out std_logic;
-            M01_AXIS_TREADY  : in  std_logic;
-            M01_AXIS_TDATA   : out std_logic_vector(63 downto 0);
-            M01_AXIS_TID     : out std_logic_vector(15 downto 0);
-            M02_AXIS_ACLK    : in  std_logic;
-            M02_AXIS_ARESETN : in  std_logic;
-            M02_AXIS_TVALID  : out std_logic;
-            M02_AXIS_TREADY  : in  std_logic;
-            M02_AXIS_TDATA   : out std_logic_vector(63 downto 0);
-            M02_AXIS_TID     : out std_logic_vector(15 downto 0);
-            M03_AXIS_ACLK    : in  std_logic;
-            M03_AXIS_ARESETN : in  std_logic;
-            M03_AXIS_TVALID  : out std_logic;
-            M03_AXIS_TREADY  : in  std_logic;
-            M03_AXIS_TDATA   : out std_logic_vector(63 downto 0);
-            M03_AXIS_TID     : out std_logic_vector(15 downto 0);
-            M04_AXIS_ACLK    : in  std_logic;
-            M04_AXIS_ARESETN : in  std_logic;
-            M04_AXIS_TVALID  : out std_logic;
-            M04_AXIS_TREADY  : in  std_logic;
-            M04_AXIS_TDATA   : out std_logic_vector(63 downto 0);
-            M04_AXIS_TID     : out std_logic_vector(15 downto 0);
-            M05_AXIS_ACLK    : in  std_logic;
-            M05_AXIS_ARESETN : in  std_logic;
-            M05_AXIS_TVALID  : out std_logic;
-            M05_AXIS_TREADY  : in  std_logic;
-            M05_AXIS_TDATA   : out std_logic_vector(63 downto 0);
-            M05_AXIS_TID     : out std_logic_vector(15 downto 0);
-            M06_AXIS_ACLK    : in  std_logic;
-            M06_AXIS_ARESETN : in  std_logic;
-            M06_AXIS_TVALID  : out std_logic;
-            M06_AXIS_TREADY  : in  std_logic;
-            M06_AXIS_TDATA   : out std_logic_vector(63 downto 0);
-            M06_AXIS_TID     : out std_logic_vector(15 downto 0);
-            M07_AXIS_ACLK    : in  std_logic;
-            M07_AXIS_ARESETN : in  std_logic;
-            M07_AXIS_TVALID  : out std_logic;
-            M07_AXIS_TREADY  : in  std_logic;
-            M07_AXIS_TDATA   : out std_logic_vector(63 downto 0);
-            M07_AXIS_TID     : out std_logic_vector(15 downto 0);
-            M08_AXIS_ACLK    : in  std_logic;
-            M08_AXIS_ARESETN : in  std_logic;
-            M08_AXIS_TVALID  : out std_logic;
-            M08_AXIS_TREADY  : in  std_logic;
-            M08_AXIS_TDATA   : out std_logic_vector(63 downto 0);
-            M08_AXIS_TID     : out std_logic_vector(15 downto 0);
-            M09_AXIS_ACLK    : in  std_logic;
-            M09_AXIS_ARESETN : in  std_logic;
-            M09_AXIS_TVALID  : out std_logic;
-            M09_AXIS_TREADY  : in  std_logic;
-            M09_AXIS_TDATA   : out std_logic_vector(63 downto 0);
-            M09_AXIS_TID     : out std_logic_vector(15 downto 0)
+            aclk          : in  std_logic;
+            aresetn       : in  std_logic;
+            s_axis_tvalid : in  std_logic;
+            s_axis_tready : out std_logic;
+            s_axis_tdata  : in  std_logic_vector(TDATA_WIDTH-1 downto 0);
+            s_axis_tdest  : in  std_logic_vector(TDEST_WIDTH-1 downto 0);
+            s_axis_tid    : in  std_logic_vector(TID_WIDTH-1 downto 0);
+            m_axis_tvalid : out std_logic_vector(NUM_MASTERS-1 downto 0);
+            m_axis_tready : in  std_logic_vector(NUM_MASTERS-1 downto 0);
+            m_axis_tdata  : out std_logic_vector(NUM_MASTERS*TDATA_WIDTH-1 downto 0);
+            m_axis_tid    : out std_logic_vector(NUM_MASTERS*TID_WIDTH-1 downto 0)
         );
     end component;
     
@@ -186,7 +141,7 @@ architecture Behavioral of top_module is
         );
     end component;
     
-    -- Result collector component (10-to-1 round-robin)
+    -- Result collector component (N-to-1 round-robin with dynamic sizing)
     component result_collector is
         generic (
             NUM_INPUTS : integer := 10
@@ -194,10 +149,10 @@ architecture Behavioral of top_module is
         port (
             clk      : in  std_logic;
             reset    : in  std_logic;
-            s_tvalid : in  std_logic_vector(9 downto 0);
-            s_tready : out std_logic_vector(9 downto 0);
-            s_tdata  : in  std_logic_vector(319 downto 0);
-            s_tid    : in  std_logic_vector(159 downto 0);
+            s_tvalid : in  std_logic_vector(NUM_INPUTS-1 downto 0);
+            s_tready : out std_logic_vector(NUM_INPUTS-1 downto 0);
+            s_tdata  : in  std_logic_vector(NUM_INPUTS*32-1 downto 0);
+            s_tid    : in  std_logic_vector(NUM_INPUTS*16-1 downto 0);
             m_tvalid : out std_logic;
             m_tready : in  std_logic;
             m_tdata  : out std_logic_vector(31 downto 0);
@@ -224,41 +179,38 @@ architecture Behavioral of top_module is
     end component;
     
     -- Internal signals
-    signal clk_150        : std_logic;
+    signal clk_200        : std_logic;
     signal locked         : std_logic;
     signal aresetn        : std_logic;
     
     -- TDEST generator signals
     signal tdest_tdata    : std_logic_vector(63 downto 0);
-    signal tdest_tdest    : std_logic_vector(3 downto 0);
+    signal tdest_tdest    : std_logic_vector(TDEST_WIDTH-1 downto 0);
     signal tdest_tid      : std_logic_vector(15 downto 0);
     signal tdest_tvalid   : std_logic;
     signal tdest_tready   : std_logic;
     
     -- Input FIFO signals
     signal fifo_in_tdata  : std_logic_vector(63 downto 0);
-    signal fifo_in_tuser  : std_logic_vector(3 downto 0);
+    signal fifo_in_tuser  : std_logic_vector(TDEST_WIDTH-1 downto 0);
     signal fifo_in_tid    : std_logic_vector(15 downto 0);
     signal fifo_in_tvalid : std_logic;
     signal fifo_in_tready : std_logic;
     
-    -- Interconnect to multiplier signals (10 channels)
-    type axis_data_array_64 is array (0 to 9) of std_logic_vector(63 downto 0);
-    type axis_tid_array_16 is array (0 to 9) of std_logic_vector(15 downto 0);
-    signal intercon_m_tdata  : axis_data_array_64;
-    signal intercon_m_tid    : axis_tid_array_16;
-    signal intercon_m_tvalid : std_logic_vector(9 downto 0);
-    signal intercon_m_tready : std_logic_vector(9 downto 0);
+    -- Interconnect to multiplier signals (parameterized)
+    signal intercon_m_tvalid : std_logic_vector(NUM_MULTIPLIERS-1 downto 0);
+    signal intercon_m_tready : std_logic_vector(NUM_MULTIPLIERS-1 downto 0);
+    signal intercon_m_tdata  : std_logic_vector(NUM_MULTIPLIERS*64-1 downto 0);
+    signal intercon_m_tid    : std_logic_vector(NUM_MULTIPLIERS*16-1 downto 0);
     
-    -- TID pipeline signals (10 channels)
-    signal tid_pipe_m_tid    : axis_tid_array_16;
-    signal tid_pipe_m_tvalid : std_logic_vector(9 downto 0);
+    -- Multiplier result signals (parameterized)
+    signal mult_result_tvalid : std_logic_vector(NUM_MULTIPLIERS-1 downto 0);
+    signal mult_result_tready : std_logic_vector(NUM_MULTIPLIERS-1 downto 0);
+    signal mult_result_tdata  : std_logic_vector(NUM_MULTIPLIERS*32-1 downto 0);
     
-    -- Multiplier result signals (10 channels)
-    type axis_data_array_32 is array (0 to 9) of std_logic_vector(31 downto 0);
-    signal mult_result_tdata  : axis_data_array_32;
-    signal mult_result_tvalid : std_logic_vector(9 downto 0);
-    signal mult_result_tready : std_logic_vector(9 downto 0);
+    -- TID pipeline signals (parameterized)
+    signal tid_pipe_m_tid    : std_logic_vector(NUM_MULTIPLIERS*16-1 downto 0);
+    signal tid_pipe_m_tvalid : std_logic_vector(NUM_MULTIPLIERS-1 downto 0);
     
     -- Combiner to output FIFO signals
     signal combiner_tdata  : std_logic_vector(31 downto 0);
@@ -266,11 +218,11 @@ architecture Behavioral of top_module is
     signal combiner_tvalid : std_logic;
     signal combiner_tready : std_logic;
     
-    -- Concatenated signals for result_collector
-    signal combiner_s_tdata  : std_logic_vector(319 downto 0);
-    signal combiner_s_tid    : std_logic_vector(159 downto 0);
-    signal combiner_s_tvalid : std_logic_vector(9 downto 0);
-    signal combiner_s_tready : std_logic_vector(9 downto 0);
+    -- Concatenated signals for result_collector (parameterized)
+    signal combiner_s_tdata  : std_logic_vector(NUM_MULTIPLIERS*32-1 downto 0);
+    signal combiner_s_tid    : std_logic_vector(NUM_MULTIPLIERS*16-1 downto 0);
+    signal combiner_s_tvalid : std_logic_vector(NUM_MULTIPLIERS-1 downto 0);
+    signal combiner_s_tready : std_logic_vector(NUM_MULTIPLIERS-1 downto 0);
     
 begin
     
@@ -279,7 +231,7 @@ begin
         port map (
             clk_in1  => clk_in,
             reset    => reset,
-            clk_out1 => clk_150,
+            clk_out1 => clk_200,
             locked   => locked
         );
     
@@ -289,10 +241,11 @@ begin
     -- TDEST generator (generates round-robin routing)
     tdest_gen : tdest_generator
         generic map (
-            NUM_MULTIPLIERS => NUM_MULTIPLIERS
+            NUM_MULTIPLIERS => NUM_MULTIPLIERS,
+            TDEST_WIDTH     => TDEST_WIDTH
         )
         port map (
-            clk           => clk_150,
+            clk           => clk_200,
             reset         => not aresetn,
             s_axis_tdata  => input_tdata,
             s_axis_tid    => input_tid,
@@ -310,7 +263,7 @@ begin
         port map (
             wr_rst_busy     => open,
             rd_rst_busy     => open,
-            s_aclk          => clk_150,
+            s_aclk          => clk_200,
             s_aresetn       => aresetn,
             s_axis_tvalid   => tdest_tvalid,
             s_axis_tready   => tdest_tready,
@@ -324,94 +277,40 @@ begin
             m_axis_tid      => fifo_in_tid
         );
     
-    -- AXI4-Stream Interconnect (routes to 10 multipliers based on TDEST)
-    interconnect_inst : axis_interconnect_0
+    -- AXI4-Stream Interconnect Wrapper (parameterizable 1-to-N routing)
+    interconnect_inst : axis_interconnect_wrapper
+        generic map (
+            NUM_MASTERS => NUM_MULTIPLIERS,
+            TDEST_WIDTH => TDEST_WIDTH,
+            TDATA_WIDTH => 64,
+            TID_WIDTH   => 16
+        )
         port map (
-            ACLK => clk_150,
-            ARESETN => aresetn,
-            -- Slave interface (from input FIFO)
-            S00_AXIS_ACLK    => clk_150,
-            S00_AXIS_ARESETN => aresetn,
-            S00_AXIS_TVALID  => fifo_in_tvalid,
-            S00_AXIS_TREADY  => fifo_in_tready,
-            S00_AXIS_TDATA   => fifo_in_tdata,
-            S00_AXIS_TDEST   => fifo_in_tuser, -- TUSER carries TDEST
-            S00_AXIS_TID     => fifo_in_tid,
-            -- Master interfaces (to 10 multipliers)
-            M00_AXIS_ACLK    => clk_150,
-            M00_AXIS_ARESETN => aresetn,
-            M00_AXIS_TVALID  => intercon_m_tvalid(0),
-            M00_AXIS_TREADY  => intercon_m_tready(0),
-            M00_AXIS_TDATA   => intercon_m_tdata(0),
-            M00_AXIS_TID     => intercon_m_tid(0),
-            M01_AXIS_ACLK    => clk_150,
-            M01_AXIS_ARESETN => aresetn,
-            M01_AXIS_TVALID  => intercon_m_tvalid(1),
-            M01_AXIS_TREADY  => intercon_m_tready(1),
-            M01_AXIS_TDATA   => intercon_m_tdata(1),
-            M01_AXIS_TID     => intercon_m_tid(1),
-            M02_AXIS_ACLK    => clk_150,
-            M02_AXIS_ARESETN => aresetn,
-            M02_AXIS_TVALID  => intercon_m_tvalid(2),
-            M02_AXIS_TREADY  => intercon_m_tready(2),
-            M02_AXIS_TDATA   => intercon_m_tdata(2),
-            M02_AXIS_TID     => intercon_m_tid(2),
-            M03_AXIS_ACLK    => clk_150,
-            M03_AXIS_ARESETN => aresetn,
-            M03_AXIS_TVALID  => intercon_m_tvalid(3),
-            M03_AXIS_TREADY  => intercon_m_tready(3),
-            M03_AXIS_TDATA   => intercon_m_tdata(3),
-            M03_AXIS_TID     => intercon_m_tid(3),
-            M04_AXIS_ACLK    => clk_150,
-            M04_AXIS_ARESETN => aresetn,
-            M04_AXIS_TVALID  => intercon_m_tvalid(4),
-            M04_AXIS_TREADY  => intercon_m_tready(4),
-            M04_AXIS_TDATA   => intercon_m_tdata(4),
-            M04_AXIS_TID     => intercon_m_tid(4),
-            M05_AXIS_ACLK    => clk_150,
-            M05_AXIS_ARESETN => aresetn,
-            M05_AXIS_TVALID  => intercon_m_tvalid(5),
-            M05_AXIS_TREADY  => intercon_m_tready(5),
-            M05_AXIS_TDATA   => intercon_m_tdata(5),
-            M05_AXIS_TID     => intercon_m_tid(5),
-            M06_AXIS_ACLK    => clk_150,
-            M06_AXIS_ARESETN => aresetn,
-            M06_AXIS_TVALID  => intercon_m_tvalid(6),
-            M06_AXIS_TREADY  => intercon_m_tready(6),
-            M06_AXIS_TDATA   => intercon_m_tdata(6),
-            M06_AXIS_TID     => intercon_m_tid(6),
-            M07_AXIS_ACLK    => clk_150,
-            M07_AXIS_ARESETN => aresetn,
-            M07_AXIS_TVALID  => intercon_m_tvalid(7),
-            M07_AXIS_TREADY  => intercon_m_tready(7),
-            M07_AXIS_TDATA   => intercon_m_tdata(7),
-            M07_AXIS_TID     => intercon_m_tid(7),
-            M08_AXIS_ACLK    => clk_150,
-            M08_AXIS_ARESETN => aresetn,
-            M08_AXIS_TVALID  => intercon_m_tvalid(8),
-            M08_AXIS_TREADY  => intercon_m_tready(8),
-            M08_AXIS_TDATA   => intercon_m_tdata(8),
-            M08_AXIS_TID     => intercon_m_tid(8),
-            M09_AXIS_ACLK    => clk_150,
-            M09_AXIS_ARESETN => aresetn,
-            M09_AXIS_TVALID  => intercon_m_tvalid(9),
-            M09_AXIS_TREADY  => intercon_m_tready(9),
-            M09_AXIS_TDATA   => intercon_m_tdata(9),
-            M09_AXIS_TID     => intercon_m_tid(9)
+            aclk          => clk_200,
+            aresetn       => aresetn,
+            s_axis_tvalid => fifo_in_tvalid,
+            s_axis_tready => fifo_in_tready,
+            s_axis_tdata  => fifo_in_tdata,
+            s_axis_tdest  => fifo_in_tuser,
+            s_axis_tid    => fifo_in_tid,
+            m_axis_tvalid => intercon_m_tvalid,
+            m_axis_tready => intercon_m_tready,
+            m_axis_tdata  => intercon_m_tdata,
+            m_axis_tid    => intercon_m_tid
         );
     
-    -- Generate 10 FP32 multipliers and TID pipelines
-    gen_multipliers : for i in 0 to 9 generate
+    -- Generate N FP32 multipliers and TID pipelines (fully parameterized)
+    gen_multipliers : for i in 0 to NUM_MULTIPLIERS-1 generate
         -- FP32 multiplier instance
         mult_inst : floating_point_mult
             port map (
-                aclk                 => clk_150,
+                aclk                 => clk_200,
                 s_axis_a_tvalid      => intercon_m_tvalid(i),
-                s_axis_a_tdata       => intercon_m_tdata(i)(31 downto 0),   -- operand_a
+                s_axis_a_tdata       => intercon_m_tdata(i*64+31 downto i*64),      -- operand_a (lower 32 bits)
                 s_axis_b_tvalid      => intercon_m_tvalid(i),
-                s_axis_b_tdata       => intercon_m_tdata(i)(63 downto 32),  -- operand_b
+                s_axis_b_tdata       => intercon_m_tdata(i*64+63 downto i*64+32),   -- operand_b (upper 32 bits)
                 m_axis_result_tvalid => mult_result_tvalid(i),
-                m_axis_result_tdata  => mult_result_tdata(i)
+                m_axis_result_tdata  => mult_result_tdata((i+1)*32-1 downto i*32)
             );
         
         -- TID pipeline (delays TID by 8 cycles to match multiplier latency)
@@ -421,11 +320,11 @@ begin
                 TID_WIDTH => 16
             )
             port map (
-                clk      => clk_150,
+                clk      => clk_200,
                 reset    => not aresetn,
-                s_tid    => intercon_m_tid(i),
+                s_tid    => intercon_m_tid((i+1)*16-1 downto i*16),
                 s_tvalid => intercon_m_tvalid(i),
-                m_tid    => tid_pipe_m_tid(i),
+                m_tid    => tid_pipe_m_tid((i+1)*16-1 downto i*16),
                 m_tvalid => tid_pipe_m_tvalid(i)
             );
         
@@ -434,20 +333,20 @@ begin
     end generate;
     
     -- Concatenate multiplier results and TIDs for result_collector
-    gen_combiner_concat : for i in 0 to 9 generate
-        combiner_s_tdata((i*32+31) downto (i*32))  <= mult_result_tdata(i);
-        combiner_s_tid((i*16+15) downto (i*16))    <= tid_pipe_m_tid(i);
+    gen_combiner_concat : for i in 0 to NUM_MULTIPLIERS-1 generate
+        combiner_s_tdata((i+1)*32-1 downto i*32)  <= mult_result_tdata((i+1)*32-1 downto i*32);
+        combiner_s_tid((i+1)*16-1 downto i*16)    <= tid_pipe_m_tid((i+1)*16-1 downto i*16);
         combiner_s_tvalid(i) <= mult_result_tvalid(i);
         mult_result_tready(i) <= combiner_s_tready(i);
     end generate;
     
-    -- Result collector (round-robin collects results and TIDs from 10 multipliers)
+    -- Result collector (round-robin collects results and TIDs from N multipliers)
     collector_inst : result_collector
         generic map (
-            NUM_INPUTS => 10
+            NUM_INPUTS => NUM_MULTIPLIERS
         )
         port map (
-            clk      => clk_150,
+            clk      => clk_200,
             reset    => not aresetn,
             s_tvalid => combiner_s_tvalid,
             s_tready => combiner_s_tready,
@@ -464,7 +363,7 @@ begin
         port map (
             wr_rst_busy     => open,
             rd_rst_busy     => open,
-            s_aclk          => clk_150,
+            s_aclk          => clk_200,
             s_aresetn       => aresetn,
             s_axis_tvalid   => combiner_tvalid,
             s_axis_tready   => combiner_tready,
