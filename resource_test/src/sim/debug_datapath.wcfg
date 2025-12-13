@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="10,290.128 ns"></ZoomStartTime>
-      <ZoomEndTime time="10,394.364 ns"></ZoomEndTime>
-      <Cursor1Time time="10,307.500 ns"></Cursor1Time>
+      <ZoomStartTime time="363.784 ns"></ZoomStartTime>
+      <ZoomEndTime time="482.244 ns"></ZoomEndTime>
+      <Cursor1Time time="468.822 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="250"></NameColumnWidth>
-      <ValueColumnWidth column_width="80"></ValueColumnWidth>
+      <NameColumnWidth column_width="226"></NameColumnWidth>
+      <ValueColumnWidth column_width="341"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="15" />
+   <WVObjectSize size="29" />
    <wave_markers>
       <marker label="" time="2337500" />
    </wave_markers>
@@ -63,29 +63,50 @@
       <obj_property name="radix_fractionWidth">24</obj_property>
       <obj_property name="radix_otherWidth">8</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/multiply_fifo_tb/output_tdata">
-      <obj_property name="ElementShortName">output_tdata[31:0]</obj_property>
-      <obj_property name="ObjectShortName">output_tdata[31:0]</obj_property>
-      <obj_property name="Radix">REALRADIX</obj_property>
-      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-      <obj_property name="radix_fractionWidth">24</obj_property>
-      <obj_property name="radix_otherWidth">8</obj_property>
-   </wvobject>
-   <wvobject fp_name="divider2" type="divider">
-      <obj_property name="label">DUT Input</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/multiply_fifo_tb/dut/\gen_multipliers(6)\/tid_pipe_inst/m_tid">
-      <obj_property name="ElementShortName">m_tid[15:0]</obj_property>
-      <obj_property name="ObjectShortName">m_tid[15:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/multiply_fifo_tb/dut/output_tid">
-      <obj_property name="ElementShortName">output_tid[15:0]</obj_property>
-      <obj_property name="ObjectShortName">output_tid[15:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/multiply_fifo_tb/dut/input_tid">
+   <wvobject type="array" fp_name="/multiply_fifo_tb/input_tid">
       <obj_property name="ElementShortName">input_tid[15:0]</obj_property>
       <obj_property name="ObjectShortName">input_tid[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/multiply_fifo_tb/input_tvalid">
+      <obj_property name="ElementShortName">input_tvalid</obj_property>
+      <obj_property name="ObjectShortName">input_tvalid</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/multiply_fifo_tb/input_tready">
+      <obj_property name="ElementShortName">input_tready</obj_property>
+      <obj_property name="ObjectShortName">input_tready</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider2" type="divider">
+      <obj_property name="label">Producer Routing</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/multiply_fifo_tb/dut/demux_inst/producer_id">
+      <obj_property name="ElementShortName">producer_id</obj_property>
+      <obj_property name="ObjectShortName">producer_id</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/dut/demux_m_tvalid">
+      <obj_property name="ElementShortName">demux_m_tvalid[4:0]</obj_property>
+      <obj_property name="ObjectShortName">demux_m_tvalid[4:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider3" type="divider">
+      <obj_property name="label">Producer 0 Output</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/multiply_fifo_tb/output_tvalid[0]">
+      <obj_property name="ElementShortName">[0]</obj_property>
+      <obj_property name="ObjectShortName">[0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/output_tid">
+      <obj_property name="ElementShortName">output_tid[79:0]</obj_property>
+      <obj_property name="ObjectShortName">output_tid[79:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/output_tdata">
+      <obj_property name="ElementShortName">output_tdata[159:0]</obj_property>
+      <obj_property name="ObjectShortName">output_tdata[159:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/producer_output_counts">
+      <obj_property name="ElementShortName">producer_output_counts[0:4]</obj_property>
+      <obj_property name="ObjectShortName">producer_output_counts[0:4]</obj_property>
    </wvobject>
    <wvobject type="other" fp_name="/multiply_fifo_tb/backpressure_detected">
       <obj_property name="ElementShortName">backpressure_detected</obj_property>
@@ -94,5 +115,75 @@
    <wvobject type="logic" fp_name="/multiply_fifo_tb/dut/input_tready">
       <obj_property name="ElementShortName">input_tready</obj_property>
       <obj_property name="ObjectShortName">input_tready</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider4" type="divider">
+      <obj_property name="label">FIFO Fullness</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/dut/input_fifo_count">
+      <obj_property name="ElementShortName">input_fifo_count[10:0]</obj_property>
+      <obj_property name="ObjectShortName">input_fifo_count[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/dut/output_fifo_0_count">
+      <obj_property name="ElementShortName">output_fifo_0_count[10:0]</obj_property>
+      <obj_property name="ObjectShortName">output_fifo_0_count[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/dut/output_fifo_1_count">
+      <obj_property name="ElementShortName">output_fifo_1_count[10:0]</obj_property>
+      <obj_property name="ObjectShortName">output_fifo_1_count[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/dut/output_fifo_2_count">
+      <obj_property name="ElementShortName">output_fifo_2_count[10:0]</obj_property>
+      <obj_property name="ObjectShortName">output_fifo_2_count[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/dut/output_fifo_3_count">
+      <obj_property name="ElementShortName">output_fifo_3_count[10:0]</obj_property>
+      <obj_property name="ObjectShortName">output_fifo_3_count[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/dut/output_fifo_4_count">
+      <obj_property name="ElementShortName">output_fifo_4_count[10:0]</obj_property>
+      <obj_property name="ObjectShortName">output_fifo_4_count[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider5" type="divider">
+      <obj_property name="label">Backpressure Propagation</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/multiply_fifo_tb/dut/tdest_tready">
+      <obj_property name="ElementShortName">tdest_tready</obj_property>
+      <obj_property name="ObjectShortName">tdest_tready</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/multiply_fifo_tb/dut/fifo_in_tready">
+      <obj_property name="ElementShortName">fifo_in_tready</obj_property>
+      <obj_property name="ObjectShortName">fifo_in_tready</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/dut/intercon_m_tready">
+      <obj_property name="ElementShortName">intercon_m_tready[19:0]</obj_property>
+      <obj_property name="ObjectShortName">intercon_m_tready[19:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/dut/mult_result_tready">
+      <obj_property name="ElementShortName">mult_result_tready[19:0]</obj_property>
+      <obj_property name="ObjectShortName">mult_result_tready[19:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/multiply_fifo_tb/dut/combiner_tready">
+      <obj_property name="ElementShortName">combiner_tready</obj_property>
+      <obj_property name="ObjectShortName">combiner_tready</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/dut/demux_m_tready">
+      <obj_property name="ElementShortName">demux_m_tready[4:0]</obj_property>
+      <obj_property name="ObjectShortName">demux_m_tready[4:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/multiply_fifo_tb/output_tready">
+      <obj_property name="ElementShortName">output_tready[4:0]</obj_property>
+      <obj_property name="ObjectShortName">output_tready[4:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
 </wave_config>

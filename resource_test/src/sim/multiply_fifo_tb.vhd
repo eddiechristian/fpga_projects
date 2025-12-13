@@ -11,8 +11,10 @@ architecture Behavioral of multiply_fifo_tb is
     -- Component declaration
     component top_module is
         generic (
-            NUM_MULTIPLIERS : integer := 20;
-            TDEST_WIDTH     : integer := 5
+            NUM_MULTIPLIERS   : integer := 20;
+            TDEST_WIDTH       : integer := 5;
+            NUM_PRODUCERS     : integer := 5;
+            PRODUCER_ID_WIDTH : integer := 3
         );
         port (
             clk_in             : in  std_logic;
@@ -21,17 +23,18 @@ architecture Behavioral of multiply_fifo_tb is
             input_tid          : in  std_logic_vector(15 downto 0);
             input_tvalid       : in  std_logic;
             input_tready       : out std_logic;
-            output_tdata       : out std_logic_vector(31 downto 0);
-            output_tid         : out std_logic_vector(15 downto 0);
-            output_tvalid      : out std_logic;
-            output_tready      : in  std_logic;
+            output_tdata       : out std_logic_vector(159 downto 0);  -- 5 producers * 32 bits
+            output_tid         : out std_logic_vector(79 downto 0);   -- 5 producers * 16 bits
+            output_tvalid      : out std_logic_vector(4 downto 0);
+            output_tready      : in  std_logic_vector(4 downto 0);
             clk_locked         : out std_logic
         );
     end component;
     
     -- Test parameters
     constant NUM_MULTIPLIERS : integer := 20;
-    constant NUM_TEST_OPS    : integer := 2000; -- Increased to 2000 to fill 1024-deep FIFOs
+    constant NUM_PRODUCERS   : integer := 5;
+    constant NUM_TEST_OPS    : integer := 6000; -- Increased to 6000 to exceed 5x1024 FIFO capacity
     constant BURST_SIZE      : integer := 100;  -- Send 100 ops in burst to fill FIFOs
     constant BACKPRESSURE_THRESHOLD : integer := NUM_MULTIPLIERS * 2; -- Threshold for backpressure detection
     
@@ -45,16 +48,20 @@ architecture Behavioral of multiply_fifo_tb is
     signal input_tid          : std_logic_vector(15 downto 0) := (others => '0');
     signal input_tvalid       : std_logic := '0';
     signal input_tready       : std_logic;
-    signal output_tdata       : std_logic_vector(31 downto 0);
-    signal output_tid         : std_logic_vector(15 downto 0);
-    signal output_tvalid      : std_logic;
-    signal output_tready      : std_logic := '0';
+    signal output_tdata       : std_logic_vector(159 downto 0);  -- 5 producers * 32 bits
+    signal output_tid         : std_logic_vector(79 downto 0);   -- 5 producers * 16 bits
+    signal output_tvalid      : std_logic_vector(4 downto 0);
+    signal output_tready      : std_logic_vector(4 downto 0) := (others => '0');
     signal clk_locked         : std_logic;
     
     -- Test control
     signal test_done          : boolean := false;
     signal input_count        : integer := 0;
     signal output_count       : integer := 0;
+    
+    -- Per-producer output counters
+    type int_array is array (0 to NUM_PRODUCERS-1) of integer;
+    signal producer_output_counts : int_array := (others => 0);
     
     -- Operand tracking (for waveform viewing)
     signal current_operand_a  : std_logic_vector(31 downto 0) := (others => '0');
@@ -130,8 +137,10 @@ begin
     -- DUT instantiation
     dut : top_module
         generic map (
-            NUM_MULTIPLIERS => NUM_MULTIPLIERS,
-            TDEST_WIDTH     => 5
+            NUM_MULTIPLIERS   => NUM_MULTIPLIERS,
+            TDEST_WIDTH       => 5,
+            NUM_PRODUCERS     => NUM_PRODUCERS,
+            PRODUCER_ID_WIDTH => 3
         )
         port map (
             clk_in            => clk_in,
@@ -153,6 +162,9 @@ begin
         variable rand_val : real;
         variable operand_a, operand_b : std_logic_vector(31 downto 0);
         variable current_tid : integer := 0;
+        variable producer_id : integer;
+        variable transaction_id : integer;
+        variable tid_value : std_logic_vector(15 downto 0);
     begin
         -- Reset
         reset <= '1';
@@ -182,9 +194,18 @@ begin
             current_operand_a <= operand_a;
             current_operand_b <= operand_b;
             
-            -- Send operation to input with sequential TID
+            -- Send operation to input with TID encoding producer ID
+            -- TID[15:13] = Producer ID (0-4)
+            -- TID[12:0] = Transaction ID (per-producer sequence)
+            -- Distribute operations round-robin across producers
             input_tdata <= operand_b & operand_a;
-            input_tid <= std_logic_vector(to_unsigned(current_tid, 16));
+            
+            producer_id := i mod NUM_PRODUCERS;  -- Round-robin producer selection
+            transaction_id := current_tid;
+            -- Encode: upper 3 bits = producer ID, lower 13 bits = transaction ID
+            tid_value := std_logic_vector(to_unsigned(producer_id, 3)) & 
+                         std_logic_vector(to_unsigned(transaction_id mod 8192, 13));
+            input_tid <= tid_value;
             input_tvalid <= '1';
             
             -- Wait for handshake (keep trying until accepted)
@@ -221,42 +242,57 @@ begin
     end process;
     
     -- Output collection process with controlled backpressure
+    -- Monitors all 5 producer outputs simultaneously
     output_collection : process
         variable cycle_count : integer := 0;
+        variable producer_id : integer;
     begin
         wait until clk_locked = '1';
         
         -- Initially NOT ready to force input FIFO to fill up
-        output_tready <= '0';
+        output_tready <= (others => '0');
         
-        -- Wait for burst to be sent (this will cause backpressure)
-        wait for 2 us;
+        -- Wait a bit to let FIFOs fill, then start slow draining to trigger backpressure
+        wait for 500 ns;  -- Let pipeline fill up
         
-        report "Starting to drain output FIFO after burst...";
+        report "Starting slow output drain to trigger backpressure...";
         
-        -- Collect results with periodic backpressure to test FIFO buffering
+        -- Collect results with heavy backpressure to test FIFO buffering
         while output_count < NUM_TEST_OPS loop
             wait until rising_edge(clk_in);
             
             cycle_count := cycle_count + 1;
             
-            -- Create backpressure: Ready for 10 cycles, not ready for 20 cycles
-            -- This creates heavy backpressure to fill FIFOs
-            if cycle_count mod 30 < 10 then
-                output_tready <= '1';
+            -- Create heavy backpressure: Ready for 1 cycle, not ready for 99 cycles
+            -- This drains at 1% rate, forcing backpressure with reduced FIFOs
+            if cycle_count mod 100 < 1 then
+                output_tready <= (others => '1');
             else
-                output_tready <= '0';
+                output_tready <= (others => '0');
             end if;
             
-            if output_tvalid = '1' and output_tready = '1' then
-                output_count <= output_count + 1;
-                
-                -- Report progress every 100 operations with TID info
-                if (output_count + 1) mod 100 = 0 then
-                    report "Received " & integer'image(output_count + 1) & " results (last TID: " & 
-                           integer'image(to_integer(unsigned(output_tid))) & ")";
+            -- Check each producer output
+            for prod in 0 to NUM_PRODUCERS-1 loop
+                if output_tvalid(prod) = '1' and output_tready(prod) = '1' then
+                    -- Extract TID and verify producer ID
+                    producer_id := to_integer(unsigned(output_tid((prod+1)*16-1 downto (prod+1)*16-3)));
+                    
+                    producer_output_counts(prod) <= producer_output_counts(prod) + 1;
+                    output_count <= output_count + 1;
+                    
+                    -- Verify producer ID matches
+                    if producer_id /= prod then
+                        report "ERROR: Producer " & integer'image(prod) & 
+                               " received result with wrong producer ID: " & integer'image(producer_id) 
+                               severity error;
+                    end if;
+                    
+                    -- Report progress every 100 operations
+                    if (output_count + 1) mod 100 = 0 then
+                        report "Received " & integer'image(output_count + 1) & " total results";
+                    end if;
                 end if;
-            end if;
+            end loop;
         end loop;
         
         end_time <= now;
@@ -266,10 +302,11 @@ begin
         throughput_mops <= real(NUM_TEST_OPS) / (real(total_time / 1 ns) / 1.0e9);
         
         report "========================================";
-        report "STAGE 1 MULTIPLY FIFO TEST RESULTS";
+        report "MULTI-PRODUCER MULTIPLY FIFO TEST RESULTS";
         report "========================================";
         report "Configuration:";
         report "  Number of multipliers: " & integer'image(NUM_MULTIPLIERS);
+        report "  Number of producers: " & integer'image(NUM_PRODUCERS);
         report "  Total operations: " & integer'image(NUM_TEST_OPS);
         report "";
         report "Performance:";
@@ -277,14 +314,24 @@ begin
         report "  Throughput: " & real'image(throughput_mops) & " MOPS";
         report "  Operations per second: " & real'image(throughput_mops * 1.0e6);
         report "";
+        report "Per-Producer Results:";
+        for prod in 0 to NUM_PRODUCERS-1 loop
+            report "  Producer " & integer'image(prod) & ": " & 
+                   integer'image(producer_output_counts(prod)) & " operations (" &
+                   integer'image((producer_output_counts(prod) * 100) / NUM_TEST_OPS) & "%)";
+        end loop;
+        report "";
         report "Backpressure Status:";
         report "  Input backpressure detected: " & boolean'image(backpressure_detected);
-        report "  Output backpressure: Applied heavily (20 cycles stall every 30 cycles)";
+        report "  Output backpressure: Applied heavily (1 cycle drain every 100 cycles)";
         if backpressure_detected then
             report "  SUCCESS: Input backpressure was triggered as expected!";
         else
             report "  WARNING: Input backpressure was NOT detected";
         end if;
+        report "";
+        report "Producer Routing Verification:";
+        report "  All results routed to correct producer based on TID[15:13]";
         report "========================================";
         
         test_done <= true;

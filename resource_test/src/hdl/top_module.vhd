@@ -9,10 +9,13 @@ use IEEE.NUMERIC_STD.ALL;
 -- - Fully parameterizable NUM_MULTIPLIERS without code changes
 -- - Uses unconstrained arrays and generate statements
 -- - Custom interconnect wrapper replaces hardcoded Xilinx IP
+-- - Multi-producer output routing based on TID upper bits
 entity top_module is
     generic (
-        NUM_MULTIPLIERS : integer := 20;  -- Number of parallel multipliers
-        TDEST_WIDTH     : integer := 5    -- TDEST width (ceil(log2(NUM_MULTIPLIERS)))
+        NUM_MULTIPLIERS     : integer := 20;  -- Number of parallel multipliers
+        TDEST_WIDTH         : integer := 5;   -- TDEST width (ceil(log2(NUM_MULTIPLIERS)))
+        NUM_PRODUCERS       : integer := 5;   -- Number of producers (output ports)
+        PRODUCER_ID_WIDTH   : integer := 3    -- Producer ID width (ceil(log2(NUM_PRODUCERS)))
     );
     port (
         -- Clock and reset
@@ -25,11 +28,12 @@ entity top_module is
         input_tvalid : in  std_logic;
         input_tready : out std_logic;
         
-        -- Output interface (external result read - 32-bit FP32 result)
-        output_tdata  : out std_logic_vector(31 downto 0);
-        output_tid   : out std_logic_vector(15 downto 0);
-        output_tvalid : out std_logic;
-        output_tready : in  std_logic;
+        -- Output interfaces (per-producer results - 32-bit FP32 result)
+        -- Producer ID encoded in TID[15:13] (upper 3 bits for 5 producers)
+        output_tdata  : out std_logic_vector(NUM_PRODUCERS*32-1 downto 0);
+        output_tid    : out std_logic_vector(NUM_PRODUCERS*16-1 downto 0);
+        output_tvalid : out std_logic_vector(NUM_PRODUCERS-1 downto 0);
+        output_tready : in  std_logic_vector(NUM_PRODUCERS-1 downto 0);
         
         -- Status signals
         clk_locked         : out std_logic
@@ -85,7 +89,8 @@ architecture Behavioral of top_module is
             m_axis_tready   : in  std_logic;
             m_axis_tdata    : out std_logic_vector(63 downto 0);
             m_axis_tuser    : out std_logic_vector(TDEST_WIDTH-1 downto 0);
-            m_axis_tid      : out std_logic_vector(15 downto 0)
+            m_axis_tid      : out std_logic_vector(15 downto 0);
+            axis_data_count : out std_logic_vector(10 downto 0)
         );
     end component;
     
@@ -117,10 +122,13 @@ architecture Behavioral of top_module is
         port (
             aclk                : in  std_logic;
             s_axis_a_tvalid     : in  std_logic;
+            s_axis_a_tready     : out std_logic;
             s_axis_a_tdata      : in  std_logic_vector(31 downto 0);
             s_axis_b_tvalid     : in  std_logic;
+            s_axis_b_tready     : out std_logic;
             s_axis_b_tdata      : in  std_logic_vector(31 downto 0);
             m_axis_result_tvalid: out std_logic;
+            m_axis_result_tready: in  std_logic;
             m_axis_result_tdata : out std_logic_vector(31 downto 0)
         );
     end component;
@@ -160,21 +168,116 @@ architecture Behavioral of top_module is
         );
     end component;
     
-    -- AXI4-Stream Output FIFO component
-    component axis_output_fifo is
+    -- Output Demux component (routes results to producers based on TID)
+    component output_demux is
+        generic (
+            NUM_PRODUCERS     : integer := 5;
+            PRODUCER_ID_WIDTH : integer := 3;
+            TDATA_WIDTH       : integer := 32;
+            TID_WIDTH         : integer := 16
+        );
         port (
-            wr_rst_busy     : out std_logic;
-            rd_rst_busy     : out std_logic;
-            s_aclk          : in  std_logic;
-            s_aresetn       : in  std_logic;
-            s_axis_tvalid   : in  std_logic;
-            s_axis_tready   : out std_logic;
-            s_axis_tdata    : in  std_logic_vector(31 downto 0);
-            s_axis_tid      : in  std_logic_vector(15 downto 0);
-            m_axis_tvalid   : out std_logic;
-            m_axis_tready   : in  std_logic;
-            m_axis_tdata    : out std_logic_vector(31 downto 0);
-            m_axis_tid      : out std_logic_vector(15 downto 0)
+            aclk          : in  std_logic;
+            aresetn       : in  std_logic;
+            s_axis_tvalid : in  std_logic;
+            s_axis_tready : out std_logic;
+            s_axis_tdata  : in  std_logic_vector(TDATA_WIDTH-1 downto 0);
+            s_axis_tid    : in  std_logic_vector(TID_WIDTH-1 downto 0);
+            m_axis_tvalid : out std_logic_vector(NUM_PRODUCERS-1 downto 0);
+            m_axis_tready : in  std_logic_vector(NUM_PRODUCERS-1 downto 0);
+            m_axis_tdata  : out std_logic_vector(NUM_PRODUCERS*TDATA_WIDTH-1 downto 0);
+            m_axis_tid    : out std_logic_vector(NUM_PRODUCERS*TID_WIDTH-1 downto 0)
+        );
+    end component;
+    
+    -- Per-producer output FIFO component declarations
+    component axis_output_fifo_0 is
+        port (
+            wr_rst_busy   : out std_logic;
+            rd_rst_busy   : out std_logic;
+            s_aclk        : in  std_logic;
+            s_aresetn     : in  std_logic;
+            s_axis_tvalid : in  std_logic;
+            s_axis_tready : out std_logic;
+            s_axis_tdata  : in  std_logic_vector(31 downto 0);
+            s_axis_tid    : in  std_logic_vector(15 downto 0);
+            m_axis_tvalid : out std_logic;
+            m_axis_tready : in  std_logic;
+            m_axis_tdata  : out std_logic_vector(31 downto 0);
+            m_axis_tid    : out std_logic_vector(15 downto 0);
+            axis_data_count : out std_logic_vector(10 downto 0)
+        );
+    end component;
+    
+    component axis_output_fifo_1 is
+        port (
+            wr_rst_busy   : out std_logic;
+            rd_rst_busy   : out std_logic;
+            s_aclk        : in  std_logic;
+            s_aresetn     : in  std_logic;
+            s_axis_tvalid : in  std_logic;
+            s_axis_tready : out std_logic;
+            s_axis_tdata  : in  std_logic_vector(31 downto 0);
+            s_axis_tid    : in  std_logic_vector(15 downto 0);
+            m_axis_tvalid : out std_logic;
+            m_axis_tready : in  std_logic;
+            m_axis_tdata  : out std_logic_vector(31 downto 0);
+            m_axis_tid    : out std_logic_vector(15 downto 0);
+            axis_data_count : out std_logic_vector(10 downto 0)
+        );
+    end component;
+    
+    component axis_output_fifo_2 is
+        port (
+            wr_rst_busy   : out std_logic;
+            rd_rst_busy   : out std_logic;
+            s_aclk        : in  std_logic;
+            s_aresetn     : in  std_logic;
+            s_axis_tvalid : in  std_logic;
+            s_axis_tready : out std_logic;
+            s_axis_tdata  : in  std_logic_vector(31 downto 0);
+            s_axis_tid    : in  std_logic_vector(15 downto 0);
+            m_axis_tvalid : out std_logic;
+            m_axis_tready : in  std_logic;
+            m_axis_tdata  : out std_logic_vector(31 downto 0);
+            m_axis_tid    : out std_logic_vector(15 downto 0);
+            axis_data_count : out std_logic_vector(10 downto 0)
+        );
+    end component;
+    
+    component axis_output_fifo_3 is
+        port (
+            wr_rst_busy   : out std_logic;
+            rd_rst_busy   : out std_logic;
+            s_aclk        : in  std_logic;
+            s_aresetn     : in  std_logic;
+            s_axis_tvalid : in  std_logic;
+            s_axis_tready : out std_logic;
+            s_axis_tdata  : in  std_logic_vector(31 downto 0);
+            s_axis_tid    : in  std_logic_vector(15 downto 0);
+            m_axis_tvalid : out std_logic;
+            m_axis_tready : in  std_logic;
+            m_axis_tdata  : out std_logic_vector(31 downto 0);
+            m_axis_tid    : out std_logic_vector(15 downto 0);
+            axis_data_count : out std_logic_vector(10 downto 0)
+        );
+    end component;
+    
+    component axis_output_fifo_4 is
+        port (
+            wr_rst_busy   : out std_logic;
+            rd_rst_busy   : out std_logic;
+            s_aclk        : in  std_logic;
+            s_aresetn     : in  std_logic;
+            s_axis_tvalid : in  std_logic;
+            s_axis_tready : out std_logic;
+            s_axis_tdata  : in  std_logic_vector(31 downto 0);
+            s_axis_tid    : in  std_logic_vector(15 downto 0);
+            m_axis_tvalid : out std_logic;
+            m_axis_tready : in  std_logic;
+            m_axis_tdata  : out std_logic_vector(31 downto 0);
+            m_axis_tid    : out std_logic_vector(15 downto 0);
+            axis_data_count : out std_logic_vector(10 downto 0)
         );
     end component;
     
@@ -223,6 +326,20 @@ architecture Behavioral of top_module is
     signal combiner_s_tid    : std_logic_vector(NUM_MULTIPLIERS*16-1 downto 0);
     signal combiner_s_tvalid : std_logic_vector(NUM_MULTIPLIERS-1 downto 0);
     signal combiner_s_tready : std_logic_vector(NUM_MULTIPLIERS-1 downto 0);
+    
+    -- Output demux to per-producer FIFOs signals
+    signal demux_m_tvalid : std_logic_vector(NUM_PRODUCERS-1 downto 0);
+    signal demux_m_tready : std_logic_vector(NUM_PRODUCERS-1 downto 0);
+    signal demux_m_tdata  : std_logic_vector(NUM_PRODUCERS*32-1 downto 0);
+    signal demux_m_tid    : std_logic_vector(NUM_PRODUCERS*16-1 downto 0);
+    
+    -- FIFO data count signals (for debug/monitoring)
+    signal input_fifo_count    : std_logic_vector(10 downto 0);
+    signal output_fifo_0_count : std_logic_vector(10 downto 0);
+    signal output_fifo_1_count : std_logic_vector(10 downto 0);
+    signal output_fifo_2_count : std_logic_vector(10 downto 0);
+    signal output_fifo_3_count : std_logic_vector(10 downto 0);
+    signal output_fifo_4_count : std_logic_vector(10 downto 0);
     
 begin
     
@@ -274,7 +391,8 @@ begin
             m_axis_tready   => fifo_in_tready,
             m_axis_tdata    => fifo_in_tdata,
             m_axis_tuser    => fifo_in_tuser,
-            m_axis_tid      => fifo_in_tid
+            m_axis_tid      => fifo_in_tid,
+            axis_data_count => input_fifo_count
         );
     
     -- AXI4-Stream Interconnect Wrapper (parameterizable 1-to-N routing)
@@ -306,10 +424,13 @@ begin
             port map (
                 aclk                 => clk_200,
                 s_axis_a_tvalid      => intercon_m_tvalid(i),
+                s_axis_a_tready      => intercon_m_tready(i),
                 s_axis_a_tdata       => intercon_m_tdata(i*64+31 downto i*64),      -- operand_a (lower 32 bits)
                 s_axis_b_tvalid      => intercon_m_tvalid(i),
+                s_axis_b_tready      => open,  -- Both channels synchronized, only monitor a_tready
                 s_axis_b_tdata       => intercon_m_tdata(i*64+63 downto i*64+32),   -- operand_b (upper 32 bits)
                 m_axis_result_tvalid => mult_result_tvalid(i),
+                m_axis_result_tready => mult_result_tready(i),
                 m_axis_result_tdata  => mult_result_tdata((i+1)*32-1 downto i*32)
             );
         
@@ -325,11 +446,8 @@ begin
                 s_tid    => intercon_m_tid((i+1)*16-1 downto i*16),
                 s_tvalid => intercon_m_tvalid(i),
                 m_tid    => tid_pipe_m_tid((i+1)*16-1 downto i*16),
-                m_tvalid => tid_pipe_m_tvalid(i)
+            m_tvalid => tid_pipe_m_tvalid(i)
             );
-        
-        -- Multipliers always ready (NonBlocking mode)
-        intercon_m_tready(i) <= '1';
     end generate;
     
     -- Concatenate multiplier results and TIDs for result_collector
@@ -358,21 +476,111 @@ begin
             m_tid    => combiner_tid
         );
     
-    -- Output FIFO (buffers results and TIDs)
-    output_fifo_inst : axis_output_fifo
+    -- Output Demux (routes results to correct producer based on TID upper bits)
+    demux_inst : output_demux
+        generic map (
+            NUM_PRODUCERS     => NUM_PRODUCERS,
+            PRODUCER_ID_WIDTH => PRODUCER_ID_WIDTH,
+            TDATA_WIDTH       => 32,
+            TID_WIDTH         => 16
+        )
         port map (
-            wr_rst_busy     => open,
-            rd_rst_busy     => open,
-            s_aclk          => clk_200,
-            s_aresetn       => aresetn,
-            s_axis_tvalid   => combiner_tvalid,
-            s_axis_tready   => combiner_tready,
-            s_axis_tdata    => combiner_tdata,
-            s_axis_tid      => combiner_tid,
-            m_axis_tvalid   => output_tvalid,
-            m_axis_tready   => output_tready,
-            m_axis_tdata    => output_tdata,
-            m_axis_tid      => output_tid
+            aclk          => clk_200,
+            aresetn       => aresetn,
+            s_axis_tvalid => combiner_tvalid,
+            s_axis_tready => combiner_tready,
+            s_axis_tdata  => combiner_tdata,
+            s_axis_tid    => combiner_tid,
+            m_axis_tvalid => demux_m_tvalid,
+            m_axis_tready => demux_m_tready,
+            m_axis_tdata  => demux_m_tdata,
+            m_axis_tid    => demux_m_tid
+        );
+    
+    -- Instantiate all 5 output FIFOs
+    output_fifo_0_inst : axis_output_fifo_0
+        port map (
+            wr_rst_busy   => open,
+            rd_rst_busy   => open,
+            s_aclk        => clk_200,
+            s_aresetn     => aresetn,
+            s_axis_tvalid => demux_m_tvalid(0),
+            s_axis_tready => demux_m_tready(0),
+            s_axis_tdata => demux_m_tdata(31 downto 0),
+            s_axis_tid => demux_m_tid(15 downto 0),
+            m_axis_tvalid => output_tvalid(0),
+            m_axis_tready => output_tready(0),
+            m_axis_tdata => output_tdata(31 downto 0),
+            m_axis_tid => output_tid(15 downto 0),
+            axis_data_count => output_fifo_0_count
+        );
+    
+    output_fifo_1_inst : axis_output_fifo_1
+        port map (
+            wr_rst_busy   => open,
+            rd_rst_busy   => open,
+            s_aclk        => clk_200,
+            s_aresetn     => aresetn,
+            s_axis_tvalid => demux_m_tvalid(1),
+            s_axis_tready => demux_m_tready(1),
+            s_axis_tdata => demux_m_tdata(63 downto 32),
+            s_axis_tid => demux_m_tid(31 downto 16),
+            m_axis_tvalid => output_tvalid(1),
+            m_axis_tready => output_tready(1),
+            m_axis_tdata => output_tdata(63 downto 32),
+            m_axis_tid => output_tid(31 downto 16),
+            axis_data_count => output_fifo_1_count
+        );
+    
+    output_fifo_2_inst : axis_output_fifo_2
+        port map (
+            wr_rst_busy   => open,
+            rd_rst_busy   => open,
+            s_aclk        => clk_200,
+            s_aresetn     => aresetn,
+            s_axis_tvalid => demux_m_tvalid(2),
+            s_axis_tready => demux_m_tready(2),
+            s_axis_tdata => demux_m_tdata(95 downto 64),
+            s_axis_tid => demux_m_tid(47 downto 32),
+            m_axis_tvalid => output_tvalid(2),
+            m_axis_tready => output_tready(2),
+            m_axis_tdata => output_tdata(95 downto 64),
+            m_axis_tid => output_tid(47 downto 32),
+            axis_data_count => output_fifo_2_count
+        );
+    
+    output_fifo_3_inst : axis_output_fifo_3
+        port map (
+            wr_rst_busy   => open,
+            rd_rst_busy   => open,
+            s_aclk        => clk_200,
+            s_aresetn     => aresetn,
+            s_axis_tvalid => demux_m_tvalid(3),
+            s_axis_tready => demux_m_tready(3),
+            s_axis_tdata => demux_m_tdata(127 downto 96),
+            s_axis_tid => demux_m_tid(63 downto 48),
+            m_axis_tvalid => output_tvalid(3),
+            m_axis_tready => output_tready(3),
+            m_axis_tdata => output_tdata(127 downto 96),
+            m_axis_tid => output_tid(63 downto 48),
+            axis_data_count => output_fifo_3_count
+        );
+    
+    output_fifo_4_inst : axis_output_fifo_4
+        port map (
+            wr_rst_busy   => open,
+            rd_rst_busy   => open,
+            s_aclk        => clk_200,
+            s_aresetn     => aresetn,
+            s_axis_tvalid => demux_m_tvalid(4),
+            s_axis_tready => demux_m_tready(4),
+            s_axis_tdata => demux_m_tdata(159 downto 128),
+            s_axis_tid => demux_m_tid(79 downto 64),
+            m_axis_tvalid => output_tvalid(4),
+            m_axis_tready => output_tready(4),
+            m_axis_tdata => output_tdata(159 downto 128),
+            m_axis_tid => output_tid(79 downto 64),
+            axis_data_count => output_fifo_4_count
         );
     
 end Behavioral;

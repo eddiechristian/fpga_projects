@@ -13,6 +13,9 @@ set part_number "xc7a200tsbg484-1"
 # Configurable number of multipliers (4, 8, 10, 16, etc.)
 set NUM_MULTIPLIERS 20
 
+# Configurable number of producers (output routing destinations)
+set NUM_PRODUCERS 5
+
 # Calculate TDEST width based on number of multipliers
 # Need ceiling of log2(NUM_MULTIPLIERS) to address all multipliers
 set TDEST_WIDTH [expr {int(ceil(log($NUM_MULTIPLIERS)/log(2.0)))}]
@@ -22,9 +25,18 @@ if {$TDEST_WIDTH < 1} {
 # For exactly power-of-2, we still need that many bits
 # e.g., 8 multipliers need 3 bits (0-7), not 4
 
+# Calculate PRODUCER_ID_WIDTH based on number of producers
+# Producer ID is encoded in upper TID bits
+set PRODUCER_ID_WIDTH [expr {int(ceil(log($NUM_PRODUCERS)/log(2.0)))}]
+if {$PRODUCER_ID_WIDTH < 1} {
+    set PRODUCER_ID_WIDTH 1
+}
+
 puts "Configuration:"
 puts "  Number of multipliers: $NUM_MULTIPLIERS"
 puts "  TDEST width: $TDEST_WIDTH bits"
+puts "  Number of producers: $NUM_PRODUCERS"
+puts "  Producer ID width: $PRODUCER_ID_WIDTH bits"
 
 # Clean build directory if it exists
 if {[file exists $project_dir]} {
@@ -72,9 +84,9 @@ set_property -dict [list \
     CONFIG.C_Latency {8} \
     CONFIG.C_Mult_Usage {Full_Usage} \
     CONFIG.C_Rate {1} \
-    CONFIG.Flow_Control {NonBlocking} \
+    CONFIG.Flow_Control {Blocking} \
     CONFIG.Maximum_Latency {false} \
-    CONFIG.Has_RESULT_TREADY {false} \
+    CONFIG.Has_RESULT_TREADY {true} \
 ] [get_ips floating_point_mult]
 
 
@@ -88,16 +100,16 @@ set_property -dict [list \
     CONFIG.Fifo_Implementation {Common_Clock_Block_RAM} \
     CONFIG.Performance_Options {First_Word_Fall_Through} \
     CONFIG.Input_Data_Width {32} \
-    CONFIG.Input_Depth {1024} \
+    CONFIG.Input_Depth {64} \
     CONFIG.Output_Data_Width {32} \
-    CONFIG.Output_Depth {1024} \
+    CONFIG.Output_Depth {64} \
     CONFIG.Reset_Type {Asynchronous_Reset} \
     CONFIG.Full_Flags_Reset_Value {1} \
     CONFIG.Use_Extra_Logic {true} \
     CONFIG.Data_Count {true} \
-    CONFIG.Data_Count_Width {10} \
-    CONFIG.Write_Data_Count_Width {10} \
-    CONFIG.Read_Data_Count_Width {10} \
+    CONFIG.Data_Count_Width {7} \
+    CONFIG.Write_Data_Count_Width {7} \
+    CONFIG.Read_Data_Count_Width {7} \
     CONFIG.INTERFACE_TYPE {AXI_STREAM} \
     CONFIG.TDATA_NUM_BYTES {8} \
     CONFIG.TUSER_WIDTH $TDEST_WIDTH \
@@ -105,33 +117,39 @@ set_property -dict [list \
     CONFIG.Enable_TLAST {false} \
     CONFIG.HAS_TKEEP {false} \
     CONFIG.HAS_TSTRB {false} \
+    CONFIG.Enable_Data_Counts_axis {true} \
 ] [get_ips axis_input_fifo]
 
-# Create Output FIFO with AXI4-Stream interface
+# Create Output FIFOs with AXI4-Stream interface (one per producer)
 # TDATA width = 32 bits (FP32 result)
-create_ip -name fifo_generator -vendor xilinx.com -library ip -version 13.2 -module_name axis_output_fifo -dir $ip_dir
-set_property -dict [list \
-    CONFIG.Fifo_Implementation {Common_Clock_Block_RAM} \
-    CONFIG.Performance_Options {First_Word_Fall_Through} \
-    CONFIG.Input_Data_Width {32} \
-    CONFIG.Input_Depth {1024} \
-    CONFIG.Output_Data_Width {32} \
-    CONFIG.Output_Depth {1024} \
-    CONFIG.Reset_Type {Asynchronous_Reset} \
-    CONFIG.Full_Flags_Reset_Value {1} \
-    CONFIG.Use_Extra_Logic {true} \
-    CONFIG.Data_Count {true} \
-    CONFIG.Data_Count_Width {10} \
-    CONFIG.Write_Data_Count_Width {10} \
-    CONFIG.Read_Data_Count_Width {10} \
-    CONFIG.INTERFACE_TYPE {AXI_STREAM} \
-    CONFIG.TDATA_NUM_BYTES {4} \
-    CONFIG.TUSER_WIDTH {0} \
-    CONFIG.TID_WIDTH {16} \
-    CONFIG.Enable_TLAST {false} \
-    CONFIG.HAS_TKEEP {false} \
-    CONFIG.HAS_TSTRB {false} \
-] [get_ips axis_output_fifo]
+puts "Creating $NUM_PRODUCERS output FIFOs (one per producer)..."
+for {set i 0} {$i < $NUM_PRODUCERS} {incr i} {
+    puts "  Creating output FIFO $i..."
+    create_ip -name fifo_generator -vendor xilinx.com -library ip -version 13.2 -module_name axis_output_fifo_$i -dir $ip_dir
+    set_property -dict [list \
+        CONFIG.Fifo_Implementation {Common_Clock_Block_RAM} \
+        CONFIG.Performance_Options {First_Word_Fall_Through} \
+        CONFIG.Input_Data_Width {32} \
+        CONFIG.Input_Depth {64} \
+        CONFIG.Output_Data_Width {32} \
+        CONFIG.Output_Depth {64} \
+        CONFIG.Reset_Type {Asynchronous_Reset} \
+        CONFIG.Full_Flags_Reset_Value {1} \
+        CONFIG.Use_Extra_Logic {true} \
+        CONFIG.Data_Count {true} \
+        CONFIG.Data_Count_Width {7} \
+        CONFIG.Write_Data_Count_Width {7} \
+        CONFIG.Read_Data_Count_Width {7} \
+        CONFIG.INTERFACE_TYPE {AXI_STREAM} \
+        CONFIG.TDATA_NUM_BYTES {4} \
+        CONFIG.TUSER_WIDTH {0} \
+        CONFIG.TID_WIDTH {16} \
+        CONFIG.Enable_TLAST {false} \
+        CONFIG.HAS_TKEEP {false} \
+        CONFIG.HAS_TSTRB {false} \
+        CONFIG.Enable_Data_Counts_axis {true} \
+    ] [get_ips axis_output_fifo_$i]
+}
 
 # NOTE: Xilinx axis_interconnect IP is no longer used
 # Using custom VHDL axis_interconnect_wrapper instead for full parameterizability
