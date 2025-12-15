@@ -5,6 +5,10 @@
 # Project settings
 set project_name "resource_test"
 set project_dir "./build"
+set log_dir "./logs"
+
+# Create logs directory if it doesn't exist
+file mkdir $log_dir
 
 # Change this to your target FPGA part
 set part_number "xc7a200tsbg484-1"

@@ -3,10 +3,10 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 use IEEE.MATH_REAL.ALL;
 
-entity pipeline_hw_tb is
-end pipeline_hw_tb;
+entity pipeline_concurrent_tb is
+end pipeline_concurrent_tb;
 
-architecture Behavioral of pipeline_hw_tb is
+architecture Behavioral of pipeline_concurrent_tb is
 
     -- Constants
     constant CLK_PERIOD : time := 10 ns;
@@ -15,7 +15,10 @@ architecture Behavioral of pipeline_hw_tb is
     constant NUM_ADD_UNITS : integer := 3;
     constant NUM_PRODUCERS : integer := 5;
     
-    constant NUM_OPS_PER_TYPE : integer := 10;  -- 10 mult, 10 FMA, 10 add, 10 sub
+    constant NUM_OPS_PER_PRODUCER : integer := 20;  -- Each producer submits 20 ops
+    constant PRODUCER_A_ID : integer := 0;
+    constant PRODUCER_B_ID : integer := 1;
+    constant PRODUCER_C_ID : integer := 2;
     
     -- Component declaration
     component pipeline_hw is
@@ -74,7 +77,7 @@ architecture Behavioral of pipeline_hw_tb is
     signal output_rd_valid : std_logic_vector(NUM_PRODUCERS-1 downto 0);
     signal output_rd_ready : std_logic_vector(NUM_PRODUCERS-1 downto 0) := (others => '1');
     
-    -- Debug signals: slices of output vectors for easier waveform viewing
+    -- Debug signals for waveform viewing
     signal prod0_result : std_logic_vector(31 downto 0);
     signal prod0_tid    : std_logic_vector(15 downto 0);
     signal prod1_result : std_logic_vector(31 downto 0);
@@ -87,7 +90,6 @@ architecture Behavioral of pipeline_hw_tb is
     signal prod4_tid    : std_logic_vector(15 downto 0);
     
     -- Debug signals: input operands for each producer
-    -- Producer 0 uses all operations, so we track the active operation
     signal prod0_wr_a_val    : std_logic_vector(31 downto 0) := (others => '0');
     signal prod0_wr_b_val    : std_logic_vector(31 downto 0) := (others => '0');
     signal prod0_wr_c_val    : std_logic_vector(31 downto 0) := (others => '0');
@@ -106,17 +108,10 @@ architecture Behavioral of pipeline_hw_tb is
     signal prod2_wr_tid      : std_logic_vector(15 downto 0) := (others => '0');
     signal prod2_wr_valid    : std_logic := '0';
     
-    signal prod3_wr_a_val    : std_logic_vector(31 downto 0) := (others => '0');
-    signal prod3_wr_b_val    : std_logic_vector(31 downto 0) := (others => '0');
-    signal prod3_wr_c_val    : std_logic_vector(31 downto 0) := (others => '0');
-    signal prod3_wr_tid      : std_logic_vector(15 downto 0) := (others => '0');
-    signal prod3_wr_valid    : std_logic := '0';
-    
-    signal prod4_wr_a_val    : std_logic_vector(31 downto 0) := (others => '0');
-    signal prod4_wr_b_val    : std_logic_vector(31 downto 0) := (others => '0');
-    signal prod4_wr_c_val    : std_logic_vector(31 downto 0) := (others => '0');
-    signal prod4_wr_tid      : std_logic_vector(15 downto 0) := (others => '0');
-    signal prod4_wr_valid    : std_logic := '0';
+    -- Debug signals for monitoring output valid states
+    signal debug_prod0_rd_valid : std_logic;
+    signal debug_prod1_rd_valid : std_logic;
+    signal debug_prod2_rd_valid : std_logic;
     
     -- Helper functions
     function to_fp32(val : real) return std_logic_vector is
@@ -169,12 +164,9 @@ architecture Behavioral of pipeline_hw_tb is
         return result;
     end function;
     
-    -- Counter for round-robin unit selection
-    shared variable mult_unit_idx : integer := 0;
-    shared variable fma_unit_idx : integer := 0;
-    shared variable add_unit_idx : integer := 0;
-    shared variable sub_unit_idx : integer := 0;
-    
+    signal producer_a_done : boolean := false;
+    signal producer_b_done : boolean := false;
+    signal producer_c_done : boolean := false;
     signal sim_done : boolean := false;
 
 begin
@@ -182,7 +174,7 @@ begin
     -- Clock generation
     clk_in <= not clk_in after CLK_PERIOD / 2 when not sim_done else '0';
     
-    -- Debug signal assignments (slice the big vectors for waveform viewing)
+    -- Debug signal assignments for waveform viewing
     prod0_result <= output_rd_data(31 downto 0);
     prod0_tid    <= output_rd_tid(15 downto 0);
     prod1_result <= output_rd_data(63 downto 32);
@@ -193,6 +185,11 @@ begin
     prod3_tid    <= output_rd_tid(63 downto 48);
     prod4_result <= output_rd_data(159 downto 128);
     prod4_tid    <= output_rd_tid(79 downto 64);
+    
+    -- Debug valid signal assignments
+    debug_prod0_rd_valid <= output_rd_valid(0);
+    debug_prod1_rd_valid <= output_rd_valid(1);
+    debug_prod2_rd_valid <= output_rd_valid(2);
     
     -- DUT instantiation
     dut : pipeline_hw
@@ -225,39 +222,34 @@ begin
             clk_locked      => clk_locked
         );
     
-    -- Stimulus process
-    stimulus : process
-        variable seed1, seed2 : integer := 42;
+    -- Producer A: Submits MULT operations
+    producer_a : process
+        variable seed1, seed2 : integer := 100;
         variable rand : real;
-        variable a_val, b_val, c_val : real;
-        variable a_fp, b_fp, c_fp : std_logic_vector(31 downto 0);
+        variable a_val, b_val : real;
+        variable a_fp, b_fp : std_logic_vector(31 downto 0);
         variable tid_val : std_logic_vector(15 downto 0);
-        variable producer_id : integer;
-        variable op_count : integer := 0;
+        variable mult_unit_idx : integer := 0;
     begin
-        -- Reset
-        reset <= '1';
-        wait for 100 ns;
-        reset <= '0';
-        wait until clk_locked = '1';
+        -- Wait for reset
+        wait until reset = '0' and clk_locked = '1';
         wait for 20 ns;
         
-        report "Starting stimulus...";
+        report "Producer A starting (MULT operations)...";
         
-        -- Generate multiply operations (round-robin across mult units)
-        for i in 0 to NUM_OPS_PER_TYPE-1 loop
+        -- Generate MULT operations
+        for i in 0 to NUM_OPS_PER_PRODUCER-1 loop
             uniform(seed1, seed2, rand);
-            a_val := rand * 4.0;
+            a_val := rand * 10.0;
             uniform(seed1, seed2, rand);
-            b_val := rand * 4.0;
+            b_val := rand * 10.0;
             
             a_fp := to_fp32(a_val);
             b_fp := to_fp32(b_val);
             
-            producer_id := i mod NUM_PRODUCERS;
-            tid_val := std_logic_vector(to_unsigned(producer_id * 8192 + i, 16));
+            -- TID format: ProducerID (bits 15:13) + operation index (bits 12:0)
+            tid_val := std_logic_vector(to_unsigned(PRODUCER_A_ID * 8192 + i, 16));
             
-            -- Target next mult unit (round-robin)
             wait until rising_edge(clk_in);
             mult_wr_data((mult_unit_idx+1)*64-1 downto mult_unit_idx*64) <= b_fp & a_fp;
             mult_wr_tid((mult_unit_idx+1)*16-1 downto mult_unit_idx*16) <= tid_val;
@@ -266,30 +258,49 @@ begin
             wait until rising_edge(clk_in) and mult_wr_ready(mult_unit_idx) = '1';
             mult_wr_valid(mult_unit_idx) <= '0';
             
-            report "[INPUT] Op=MULT Unit=" & integer'image(mult_unit_idx) & 
-                   " TID=" & integer'image(to_integer(unsigned(tid_val))) &
-                   " Prod=" & integer'image(producer_id) &
-                   " A=" & real'image(a_val) & " B=" & real'image(b_val);
-            
             mult_unit_idx := (mult_unit_idx + 1) mod NUM_MULT_UNITS;
-            op_count := op_count + 1;
+            
+            report "[Producer A] MULT #" & integer'image(i) & 
+                   " TID=" & integer'image(to_integer(unsigned(tid_val))) &
+                   " A=" & real'image(a_val) & " B=" & real'image(b_val) &
+                   " Expected=" & real'image(a_val * b_val);
         end loop;
         
+        report "Producer A finished all operations";
+        producer_a_done <= true;
+        wait;
+    end process;
+    
+    -- Producer B: Submits FMA operations
+    producer_b : process
+        variable seed1, seed2 : integer := 200;
+        variable rand : real;
+        variable a_val, b_val, c_val : real;
+        variable a_fp, b_fp, c_fp : std_logic_vector(31 downto 0);
+        variable tid_val : std_logic_vector(15 downto 0);
+        variable fma_unit_idx : integer := 0;
+    begin
+        -- Wait for reset
+        wait until reset = '0' and clk_locked = '1';
+        wait for 20 ns;
+        
+        report "Producer B starting (FMA operations)...";
+        
         -- Generate FMA operations
-        for i in 0 to NUM_OPS_PER_TYPE-1 loop
+        for i in 0 to NUM_OPS_PER_PRODUCER-1 loop
             uniform(seed1, seed2, rand);
-            a_val := rand * 4.0;
+            a_val := rand * 5.0;
             uniform(seed1, seed2, rand);
-            b_val := rand * 4.0;
+            b_val := rand * 5.0;
             uniform(seed1, seed2, rand);
-            c_val := rand * 4.0;
+            c_val := rand * 5.0;
             
             a_fp := to_fp32(a_val);
             b_fp := to_fp32(b_val);
             c_fp := to_fp32(c_val);
             
-            producer_id := i mod NUM_PRODUCERS;
-            tid_val := std_logic_vector(to_unsigned(producer_id * 8192 + NUM_OPS_PER_TYPE + i, 16));
+            -- TID format: ProducerID (bits 15:13) + operation index (bits 12:0)
+            tid_val := std_logic_vector(to_unsigned(PRODUCER_B_ID * 8192 + i, 16));
             
             wait until rising_edge(clk_in);
             fma_wr_data((fma_unit_idx+1)*96-1 downto fma_unit_idx*96) <= c_fp & b_fp & a_fp;
@@ -299,129 +310,292 @@ begin
             wait until rising_edge(clk_in) and fma_wr_ready(fma_unit_idx) = '1';
             fma_wr_valid(fma_unit_idx) <= '0';
             
-            report "[INPUT] Op=FMA Unit=" & integer'image(fma_unit_idx) & 
-                   " TID=" & integer'image(to_integer(unsigned(tid_val))) &
-                   " Prod=" & integer'image(producer_id) &
-                   " A=" & real'image(a_val) & " B=" & real'image(b_val) & " C=" & real'image(c_val);
-            
             fma_unit_idx := (fma_unit_idx + 1) mod NUM_FMA_UNITS;
-            op_count := op_count + 1;
-        end loop;
-        
-        -- Generate ADD operations
-        for i in 0 to NUM_OPS_PER_TYPE-1 loop
-            uniform(seed1, seed2, rand);
-            a_val := rand * 4.0;
-            uniform(seed1, seed2, rand);
-            b_val := rand * 4.0;
             
-            a_fp := to_fp32(a_val);
-            b_fp := to_fp32(b_val);
-            
-            producer_id := i mod NUM_PRODUCERS;
-            tid_val := std_logic_vector(to_unsigned(producer_id * 8192 + 2*NUM_OPS_PER_TYPE + i, 16));
-            
-            wait until rising_edge(clk_in);
-            addsub_wr_data((add_unit_idx+1)*65-1 downto add_unit_idx*65) <= '0' & b_fp & a_fp;  -- op=0 (add)
-            addsub_wr_tid((add_unit_idx+1)*16-1 downto add_unit_idx*16) <= tid_val;
-            addsub_wr_valid(add_unit_idx) <= '1';
-            
-            wait until rising_edge(clk_in) and addsub_wr_ready(add_unit_idx) = '1';
-            addsub_wr_valid(add_unit_idx) <= '0';
-            
-            report "[INPUT] Op=ADD Unit=" & integer'image(add_unit_idx) & 
+            report "[Producer B] FMA #" & integer'image(i) & 
                    " TID=" & integer'image(to_integer(unsigned(tid_val))) &
-                   " Prod=" & integer'image(producer_id) &
-                   " A=" & real'image(a_val) & " B=" & real'image(b_val);
-            
-            add_unit_idx := (add_unit_idx + 1) mod NUM_ADD_UNITS;
-            op_count := op_count + 1;
+                   " A=" & real'image(a_val) & " B=" & real'image(b_val) & " C=" & real'image(c_val) &
+                   " Expected=" & real'image(a_val * b_val + c_val);
         end loop;
         
-        -- Generate SUB operations
-        for i in 0 to NUM_OPS_PER_TYPE-1 loop
-            uniform(seed1, seed2, rand);
-            a_val := rand * 4.0;
-            uniform(seed1, seed2, rand);
-            b_val := rand * 4.0;
-            
-            a_fp := to_fp32(a_val);
-            b_fp := to_fp32(b_val);
-            
-            producer_id := i mod NUM_PRODUCERS;
-            tid_val := std_logic_vector(to_unsigned(producer_id * 8192 + 3*NUM_OPS_PER_TYPE + i, 16));
-            
-            wait until rising_edge(clk_in);
-            addsub_wr_data((sub_unit_idx+1)*65-1 downto sub_unit_idx*65) <= '1' & b_fp & a_fp;  -- op=1 (sub)
-            addsub_wr_tid((sub_unit_idx+1)*16-1 downto sub_unit_idx*16) <= tid_val;
-            addsub_wr_valid(sub_unit_idx) <= '1';
-            
-            wait until rising_edge(clk_in) and addsub_wr_ready(sub_unit_idx) = '1';
-            addsub_wr_valid(sub_unit_idx) <= '0';
-            
-            report "[INPUT] Op=SUB Unit=" & integer'image(sub_unit_idx) & 
-                   " TID=" & integer'image(to_integer(unsigned(tid_val))) &
-                   " Prod=" & integer'image(producer_id) &
-                   " A=" & real'image(a_val) & " B=" & real'image(b_val);
-            
-            sub_unit_idx := (sub_unit_idx + 1) mod NUM_ADD_UNITS;
-            op_count := op_count + 1;
-        end loop;
-        
-        report "All " & integer'image(op_count) & " operations sent";
+        report "Producer B finished all operations";
+        producer_b_done <= true;
         wait;
     end process;
     
-    -- Output collection process
-    output_collection : process
-        variable output_count : integer := 0;
-        variable expected_total : integer := NUM_OPS_PER_TYPE * 4;  -- mult, FMA, add, sub
-        variable result_val : real;
-        variable tid_val : integer;
-        variable producer_id : integer;
+    -- Producer C: Submits mixed MULT and FMA operations
+    producer_c : process
+        variable seed1, seed2 : integer := 300;
+        variable rand : real;
+        variable a_val, b_val, c_val : real;
+        variable a_fp, b_fp, c_fp : std_logic_vector(31 downto 0);
+        variable tid_val : std_logic_vector(15 downto 0);
+        variable use_mult : boolean;
+        variable mult_unit_idx : integer := 0;
+        variable fma_unit_idx : integer := 0;
     begin
+        -- Wait for reset
         wait until reset = '0' and clk_locked = '1';
+        wait for 20 ns;
         
-        -- Always ready to accept outputs
-        output_rd_ready <= (others => '1');
+        report "Producer C starting (mixed MULT/FMA operations)...";
         
-        while output_count < expected_total loop
-            wait until rising_edge(clk_in);
+        -- Generate mixed operations
+        for i in 0 to NUM_OPS_PER_PRODUCER-1 loop
+            -- Alternate between MULT and FMA
+            use_mult := (i mod 2) = 0;
             
-            for prod in 0 to NUM_PRODUCERS-1 loop
-                if output_rd_valid(prod) = '1' and output_rd_ready(prod) = '1' then
-                    result_val := from_fp32(output_rd_data((prod+1)*32-1 downto prod*32));
-                    tid_val := to_integer(unsigned(output_rd_tid((prod+1)*16-1 downto prod*16)));
-                    producer_id := tid_val / 8192;
-                    
-                    report "[OUTPUT] Prod=" & integer'image(prod) &
-                           " TID=" & integer'image(tid_val) &
-                           " Result=" & real'image(result_val);
-                    
-                    output_count := output_count + 1;
-                end if;
-            end loop;
+            uniform(seed1, seed2, rand);
+            a_val := rand * 8.0;
+            uniform(seed1, seed2, rand);
+            b_val := rand * 8.0;
+            
+            a_fp := to_fp32(a_val);
+            b_fp := to_fp32(b_val);
+            
+            -- TID format: ProducerID (bits 15:13) + operation index (bits 12:0)
+            tid_val := std_logic_vector(to_unsigned(PRODUCER_C_ID * 8192 + i, 16));
+            
+            if use_mult then
+                -- Submit MULT operation
+                wait until rising_edge(clk_in);
+                mult_wr_data((mult_unit_idx+1)*64-1 downto mult_unit_idx*64) <= b_fp & a_fp;
+                mult_wr_tid((mult_unit_idx+1)*16-1 downto mult_unit_idx*16) <= tid_val;
+                mult_wr_valid(mult_unit_idx) <= '1';
+                
+                wait until rising_edge(clk_in) and mult_wr_ready(mult_unit_idx) = '1';
+                mult_wr_valid(mult_unit_idx) <= '0';
+                
+                mult_unit_idx := (mult_unit_idx + 1) mod NUM_MULT_UNITS;
+                
+                report "[Producer C] MULT #" & integer'image(i) & 
+                       " TID=" & integer'image(to_integer(unsigned(tid_val))) &
+                       " A=" & real'image(a_val) & " B=" & real'image(b_val) &
+                       " Expected=" & real'image(a_val * b_val);
+            else
+                -- Submit FMA operation
+                uniform(seed1, seed2, rand);
+                c_val := rand * 8.0;
+                c_fp := to_fp32(c_val);
+                
+                wait until rising_edge(clk_in);
+                fma_wr_data((fma_unit_idx+1)*96-1 downto fma_unit_idx*96) <= c_fp & b_fp & a_fp;
+                fma_wr_tid((fma_unit_idx+1)*16-1 downto fma_unit_idx*16) <= tid_val;
+                fma_wr_valid(fma_unit_idx) <= '1';
+                
+                wait until rising_edge(clk_in) and fma_wr_ready(fma_unit_idx) = '1';
+                fma_wr_valid(fma_unit_idx) <= '0';
+                
+                fma_unit_idx := (fma_unit_idx + 1) mod NUM_FMA_UNITS;
+                
+                report "[Producer C] FMA #" & integer'image(i) & 
+                       " TID=" & integer'image(to_integer(unsigned(tid_val))) &
+                       " A=" & real'image(a_val) & " B=" & real'image(b_val) & " C=" & real'image(c_val) &
+                       " Expected=" & real'image(a_val * b_val + c_val);
+            end if;
         end loop;
         
-        report "Simulation complete: Collected " & integer'image(output_count) & " outputs";
+        report "Producer C finished all operations";
+        producer_c_done <= true;
+        wait;
+    end process;
+    
+    -- Consumer for Producer A results
+    consumer_a : process
+        variable count : integer := 0;
+        variable result_val : real;
+        variable tid_val : integer;
+        variable wait_cycles : integer := 0;
+    begin
+        wait until reset = '0' and clk_locked = '1';
+        report "[Consumer A] Started, waiting for results...";
+        
+        while count < NUM_OPS_PER_PRODUCER loop
+            wait until rising_edge(clk_in);
+            wait_cycles := wait_cycles + 1;
+            
+            if output_rd_valid(PRODUCER_A_ID) = '1' and output_rd_ready(PRODUCER_A_ID) = '1' then
+                result_val := from_fp32(output_rd_data((PRODUCER_A_ID+1)*32-1 downto PRODUCER_A_ID*32));
+                tid_val := to_integer(unsigned(output_rd_tid((PRODUCER_A_ID+1)*16-1 downto PRODUCER_A_ID*16)));
+                
+                report "[Producer A RESULT] TID=" & integer'image(tid_val) &
+                       " Result=" & real'image(result_val) &
+                       " (waited " & integer'image(wait_cycles) & " cycles)";
+                
+                count := count + 1;
+                wait_cycles := 0;
+            elsif wait_cycles mod 100 = 0 then
+                report "[Consumer A] Still waiting... (count=" & integer'image(count) &
+                       "/" & integer'image(NUM_OPS_PER_PRODUCER) &
+                       ", rd_valid=" & std_logic'image(output_rd_valid(PRODUCER_A_ID)) & ")";
+            end if;
+        end loop;
+        
+        report "Producer A: Collected all " & integer'image(count) & " results";
+        wait;
+    end process;
+    
+    -- Consumer for Producer B results
+    consumer_b : process
+        variable count : integer := 0;
+        variable result_val : real;
+        variable tid_val : integer;
+        variable wait_cycles : integer := 0;
+    begin
+        wait until reset = '0' and clk_locked = '1';
+        report "[Consumer B] Started, waiting for results...";
+        
+        while count < NUM_OPS_PER_PRODUCER loop
+            wait until rising_edge(clk_in);
+            wait_cycles := wait_cycles + 1;
+            
+            if output_rd_valid(PRODUCER_B_ID) = '1' and output_rd_ready(PRODUCER_B_ID) = '1' then
+                result_val := from_fp32(output_rd_data((PRODUCER_B_ID+1)*32-1 downto PRODUCER_B_ID*32));
+                tid_val := to_integer(unsigned(output_rd_tid((PRODUCER_B_ID+1)*16-1 downto PRODUCER_B_ID*16)));
+                
+                report "[Producer B RESULT] TID=" & integer'image(tid_val) &
+                       " Result=" & real'image(result_val) &
+                       " (waited " & integer'image(wait_cycles) & " cycles)";
+                
+                count := count + 1;
+                wait_cycles := 0;
+            elsif wait_cycles mod 100 = 0 then
+                report "[Consumer B] Still waiting... (count=" & integer'image(count) &
+                       "/" & integer'image(NUM_OPS_PER_PRODUCER) &
+                       ", rd_valid=" & std_logic'image(output_rd_valid(PRODUCER_B_ID)) & ")";
+            end if;
+        end loop;
+        
+        report "Producer B: Collected all " & integer'image(count) & " results";
+        wait;
+    end process;
+    
+    -- Consumer for Producer C results
+    consumer_c : process
+        variable count : integer := 0;
+        variable result_val : real;
+        variable tid_val : integer;
+        variable wait_cycles : integer := 0;
+    begin
+        wait until reset = '0' and clk_locked = '1';
+        report "[Consumer C] Started, waiting for results...";
+        
+        while count < NUM_OPS_PER_PRODUCER loop
+            wait until rising_edge(clk_in);
+            wait_cycles := wait_cycles + 1;
+            
+            if output_rd_valid(PRODUCER_C_ID) = '1' and output_rd_ready(PRODUCER_C_ID) = '1' then
+                result_val := from_fp32(output_rd_data((PRODUCER_C_ID+1)*32-1 downto PRODUCER_C_ID*32));
+                tid_val := to_integer(unsigned(output_rd_tid((PRODUCER_C_ID+1)*16-1 downto PRODUCER_C_ID*16)));
+                
+                report "[Producer C RESULT] TID=" & integer'image(tid_val) &
+                       " Result=" & real'image(result_val) &
+                       " (waited " & integer'image(wait_cycles) & " cycles)";
+                
+                count := count + 1;
+                wait_cycles := 0;
+            elsif wait_cycles mod 100 = 0 then
+                report "[Consumer C] Still waiting... (count=" & integer'image(count) &
+                       "/" & integer'image(NUM_OPS_PER_PRODUCER) &
+                       ", rd_valid=" & std_logic'image(output_rd_valid(PRODUCER_C_ID)) & ")";
+            end if;
+        end loop;
+        
+        report "Producer C: Collected all " & integer'image(count) & " results";
+        wait;
+    end process;
+    
+    -- Main control process
+    main_control : process
+    begin
+        -- Reset
+        reset <= '1';
+        wait for 100 ns;
+        reset <= '0';
+        report "========================================";
+        report "Starting concurrent producer test";
+        report "Producer A: " & integer'image(NUM_OPS_PER_PRODUCER) & " MULT operations";
+        report "Producer B: " & integer'image(NUM_OPS_PER_PRODUCER) & " FMA operations";
+        report "Producer C: " & integer'image(NUM_OPS_PER_PRODUCER) & " mixed MULT/FMA operations";
+        report "========================================";
+        
+        -- Wait for all three producers to finish
+        wait until producer_a_done and producer_b_done and producer_c_done;
+        
+        -- Give some time for results to propagate (FP latency + routing)
+        wait for 5000 ns;
+        
+        report "========================================";
+        report "Concurrent producer test complete!";
+        report "========================================";
         sim_done <= true;
         wait;
     end process;
     
+    -- Monitor output valid signals and report changes
+    output_valid_monitor : process(clk_in)
+        variable prod0_valid_count : integer := 0;
+        variable prod1_valid_count : integer := 0;
+        variable prod2_valid_count : integer := 0;
+    begin
+        if rising_edge(clk_in) then
+            if reset = '0' and clk_locked = '1' then
+                if output_rd_valid(0) = '1' then
+                    prod0_valid_count := prod0_valid_count + 1;
+                    if prod0_valid_count <= 5 or prod0_valid_count mod 5 = 0 then
+                        report "[FIFO Monitor] Producer 0 rd_valid asserted (count=" & 
+                               integer'image(prod0_valid_count) & ")";
+                    end if;
+                end if;
+                
+                if output_rd_valid(1) = '1' then
+                    prod1_valid_count := prod1_valid_count + 1;
+                    if prod1_valid_count <= 5 or prod1_valid_count mod 5 = 0 then
+                        report "[FIFO Monitor] Producer 1 rd_valid asserted (count=" & 
+                               integer'image(prod1_valid_count) & ")";
+                    end if;
+                end if;
+                
+                if output_rd_valid(2) = '1' then
+                    prod2_valid_count := prod2_valid_count + 1;
+                    if prod2_valid_count <= 5 or prod2_valid_count mod 5 = 0 then
+                        report "[FIFO Monitor] Producer 2 rd_valid asserted (count=" & 
+                               integer'image(prod2_valid_count) & ")";
+                    end if;
+                end if;
+            end if;
+        end if;
+    end process;
+    
     -- Monitor inputs and update debug signals for waveform
-    input_monitor : process(clk_in)
+    input_monitor : process(clk_in, reset)
         variable producer_id : integer;
         variable tid_val : integer;
     begin
-        if rising_edge(clk_in) then
-            -- Clear all valid flags by default
+        if reset = '1' then
+            -- Initialize all debug signals to zero on reset
+            prod0_wr_a_val <= (others => '0');
+            prod0_wr_b_val <= (others => '0');
+            prod0_wr_c_val <= (others => '0');
+            prod0_wr_tid   <= (others => '0');
+            prod0_wr_valid <= '0';
+            prod1_wr_a_val <= (others => '0');
+            prod1_wr_b_val <= (others => '0');
+            prod1_wr_c_val <= (others => '0');
+            prod1_wr_tid   <= (others => '0');
+            prod1_wr_valid <= '0';
+            prod2_wr_a_val <= (others => '0');
+            prod2_wr_b_val <= (others => '0');
+            prod2_wr_c_val <= (others => '0');
+            prod2_wr_tid   <= (others => '0');
+            prod2_wr_valid <= '0';
+        elsif rising_edge(clk_in) then
+            -- Default: clear valid flags but keep data (hold previous values)
             prod0_wr_valid <= '0';
             prod1_wr_valid <= '0';
             prod2_wr_valid <= '0';
-            prod3_wr_valid <= '0';
-            prod4_wr_valid <= '0';
             
-            -- Monitor MULT operations
+            -- Monitor MULT operations - only update when valid
             for i in 0 to NUM_MULT_UNITS-1 loop
                 if mult_wr_valid(i) = '1' then
                     tid_val := to_integer(unsigned(mult_wr_tid((i+1)*16-1 downto i*16)));
@@ -446,24 +620,12 @@ begin
                             prod2_wr_c_val <= (others => '0');
                             prod2_wr_tid   <= mult_wr_tid((i+1)*16-1 downto i*16);
                             prod2_wr_valid <= '1';
-                        when 3 =>
-                            prod3_wr_a_val <= mult_wr_data(i*64+31 downto i*64);
-                            prod3_wr_b_val <= mult_wr_data(i*64+63 downto i*64+32);
-                            prod3_wr_c_val <= (others => '0');
-                            prod3_wr_tid   <= mult_wr_tid((i+1)*16-1 downto i*16);
-                            prod3_wr_valid <= '1';
-                        when 4 =>
-                            prod4_wr_a_val <= mult_wr_data(i*64+31 downto i*64);
-                            prod4_wr_b_val <= mult_wr_data(i*64+63 downto i*64+32);
-                            prod4_wr_c_val <= (others => '0');
-                            prod4_wr_tid   <= mult_wr_tid((i+1)*16-1 downto i*16);
-                            prod4_wr_valid <= '1';
                         when others => null;
                     end case;
                 end if;
             end loop;
             
-            -- Monitor FMA operations
+            -- Monitor FMA operations - only update when valid
             for i in 0 to NUM_FMA_UNITS-1 loop
                 if fma_wr_valid(i) = '1' then
                     tid_val := to_integer(unsigned(fma_wr_tid((i+1)*16-1 downto i*16)));
@@ -488,60 +650,6 @@ begin
                             prod2_wr_c_val <= fma_wr_data(i*96+95 downto i*96+64);
                             prod2_wr_tid   <= fma_wr_tid((i+1)*16-1 downto i*16);
                             prod2_wr_valid <= '1';
-                        when 3 =>
-                            prod3_wr_a_val <= fma_wr_data(i*96+31 downto i*96);
-                            prod3_wr_b_val <= fma_wr_data(i*96+63 downto i*96+32);
-                            prod3_wr_c_val <= fma_wr_data(i*96+95 downto i*96+64);
-                            prod3_wr_tid   <= fma_wr_tid((i+1)*16-1 downto i*16);
-                            prod3_wr_valid <= '1';
-                        when 4 =>
-                            prod4_wr_a_val <= fma_wr_data(i*96+31 downto i*96);
-                            prod4_wr_b_val <= fma_wr_data(i*96+63 downto i*96+32);
-                            prod4_wr_c_val <= fma_wr_data(i*96+95 downto i*96+64);
-                            prod4_wr_tid   <= fma_wr_tid((i+1)*16-1 downto i*16);
-                            prod4_wr_valid <= '1';
-                        when others => null;
-                    end case;
-                end if;
-            end loop;
-            
-            -- Monitor ADD/SUB operations
-            for i in 0 to NUM_ADD_UNITS-1 loop
-                if addsub_wr_valid(i) = '1' then
-                    tid_val := to_integer(unsigned(addsub_wr_tid((i+1)*16-1 downto i*16)));
-                    producer_id := tid_val / 8192;
-                    
-                    case producer_id is
-                        when 0 =>
-                            prod0_wr_a_val <= addsub_wr_data(i*65+31 downto i*65);
-                            prod0_wr_b_val <= addsub_wr_data(i*65+63 downto i*65+32);
-                            prod0_wr_c_val <= (others => '0');
-                            prod0_wr_tid   <= addsub_wr_tid((i+1)*16-1 downto i*16);
-                            prod0_wr_valid <= '1';
-                        when 1 =>
-                            prod1_wr_a_val <= addsub_wr_data(i*65+31 downto i*65);
-                            prod1_wr_b_val <= addsub_wr_data(i*65+63 downto i*65+32);
-                            prod1_wr_c_val <= (others => '0');
-                            prod1_wr_tid   <= addsub_wr_tid((i+1)*16-1 downto i*16);
-                            prod1_wr_valid <= '1';
-                        when 2 =>
-                            prod2_wr_a_val <= addsub_wr_data(i*65+31 downto i*65);
-                            prod2_wr_b_val <= addsub_wr_data(i*65+63 downto i*65+32);
-                            prod2_wr_c_val <= (others => '0');
-                            prod2_wr_tid   <= addsub_wr_tid((i+1)*16-1 downto i*16);
-                            prod2_wr_valid <= '1';
-                        when 3 =>
-                            prod3_wr_a_val <= addsub_wr_data(i*65+31 downto i*65);
-                            prod3_wr_b_val <= addsub_wr_data(i*65+63 downto i*65+32);
-                            prod3_wr_c_val <= (others => '0');
-                            prod3_wr_tid   <= addsub_wr_tid((i+1)*16-1 downto i*16);
-                            prod3_wr_valid <= '1';
-                        when 4 =>
-                            prod4_wr_a_val <= addsub_wr_data(i*65+31 downto i*65);
-                            prod4_wr_b_val <= addsub_wr_data(i*65+63 downto i*65+32);
-                            prod4_wr_c_val <= (others => '0');
-                            prod4_wr_tid   <= addsub_wr_tid((i+1)*16-1 downto i*16);
-                            prod4_wr_valid <= '1';
                         when others => null;
                     end case;
                 end if;

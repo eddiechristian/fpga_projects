@@ -1,0 +1,248 @@
+
+# run 200us
+Note: ========================================
+Time: 100 ns  Iteration: 0  Process: /pipeline_concurrent_tb/main_control  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: Starting concurrent producer test
+Time: 100 ns  Iteration: 0  Process: /pipeline_concurrent_tb/main_control  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: Producer A: 20 MULT operations
+Time: 100 ns  Iteration: 0  Process: /pipeline_concurrent_tb/main_control  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: Producer B: 20 FMA operations
+Time: 100 ns  Iteration: 0  Process: /pipeline_concurrent_tb/main_control  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: Producer C: 20 mixed MULT/FMA operations
+Time: 100 ns  Iteration: 0  Process: /pipeline_concurrent_tb/main_control  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: ========================================
+Time: 100 ns  Iteration: 0  Process: /pipeline_concurrent_tb/main_control  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer A] Started, waiting for results...
+Time: 555100 ps  Iteration: 1  Process: /pipeline_concurrent_tb/consumer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer B] Started, waiting for results...
+Time: 555100 ps  Iteration: 1  Process: /pipeline_concurrent_tb/consumer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer C] Started, waiting for results...
+Time: 555100 ps  Iteration: 1  Process: /pipeline_concurrent_tb/consumer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: Producer A starting (MULT operations)...
+Time: 575100 ps  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: Producer B starting (FMA operations)...
+Time: 575100 ps  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: Producer C starting (mixed MULT/FMA operations)...
+Time: 575100 ps  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [MULT0_FIFO] Write TID=0
+Time: 585 ns  Iteration: 9  Process: /pipeline_concurrent_tb/dut/\gen_mult(0)\/line__266  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [MULT0_FIFO] Write TID=0
+Time: 590 ns  Iteration: 9  Process: /pipeline_concurrent_tb/dut/\gen_mult(0)\/line__266  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Producer A] MULT #0 TID=0 A=9.999684e+00 B=4.519575e+00 Expected=4.519432e+01
+Time: 595 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #0 TID=8192 A=4.999684e+00 B=4.519575e+00 C=2.483841e+00 Expected=2.508029e+01
+Time: 595 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] MULT #0 TID=16384 A=7.999242e+00 B=2.846980e+00 Expected=2.277368e+01
+Time: 595 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [MULT0_FIFO] Read TID=0 a=0x4XXFFXXX b=0x40XXXXXX
+Time: 595 ns  Iteration: 9  Process: /pipeline_concurrent_tb/dut/\gen_mult(0)\/line__266  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [MULT0_FIFO] Read TID=0 a=0x4XXFFXXX b=0x40XXXXXX
+Time: 600 ns  Iteration: 9  Process: /pipeline_concurrent_tb/dut/\gen_mult(0)\/line__266  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Producer A] MULT #1 TID=1 A=7.483841e+00 B=3.085528e+00 Expected=2.309160e+01
+Time: 615 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #1 TID=8193 A=3.085528e+00 B=1.944521e+00 C=1.711809e+00 Expected=7.711684e+00
+Time: 615 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] FMA #1 TID=16385 A=1.961217e+00 B=7.405268e+00 C=6.668500e-01 Expected=1.519019e+01
+Time: 615 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Debug] FP unit 8 valid, TID=0 ProducerID=0
+Time: 630100 ps  Iteration: 3  Process: /pipeline_concurrent_tb/dut/\gen_output(0)\/line__472  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Routing] Producer 0 matched FP unit 8 TID=0
+Time: 630100 ps  Iteration: 3  Process: /pipeline_concurrent_tb/dut/\gen_output(0)\/line__472  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Producer A] MULT #2 TID=2 A=6.944521e+00 B=1.711810e+00 Expected=1.188770e+01
+Time: 635 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #2 TID=8194 A=4.645013e+00 B=4.672854e+00 C=4.136349e+00 Expected=2.584182e+01
+Time: 635 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] MULT #2 TID=16386 A=4.108342e+00 B=3.148032e+00 Expected=1.293319e+01
+Time: 635 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [MULT0_FP] Result TID=0 result=0x4XXXXXXX gated='1'
+Time: 635 ns  Iteration: 9  Process: /pipeline_concurrent_tb/dut/\gen_mult(0)\/line__266  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [MULT0_FP] Result TID=0 result=0x4XXXXXXX gated='1'
+Time: 640 ns  Iteration: 9  Process: /pipeline_concurrent_tb/dut/\gen_mult(0)\/line__266  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Producer A RESULT] TID=0 Result=5.877472e-39 (waited 9 cycles)
+Time: 645 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [FIFO Monitor] Producer 0 rd_valid asserted (count=1)
+Time: 645 ns  Iteration: 0  Process: /pipeline_concurrent_tb/output_valid_monitor  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A] MULT #3 TID=3 A=4.645014e+00 B=4.672854e+00 Expected=2.170547e+01
+Time: 655 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #3 TID=8195 A=2.306885e+00 B=4.957365e+00 C=3.816076e+00 Expected=1.525215e+01
+Time: 655 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] FMA #3 TID=16387 A=3.214849e+00 B=1.927237e+00 C=1.536524e+00 Expected=7.732301e+00
+Time: 655 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A] MULT #4 TID=4 A=4.136349e+00 B=7.306885e+00 Expected=3.022382e+01
+Time: 675 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #4 TID=8196 A=8.164865e-02 B=1.716165e+00 C=4.021099e+00 Expected=4.161221e+00
+Time: 675 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] MULT #4 TID=16388 A=3.897676e+00 B=5.158582e+00 Expected=2.010648e+01
+Time: 675 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A] MULT #5 TID=5 A=4.957365e+00 B=8.816076e+00 Expected=4.370451e+01
+Time: 695 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #5 TID=8197 A=4.474371e-01 B=4.824219e+00 C=2.823349e-01 Expected=2.440869e+00
+Time: 695 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] FMA #5 TID=16389 A=1.959562e-01 B=4.118796e+00 C=5.650637e+00 Expected=6.457741e+00
+Time: 695 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A] MULT #6 TID=6 A=8.164866e-02 B=1.716165e+00 Expected=1.401226e-01
+Time: 715 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #6 TID=8198 A=1.810683e+00 B=2.341470e+00 C=4.686677e+00 Expected=8.926337e+00
+Time: 715 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] MULT #6 TID=16390 A=5.073848e+00 B=7.578125e+00 Expected=3.845026e+01
+Time: 715 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A] MULT #7 TID=7 A=9.021099e+00 B=5.447437e+00 Expected=4.914187e+01
+Time: 735 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #7 TID=8199 A=4.975264e+00 B=1.179060e+00 C=3.548277e+00 Expected=9.414413e+00
+Time: 735 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] FMA #7 TID=16391 A=6.776035e-01 B=4.345639e+00 C=5.619529e+00 Expected=8.564149e+00
+Time: 735 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A] MULT #8 TID=8 A=9.824219e+00 B=2.823353e-01 Expected=2.773724e+00
+Time: 755 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #8 TID=8200 A=4.359285e+00 B=3.210461e+00 C=3.177834e+00 Expected=1.717315e+01
+Time: 755 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] MULT #8 TID=16392 A=7.248024e+00 B=3.940633e+00 Expected=2.856180e+01
+Time: 755 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A] MULT #9 TID=9 A=1.810683e+00 B=2.341470e+00 Expected=4.239661e+00
+Time: 775 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #9 TID=8201 A=2.233628e+00 B=2.707925e+00 C=3.922309e+00 Expected=9.970808e+00
+Time: 775 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] FMA #9 TID=16393 A=2.829744e+00 B=5.158656e-01 C=2.462285e+00 Expected=3.922053e+00
+Time: 775 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Debug] FP unit 7 valid, TID=0 ProducerID=0
+Time: 780100 ps  Iteration: 3  Process: /pipeline_concurrent_tb/dut/\gen_output(0)\/line__472  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Routing] Producer 0 matched FP unit 7 TID=0
+Time: 780100 ps  Iteration: 3  Process: /pipeline_concurrent_tb/dut/\gen_output(0)\/line__472  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Producer A] MULT #10 TID=10 A=9.686677e+00 B=4.975264e+00 Expected=4.819378e+01
+Time: 795 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #10 TID=8202 A=4.255715e-01 B=1.749662e+00 C=3.349892e-01 Expected=1.079595e+00
+Time: 795 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] MULT #10 TID=16394 A=3.705106e+00 B=3.626802e+00 Expected=1.343769e+01
+Time: 795 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A RESULT] TID=0 Result=5.877472e-39 (waited 15 cycles)
+Time: 795 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [FIFO Monitor] Producer 0 rd_valid asserted (count=2)
+Time: 795 ns  Iteration: 0  Process: /pipeline_concurrent_tb/output_valid_monitor  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A] MULT #11 TID=11 A=1.179060e+00 B=3.548278e+00 Expected=4.183633e+00
+Time: 815 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #11 TID=8203 A=1.363570e-01 B=2.566937e-01 C=1.307530e+00 Expected=1.342532e+00
+Time: 815 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] FMA #11 TID=16395 A=5.360708e+00 B=2.499020e+00 C=5.413542e+00 Expected=1.881006e+01
+Time: 815 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A] MULT #12 TID=12 A=4.359285e+00 B=8.210461e+00 Expected=3.579174e+01
+Time: 835 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #12 TID=8204 A=2.026271e+00 B=7.074911e-01 C=9.816674e-01 Expected=2.415236e+00
+Time: 835 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] MULT #12 TID=16396 A=5.021371e+00 B=4.199189e+00 Expected=2.108569e+01
+Time: 835 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A] MULT #13 TID=13 A=8.177835e+00 B=2.233629e+00 Expected=1.826625e+01
+Time: 855 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #13 TID=8205 A=4.936685e+00 B=7.735973e-01 C=4.579840e+00 Expected=8.398846e+00
+Time: 855 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] FMA #13 TID=16397 A=8.039741e-01 B=3.272568e-01 C=4.616065e+00 Expected=4.879171e+00
+Time: 855 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A] MULT #14 TID=14 A=7.707925e+00 B=8.922309e+00 Expected=6.877249e+01
+Time: 875 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #14 TID=8206 A=6.170909e-01 B=4.229367e+00 C=2.932118e+00 Expected=5.542022e+00
+Time: 875 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] MULT #14 TID=16398 A=7.138072e+00 B=4.863049e+00 Expected=3.471280e+01
+Time: 875 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A] MULT #15 TID=15 A=5.425572e+00 B=1.749662e+00 Expected=9.492918e+00
+Time: 895 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #15 TID=8207 A=1.831832e-01 B=4.949747e-01 C=4.739662e-01 Expected=5.646373e-01
+Time: 895 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] FMA #15 TID=16399 A=1.697978e+00 B=2.356002e+00 C=7.848043e+00 Expected=1.184848e+01
+Time: 895 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [MULT0_FIFO] Write TID=0
+Time: 905 ns  Iteration: 9  Process: /pipeline_concurrent_tb/dut/\gen_mult(0)\/line__266  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [MULT0_FIFO] Write TID=0
+Time: 910 ns  Iteration: 9  Process: /pipeline_concurrent_tb/dut/\gen_mult(0)\/line__266  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Producer A] MULT #16 TID=16 A=3.349892e-01 B=1.363570e-01 Expected=4.567812e-02
+Time: 915 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #16 TID=8208 A=1.298657e+00 B=1.246728e+00 C=3.887847e+00 Expected=5.506920e+00
+Time: 915 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] MULT #16 TID=16400 A=1.856634e+00 B=2.991616e+00 Expected=5.554335e+00
+Time: 915 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [MULT0_FIFO] Read TID=0 a=0x3XXXXXXX b=0xXXXXXXXX
+Time: 915 ns  Iteration: 9  Process: /pipeline_concurrent_tb/dut/\gen_mult(0)\/line__266  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [MULT0_FIFO] Read TID=0 a=0x3XXXXXXX b=0xXXXXXXXX
+Time: 920 ns  Iteration: 9  Process: /pipeline_concurrent_tb/dut/\gen_mult(0)\/line__266  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Producer A] MULT #17 TID=17 A=5.256694e+00 B=6.307530e+00 Expected=3.315675e+01
+Time: 935 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #17 TID=8209 A=4.269008e+00 B=2.925837e+00 C=3.529067e+00 Expected=1.601949e+01
+Time: 935 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] FMA #17 TID=16401 A=1.481018e+00 B=2.150481e+00 C=7.037083e+00 Expected=1.022198e+01
+Time: 935 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Debug] FP unit 8 valid, TID=0 ProducerID=0
+Time: 950100 ps  Iteration: 3  Process: /pipeline_concurrent_tb/dut/\gen_output(0)\/line__472  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Routing] Producer 0 matched FP unit 8 TID=0
+Time: 950100 ps  Iteration: 3  Process: /pipeline_concurrent_tb/dut/\gen_output(0)\/line__472  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Producer A] MULT #18 TID=18 A=2.026271e+00 B=7.074914e-01 Expected=1.433569e+00
+Time: 955 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #18 TID=8210 A=1.748464e+00 B=2.011157e+00 C=2.704093e+00 Expected=6.220527e+00
+Time: 955 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] MULT #18 TID=16402 A=4.439639e+00 B=1.187939e+00 Expected=5.274019e+00
+Time: 955 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [MULT0_FP] Result TID=0 result=0xXXXXXXXX gated='1'
+Time: 955 ns  Iteration: 9  Process: /pipeline_concurrent_tb/dut/\gen_mult(0)\/line__266  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [MULT0_FP] Result TID=0 result=0xXXXXXXXX gated='1'
+Time: 960 ns  Iteration: 9  Process: /pipeline_concurrent_tb/dut/\gen_mult(0)\/line__266  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Producer A RESULT] TID=0 Result=5.877472e-39 (waited 17 cycles)
+Time: 965 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [FIFO Monitor] Producer 0 rd_valid asserted (count=3)
+Time: 965 ns  Iteration: 0  Process: /pipeline_concurrent_tb/output_valid_monitor  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer A] MULT #19 TID=19 A=9.816678e-01 B=9.936685e+00 Expected=9.754523e+00
+Time: 975 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: Producer A finished all operations
+Time: 975 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer B] FMA #19 TID=8211 A=2.055219e-01 B=3.276079e+00 C=3.989699e+00 Expected=4.663005e+00
+Time: 975 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: Producer B finished all operations
+Time: 975 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Producer C] FMA #19 TID=16403 A=5.137519e+00 B=3.116777e+00 C=2.992148e+00 Expected=1.900465e+01
+Time: 975 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: Producer C finished all operations
+Time: 975 ns  Iteration: 0  Process: /pipeline_concurrent_tb/producer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Debug] FP unit 7 valid, TID=0 ProducerID=0
+Time: 980100 ps  Iteration: 3  Process: /pipeline_concurrent_tb/dut/\gen_output(0)\/line__472  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Routing] Producer 0 matched FP unit 7 TID=0
+Time: 980100 ps  Iteration: 3  Process: /pipeline_concurrent_tb/dut/\gen_output(0)\/line__472  File: /home/eddie/fpga_projects/resource_test/src/hdl/pipeline_hw.vhd
+Note: [Producer A RESULT] TID=0 Result=5.877472e-39 (waited 3 cycles)
+Time: 995 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [FIFO Monitor] Producer 0 rd_valid asserted (count=4)
+Time: 995 ns  Iteration: 0  Process: /pipeline_concurrent_tb/output_valid_monitor  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer B] Still waiting... (count=0/20, rd_valid='0')
+Time: 1555 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer C] Still waiting... (count=0/20, rd_valid='0')
+Time: 1555 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer A] Still waiting... (count=4/20, rd_valid='0')
+Time: 1995 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer B] Still waiting... (count=0/20, rd_valid='0')
+Time: 2555 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer C] Still waiting... (count=0/20, rd_valid='0')
+Time: 2555 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer A] Still waiting... (count=4/20, rd_valid='0')
+Time: 2995 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer B] Still waiting... (count=0/20, rd_valid='0')
+Time: 3555 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer C] Still waiting... (count=0/20, rd_valid='0')
+Time: 3555 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer A] Still waiting... (count=4/20, rd_valid='0')
+Time: 3995 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer B] Still waiting... (count=0/20, rd_valid='0')
+Time: 4555 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer C] Still waiting... (count=0/20, rd_valid='0')
+Time: 4555 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer A] Still waiting... (count=4/20, rd_valid='0')
+Time: 4995 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_a  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer B] Still waiting... (count=0/20, rd_valid='0')
+Time: 5555 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_b  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: [Consumer C] Still waiting... (count=0/20, rd_valid='0')
+Time: 5555 ns  Iteration: 0  Process: /pipeline_concurrent_tb/consumer_c  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: ========================================
+Time: 5975 ns  Iteration: 0  Process: /pipeline_concurrent_tb/main_control  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: Concurrent producer test complete!
+Time: 5975 ns  Iteration: 0  Process: /pipeline_concurrent_tb/main_control  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Note: ========================================
+Time: 5975 ns  Iteration: 0  Process: /pipeline_concurrent_tb/main_control  File: /home/eddie/fpga_projects/resource_test/src/sim/pipeline_concurrent_tb.vhd
+Error:  Warning : [Unisim MMCME2_ADV-164] input CLKIN1 of MMCME2_ADV is stopped. Reset is required for MMCME2_ADV when input clock returns.
+Time: 5989750 ps  Iteration: 1  Process: /pipeline_concurrent_tb/dut/clk_inst/inst/mmcm_adv_inst/clkin_lost_out_p  File: /proj/xbuilds/SWIP/2024.2_1107_2045/installs/lin64/Vivado/2024.2/data/vhdl/src/unisims/primitive/MMCME2_ADV.vhd
+xsim: Time (s): cpu = 00:00:06 ; elapsed = 00:00:08 . Memory (MB): peak = 8079.574 ; gain = 21.809 ; free physical = 12449 ; free virtual = 30820
+INFO: [USF-XSim-96] XSim completed. Design snapshot 'pipeline_concurrent_tb_behav' loaded.
+INFO: [USF-XSim-97] XSim simulation ran for 200us
+launch_simulation: Time (s): cpu = 00:01:47 ; elapsed = 00:00:42 . Memory (MB): peak = 8079.574 ; gain = 21.809 ; free physical = 12449 ; free virtual = 30820

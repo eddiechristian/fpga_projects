@@ -161,14 +161,17 @@ architecture Behavioral of pipeline_hw is
     signal mult_result_data  : std_logic_vector(NUM_MULT_UNITS*32-1 downto 0);
     signal mult_result_tid   : std_logic_vector(NUM_MULT_UNITS*16-1 downto 0);
     signal mult_result_valid : std_logic_vector(NUM_MULT_UNITS-1 downto 0);
+    signal mult_result_valid_gated : std_logic_vector(NUM_MULT_UNITS-1 downto 0);
     
     signal fma_result_data  : std_logic_vector(NUM_FMA_UNITS*32-1 downto 0);
     signal fma_result_tid   : std_logic_vector(NUM_FMA_UNITS*16-1 downto 0);
     signal fma_result_valid : std_logic_vector(NUM_FMA_UNITS-1 downto 0);
+    signal fma_result_valid_gated : std_logic_vector(NUM_FMA_UNITS-1 downto 0);
     
     signal addsub_result_data  : std_logic_vector(NUM_ADD_UNITS*32-1 downto 0);
     signal addsub_result_tid   : std_logic_vector(NUM_ADD_UNITS*16-1 downto 0);
     signal addsub_result_valid : std_logic_vector(NUM_ADD_UNITS-1 downto 0);
+    signal addsub_result_valid_gated : std_logic_vector(NUM_ADD_UNITS-1 downto 0);
     
     -- Combined results from all FP units (for output routing)
     signal all_results_data  : std_logic_vector(TOTAL_FP_UNITS*32-1 downto 0);
@@ -190,8 +193,100 @@ begin
             locked   => locked
         );
 
+    -- Valid tracking shift registers for MULT units (8 cycle latency)
+    gen_mult_valid_track : for i in 0 to NUM_MULT_UNITS-1 generate
+        signal valid_shift : std_logic_vector(7 downto 0) := (others => '0');
+    begin
+        process(clk)
+        begin
+            if rising_edge(clk) then
+                if reset = '1' then
+                    valid_shift <= (others => '0');
+                else
+                    -- Shift in the FIFO rd_valid, shift out after 8 cycles
+                    valid_shift <= valid_shift(6 downto 0) & mult_fifo_rd_valid(i);
+                end if;
+            end if;
+        end process;
+        -- Gate the result valid with the tracked input valid
+        mult_result_valid_gated(i) <= mult_result_valid(i) and valid_shift(7);
+    end generate;
+    
+    -- Valid tracking shift registers for FMA units (2 cycle latency observed)
+    gen_fma_valid_track : for i in 0 to NUM_FMA_UNITS-1 generate
+        signal valid_shift : std_logic_vector(1 downto 0) := (others => '0');
+    begin
+        process(clk)
+        begin
+            if rising_edge(clk) then
+                if reset = '1' then
+                    valid_shift <= (others => '0');
+                else
+                    valid_shift <= valid_shift(0) & fma_fifo_rd_valid(i);
+                    -- Debug for FMA0: track shift register progress
+                    if i = 0 and (fma_fifo_rd_valid(i) = '1' or valid_shift /= "00") then
+                        report "[FMA0_SHIFT] fifo_rd_valid=" & std_logic'image(fma_fifo_rd_valid(i)) &
+                               " shift=" & to_hstring(valid_shift) &
+                               " fma_valid=" & std_logic'image(fma_result_valid(i)) &
+                               " shift(1)=" & std_logic'image(valid_shift(1)) &
+                               " gated=" & std_logic'image(fma_result_valid_gated(i));
+                    end if;
+                end if;
+            end if;
+        end process;
+        fma_result_valid_gated(i) <= fma_result_valid(i) and valid_shift(1);
+    end generate;
+    
+    -- Valid tracking shift registers for AddSub units (assume 8 cycle latency)
+    gen_addsub_valid_track : for i in 0 to NUM_ADD_UNITS-1 generate
+        signal valid_shift : std_logic_vector(7 downto 0) := (others => '0');
+    begin
+        process(clk)
+        begin
+            if rising_edge(clk) then
+                if reset = '1' then
+                    valid_shift <= (others => '0');
+                else
+                    valid_shift <= valid_shift(6 downto 0) & addsub_fifo_rd_valid(i);
+                end if;
+            end if;
+        end process;
+        addsub_result_valid_gated(i) <= addsub_result_valid(i) and valid_shift(7);
+    end generate;
+
     -- Multiplier units with input FIFOs
     gen_mult : for i in 0 to NUM_MULT_UNITS-1 generate
+        signal mult_fifo_wr_accepted : std_logic;
+        signal mult_fifo_rd_accepted : std_logic;
+    begin
+        mult_fifo_wr_accepted <= mult_wr_valid(i) and mult_wr_ready(i);
+        mult_fifo_rd_accepted <= mult_fifo_rd_valid(i) and mult_fifo_rd_ready(i);
+        
+        -- Debug for MULT unit 0
+        process(clk)
+        begin
+            if rising_edge(clk) then
+                if i = 0 then
+                    if mult_fifo_wr_accepted = '1' then
+                        report "[MULT0_FIFO] Write TID=" & 
+                               integer'image(to_integer(unsigned(mult_wr_tid(15 downto 0))));
+                    end if;
+                    if mult_fifo_rd_accepted = '1' then
+                        report "[MULT0_FIFO] Read TID=" & 
+                               integer'image(to_integer(unsigned(mult_fifo_rd_tid(15 downto 0)))) &
+                               " a=0x" & to_hstring(mult_fifo_rd_data(31 downto 0)) &
+                               " b=0x" & to_hstring(mult_fifo_rd_data(63 downto 32));
+                    end if;
+                    if mult_result_valid(0) = '1' then
+                        report "[MULT0_FP] Result TID=" & 
+                               integer'image(to_integer(unsigned(mult_result_tid(15 downto 0)))) &
+                               " result=0x" & to_hstring(mult_result_data(31 downto 0)) &
+                               " gated=" & std_logic'image(mult_result_valid_gated(0));
+                    end if;
+                end if;
+            end if;
+        end process;
+        
         -- Input FIFO
         mult_fifo : sync_fifo
             generic map (
@@ -235,6 +330,38 @@ begin
 
     -- FMA units with input FIFOs
     gen_fma : for i in 0 to NUM_FMA_UNITS-1 generate
+        signal fma_fifo_wr_accepted : std_logic;
+        signal fma_fifo_rd_accepted : std_logic;
+    begin
+        fma_fifo_wr_accepted <= fma_wr_valid(i) and fma_wr_ready(i);
+        fma_fifo_rd_accepted <= fma_fifo_rd_valid(i) and fma_fifo_rd_ready(i);
+        
+        -- Debug for FMA unit 0
+        process(clk)
+        begin
+            if rising_edge(clk) then
+                if i = 0 then
+                    if fma_fifo_wr_accepted = '1' then
+                        report "[FMA0_FIFO] Write TID=" & 
+                               integer'image(to_integer(unsigned(fma_wr_tid(15 downto 0))));
+                    end if;
+                    if fma_fifo_rd_accepted = '1' then
+                        report "[FMA0_FIFO] Read TID=" & 
+                               integer'image(to_integer(unsigned(fma_fifo_rd_tid(15 downto 0)))) &
+                               " a=0x" & to_hstring(fma_fifo_rd_data(31 downto 0)) &
+                               " b=0x" & to_hstring(fma_fifo_rd_data(63 downto 32)) &
+                               " c=0x" & to_hstring(fma_fifo_rd_data(95 downto 64));
+                    end if;
+                    if fma_result_valid(0) = '1' then
+                        report "[FMA0_FP] Result TID=" & 
+                               integer'image(to_integer(unsigned(fma_result_tid(15 downto 0)))) &
+                               " result=0x" & to_hstring(fma_result_data(31 downto 0)) &
+                               " gated=" & std_logic'image(fma_result_valid_gated(0));
+                    end if;
+                end if;
+            end if;
+        end process;
+        
         -- Input FIFO
         fma_fifo : sync_fifo
             generic map (
@@ -324,9 +451,10 @@ begin
     end generate;
 
     -- Combine all FP unit results into arrays for routing
+    -- Use gated valid signals to filter out garbage outputs
     all_results_data  <= mult_result_data & fma_result_data & addsub_result_data;
     all_results_tid   <= mult_result_tid & fma_result_tid & addsub_result_tid;
-    all_results_valid <= mult_result_valid & fma_result_valid & addsub_result_valid;
+    all_results_valid <= mult_result_valid_gated & fma_result_valid_gated & addsub_result_valid_gated;
     
     -- All FP units always ready in NonBlocking mode (no backpressure)
     all_results_ready <= (others => '1');
@@ -343,22 +471,42 @@ begin
         -- Combinational routing process
         process(all_results_valid, all_results_data, all_results_tid, prod_wr_ready)
             variable producer_id : integer;
+            variable tid_val : std_logic_vector(15 downto 0);
+            variable matched : boolean;
         begin
             prod_wr_valid <= '0';
             prod_wr_data  <= (others => '0');
             prod_wr_tid   <= (others => '0');
+            matched := false;
             
             -- Check all FP units for results targeting this producer
             for i in 0 to TOTAL_FP_UNITS-1 loop
                 if all_results_valid(i) = '1' then
-                    -- Extract producer ID from TID upper 3 bits
-                    producer_id := to_integer(unsigned(all_results_tid((i+1)*16-1 downto i*16+13)));
+                    -- Extract full TID and producer ID from TID upper 3 bits
+                    tid_val := all_results_tid((i+1)*16-1 downto i*16);
+                    producer_id := to_integer(unsigned(tid_val(15 downto 13)));
+                    
+                    -- Debug: show first few results from any FP unit (for producer 0 only)
+                    if prod = 0 and not matched then
+                        report "[Debug] FP unit " & integer'image(i) & 
+                               " valid, TID=" & integer'image(to_integer(unsigned(tid_val))) &
+                               " ProducerID=" & integer'image(producer_id);
+                    end if;
                     
                     if producer_id = prod then
+                        -- Debug: report when producer 0/1/2 gets a result (first match only)
+                        if prod < 3 and not matched then
+                            report "[Routing] Producer " & integer'image(prod) & 
+                                   " matched FP unit " & integer'image(i) & 
+                                   " TID=" & integer'image(to_integer(unsigned(tid_val)));
+                        end if;
+                        
                         -- This result is for us
                         prod_wr_data  <= all_results_data((i+1)*32-1 downto i*32);
-                        prod_wr_tid   <= all_results_tid((i+1)*16-1 downto i*16);
+                        prod_wr_tid   <= tid_val;
                         prod_wr_valid <= '1';
+                        matched := true;
+                        
                         exit;  -- Only take one result per cycle
                     end if;
                 end if;

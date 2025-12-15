@@ -2,8 +2,8 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
--- Read-first synchronous FIFO with TID support
--- Proven pattern: read captures data at current pointer before updates
+-- Simple synchronous FIFO with TID support
+-- Stores {data, tid} pairs
 entity sync_fifo is
     generic (
         DATA_WIDTH : integer := 32;
@@ -29,7 +29,7 @@ entity sync_fifo is
         -- Status
         full       : out std_logic;
         empty      : out std_logic;
-        almost_full : out std_logic
+        almost_full : out std_logic  -- Asserts when >= 3/4 full
     );
 end sync_fifo;
 
@@ -46,18 +46,20 @@ architecture Behavioral of sync_fifo is
     
     signal full_int       : std_logic;
     signal empty_int      : std_logic;
-    signal empty_reg      : std_logic := '1';  -- Registered empty for read gating
-    signal empty_reg2     : std_logic := '1';  -- Second delay stage
     signal almost_full_int : std_logic;
     
-    -- Registered outputs
-    signal rd_data_reg  : std_logic_vector(DATA_WIDTH-1 downto 0) := (others => '0');
-    signal rd_tid_reg   : std_logic_vector(TID_WIDTH-1 downto 0) := (others => '0');
+    -- Registered read output for BRAM timing
+    signal rd_data_reg : std_logic_vector(DATA_WIDTH-1 downto 0);
+    signal rd_tid_reg  : std_logic_vector(TID_WIDTH-1 downto 0);
     signal rd_valid_reg : std_logic := '0';
+    
+    -- Track if we've ever written to FIFO (to avoid outputting initial zeros)
+    signal has_data : std_logic := '0';
+    signal has_data_delayed : std_logic := '0';
     
 begin
 
-    -- Combinational status flags
+    -- Status flags
     full_int  <= '1' when count = DEPTH else '0';
     empty_int <= '1' when count = 0 else '0';
     almost_full_int <= '1' when count >= ALMOST_FULL_THRESHOLD else '0';
@@ -65,52 +67,30 @@ begin
     full  <= full_int;
     empty <= empty_int;
     almost_full <= almost_full_int;
+    
+    -- Write ready when not full
     wr_ready <= not full_int;
     
-    -- Registered outputs
-    rd_data  <= rd_data_reg;
-    rd_tid   <= rd_tid_reg;
+    -- Read valid (registered to match read data/TID delay)
     rd_valid <= rd_valid_reg;
     
-    -- Main FIFO logic - READ FIRST pattern
+    -- Write process
     process(clk)
         variable wr_combined : std_logic_vector(TOTAL_WIDTH-1 downto 0);
-        variable rd_combined : std_logic_vector(TOTAL_WIDTH-1 downto 0);
     begin
         if rising_edge(clk) then
             if reset = '1' then
                 wr_ptr <= 0;
                 rd_ptr <= 0;
                 count <= 0;
-                rd_valid_reg <= '0';
-                rd_data_reg <= (others => '0');
-                rd_tid_reg <= (others => '0');
-                empty_reg <= '1';
-                empty_reg2 <= '1';
+                has_data <= '0';
             else
-                -- Register empty flag (delays by 2 cycles so writes fully propagate)
-                empty_reg <= empty_int;
-                empty_reg2 <= empty_reg;
-                
-                -- STEP 1: Capture read data FIRST (uses current rd_ptr)
-                -- Use 2nd stage registered empty to ensure writes have propagated
-                if rd_ready = '1' and empty_reg2 = '0' then
-                    rd_combined := fifo_mem(rd_ptr);
-                    rd_data_reg <= rd_combined(DATA_WIDTH-1 downto 0);
-                    rd_tid_reg  <= rd_combined(TOTAL_WIDTH-1 downto DATA_WIDTH);
-                    rd_valid_reg <= '1';
-                else
-                    rd_valid_reg <= '0';
-                end if;
-                
-                -- STEP 2: Write to FIFO (uses current wr_ptr)
+                -- Handle write
                 if wr_valid = '1' and full_int = '0' then
                     wr_combined := wr_tid & wr_data;
                     fifo_mem(wr_ptr) <= wr_combined;
-                end if;
-                
-                -- STEP 3: Update pointers and count
-                if wr_valid = '1' and full_int = '0' then
+                    has_data <= '1';
+                    
                     if wr_ptr = DEPTH-1 then
                         wr_ptr <= 0;
                     else
@@ -118,7 +98,11 @@ begin
                     end if;
                 end if;
                 
-                if rd_ready = '1' and empty_reg2 = '0' then
+                -- Delay has_data by one cycle
+                has_data_delayed <= has_data;
+                
+                -- Handle read pointer advance
+                if rd_ready = '1' and empty_int = '0' then
                     if rd_ptr = DEPTH-1 then
                         rd_ptr <= 0;
                     else
@@ -127,15 +111,50 @@ begin
                 end if;
                 
                 -- Update count
-                if (wr_valid = '1' and full_int = '0') and (rd_ready = '1' and empty_reg2 = '0') then
-                    count <= count;  -- Both read and write, count unchanged
+                if (wr_valid = '1' and full_int = '0') and (rd_ready = '1' and empty_int = '0') then
+                    count <= count;
                 elsif wr_valid = '1' and full_int = '0' then
                     count <= count + 1;
-                elsif rd_ready = '1' and empty_reg2 = '0' then
+                elsif rd_ready = '1' and empty_int = '0' then
                     count <= count - 1;
                 end if;
             end if;
         end if;
     end process;
+    
+    -- Read process with bypass for write-during-read
+    process(clk)
+        variable rd_combined : std_logic_vector(TOTAL_WIDTH-1 downto 0);
+        variable wr_combined : std_logic_vector(TOTAL_WIDTH-1 downto 0);
+        variable reading : boolean;
+        variable writing : boolean;
+        variable same_addr : boolean;
+    begin
+        if rising_edge(clk) then
+            if reset = '1' then
+                rd_valid_reg <= '0';
+            else
+                reading := rd_ready = '1' and empty_int = '0';
+                writing := wr_valid = '1' and full_int = '0';
+                same_addr := wr_ptr = rd_ptr;
+                
+                -- Bypass: if writing to same address we're reading, use write data
+                if reading and writing and same_addr then
+                    wr_combined := wr_tid & wr_data;
+                    rd_data_reg <= wr_combined(DATA_WIDTH-1 downto 0);
+                    rd_tid_reg  <= wr_combined(TOTAL_WIDTH-1 downto DATA_WIDTH);
+                else
+                    rd_combined := fifo_mem(rd_ptr);
+                    rd_data_reg <= rd_combined(DATA_WIDTH-1 downto 0);
+                    rd_tid_reg  <= rd_combined(TOTAL_WIDTH-1 downto DATA_WIDTH);
+                end if;
+                
+                rd_valid_reg <= rd_ready and not empty_int;
+            end if;
+        end if;
+    end process;
+    
+    rd_data <= rd_data_reg;
+    rd_tid  <= rd_tid_reg;
 
 end Behavioral;
