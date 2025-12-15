@@ -20,8 +20,8 @@ package crossbar_pkg is
     constant MAX_DATA_WIDTH     : integer := 96;  -- Maximum of all data widths
     
     -- TID field definitions
-    constant PRODUCER_ID_BITS   : integer := 3;   -- Bits 15:13 encode producer ID
-    constant OP_INDEX_BITS      : integer := 13;  -- Bits 12:0 encode operation index
+    constant PRODUCER_ID_BITS   : integer := 5;   -- Bits 15:11 encode producer ID (up to 32 producers)
+    constant OP_INDEX_BITS      : integer := 11;  -- Bits 10:0 encode operation index (up to 2048 ops)
     
     -- Output FIFO configuration
     constant OUTPUT_FIFO_DEPTH  : integer := 8;
@@ -114,18 +114,18 @@ end package crossbar_pkg;
 
 package body crossbar_pkg is
 
-    -- Extract producer ID from TID bits [15:13]
+    -- Extract producer ID from TID bits [15:11]
     function get_producer_id(tid : std_logic_vector(TID_WIDTH-1 downto 0)) return integer is
     begin
-        return to_integer(unsigned(tid(15 downto 13)));
+        return to_integer(unsigned(tid(15 downto 11)));
     end function;
     
     -- Create TID from producer ID and operation index
     function make_tid(producer_id : integer; op_index : integer) return std_logic_vector is
         variable tid : std_logic_vector(TID_WIDTH-1 downto 0);
     begin
-        tid(15 downto 13) := std_logic_vector(to_unsigned(producer_id, PRODUCER_ID_BITS));
-        tid(12 downto 0) := std_logic_vector(to_unsigned(op_index, OP_INDEX_BITS));
+        tid(15 downto 11) := std_logic_vector(to_unsigned(producer_id, PRODUCER_ID_BITS));
+        tid(10 downto 0) := std_logic_vector(to_unsigned(op_index, OP_INDEX_BITS));
         return tid;
     end function;
     

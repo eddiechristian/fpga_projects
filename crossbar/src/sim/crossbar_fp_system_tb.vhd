@@ -277,7 +277,7 @@ begin
         for i in 0 to NUM_PRODUCERS-1 loop
             prod_requests(i).valid <= '1';
             prod_requests(i).unit_type <= UNIT_MULT;
-            prod_requests(i).unit_index <= 0;
+            prod_requests(i).unit_index <= i;  -- Each producer uses different MULT unit
             prod_requests(i).data(31 downto 0) <= real_to_fp32(real(i) + 1.0);
             prod_requests(i).data(63 downto 32) <= real_to_fp32(10.0);
             prod_requests(i).tid <= make_tid(i, 300 + i);  -- Producer i, operation 300+i
