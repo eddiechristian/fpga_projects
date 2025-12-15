@@ -97,9 +97,10 @@ begin
     -- Priority encoder: if multiple FP units output to same producer, lower index wins
     process(all_fp_outputs, decoded_producer_ids, fifo_full)
         variable prod_id : integer range 0 to NUM_PRODUCERS-1;
+        variable fifo_wr_en_var : std_logic_vector(0 to NUM_PRODUCERS-1);
     begin
         -- Default: no writes
-        fifo_wr_en <= (others => '0');
+        fifo_wr_en_var := (others => '0');
         fifo_wr_data <= (others => (others => '0'));
         
         -- For each FP unit, try to write to its target producer FIFO
@@ -108,13 +109,16 @@ begin
                 prod_id := decoded_producer_ids(fp_idx);
                 
                 -- Only write if FIFO not full and no earlier FP unit has claimed this producer
-                if fifo_full(prod_id) = '0' and fifo_wr_en(prod_id) = '0' then
-                    fifo_wr_en(prod_id) <= '1';
+                if fifo_full(prod_id) = '0' and fifo_wr_en_var(prod_id) = '0' then
+                    fifo_wr_en_var(prod_id) := '1';
                     fifo_wr_data(prod_id)(31 downto 0) <= all_fp_outputs(fp_idx).data;
                     fifo_wr_data(prod_id)(47 downto 32) <= all_fp_outputs(fp_idx).tid;
                 end if;
             end if;
         end loop;
+        
+        -- Assign variable to signal
+        fifo_wr_en <= fifo_wr_en_var;
     end process;
     
     -- Generate output FIFOs for each producer
@@ -158,6 +162,23 @@ begin
         for i in 0 to NUM_PRODUCERS-1 loop
             fifo_rd_en(i) <= prod_results(i).valid and prod_results(i).ready;
         end loop;
+    end process;
+    
+    -- Debug: Monitor routing
+    process(clk)
+    begin
+        if rising_edge(clk) then
+            for i in 0 to TOTAL_FP_UNITS_CONST-1 loop
+                if all_fp_outputs(i).valid = '1' then
+                    report "OUTPUT_ROUTER: FP unit " & integer'image(i) & 
+                           " has valid output, TID=" & integer'image(to_integer(unsigned(all_fp_outputs(i).tid))) &
+                           " (0x" & to_hstring(all_fp_outputs(i).tid) & ")" &
+                           ", decoded Producer ID=" & integer'image(decoded_producer_ids(i)) &
+                           ", fifo_full=" & std_logic'image(fifo_full(decoded_producer_ids(i))) &
+                           ", fifo_wr_en=" & std_logic'image(fifo_wr_en(decoded_producer_ids(i)));
+                end if;
+            end loop;
+        end if;
     end process;
 
 end Behavioral;

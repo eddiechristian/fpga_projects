@@ -110,5 +110,20 @@ begin
     m_axis_valid <= fp_result_valid;
     m_axis_data <= fp_result_data;
     m_axis_tid <= tid_delay(FP_LATENCY-1);
+    
+    -- Debug monitoring process
+    debug_proc: process(aclk)
+    begin
+        if rising_edge(aclk) then
+            if s_axis_valid = '1' then
+                report "ADDSUB: Input valid, TID=" & integer'image(to_integer(unsigned(s_axis_tid))) &
+                       " Op=" & std_logic'image(s_axis_data(64));
+            end if;
+            if fp_result_valid = '1' then
+                report "ADDSUB: Output valid from IP, TID=" & integer'image(to_integer(unsigned(tid_delay(FP_LATENCY-1)))) &
+                       " Data=" & to_hstring(fp_result_data);
+            end if;
+        end if;
+    end process;
 
 end Behavioral;

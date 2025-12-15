@@ -183,6 +183,7 @@ begin
         prod_requests(3).valid <= '0';
         
         wait for CLK_PERIOD * 20;
+        report "Test 2 wait period complete - checking for results...";
         
         -- Test 3: Addition from Producer 2
         report "Test 3: Addition (5.5 + 3.25 = 8.75)";
@@ -198,6 +199,7 @@ begin
         prod_requests(2).valid <= '0';
         
         wait for CLK_PERIOD * 20;
+        report "Test 3 wait period complete - checking for results...";
         
         -- Test 4: FMA operation from Producer 1 (swapped with Test 2)
         report "Test 4: FMA (2.0 * 3.0 + 4.0 = 10.0)";
@@ -213,6 +215,7 @@ begin
         prod_requests(1).valid <= '0';
         
         wait for CLK_PERIOD * 20;
+        report "Test 4 wait period complete - checking for results...";
         
         -- Test 5: Multiple concurrent requests (stress test)
         report "Test 5: Concurrent requests from multiple producers";
@@ -296,20 +299,25 @@ begin
         wait;
     end process;
     
-    -- Result monitor process
+    -- Result monitor process with counters
     monitor_proc: process
+        variable result_count : integer := 0;
     begin
         wait until rising_edge(clk);
         
         for i in 0 to NUM_PRODUCERS-1 loop
             if prod_results(i).valid = '1' then
-                report "Producer " & integer'image(i) & 
+                result_count := result_count + 1;
+                report "[" & integer'image(result_count) & "] Producer " & integer'image(i) & 
                        " received result: TID=" & integer'image(to_integer(unsigned(prod_results(i).tid))) &
                        " Data=" & to_hstring(prod_results(i).data);
             end if;
         end loop;
         
         if sim_done then
+            report "======================================";
+            report "Total results captured: " & integer'image(result_count);
+            report "======================================";
             wait;
         end if;
     end process;

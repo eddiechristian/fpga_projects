@@ -1,58 +1,148 @@
 
 Note: ======================================
 Time: 75 ns  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
-Note: Warming up FMA and ADDSUB units
-Time: 75 ns  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
-Note: ======================================
-Time: 75 ns  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
-Note: ======================================
-Time: 132500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 Note: Starting Crossbar FP System Tests
-Time: 132500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Time: 75 ns  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 Note: ======================================
-Time: 132500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Time: 75 ns  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 Note: Test 1: Multiplication (2.0 * 3.0 = 6.0)
-Time: 132500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
-Note: Producer 0 received result: TID=0 Data=40C00000
-Time: 152500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Time: 75 ns  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: MULT: Input valid, TID=0
+Time: 82500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: MULT: Output valid from IP, TID=0 Data=40C00000
+Time: 92500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=0 (0x0000), decoded Producer ID=0, fifo_full='0', fifo_wr_en='1'
+Time: 92500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/output_router_inst/line__168  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: [1] Producer 0 received result: TID=0 Data=40C00000
+Time: 97500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 Note: Test 2: Subtraction (10.0 - 2.5 = 7.5)
-Time: 237500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Time: 182500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: ADDSUB: Input valid, TID=24579 Op='1'
+Time: 187500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_addsub_units(0)\/addsub_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_addsub_wrapper.vhd
+Note: ADDSUB: Output valid from IP, TID=24579 Data=40F00000
+Time: 197500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_addsub_units(0)\/addsub_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_addsub_wrapper.vhd
+Note: OUTPUT_ROUTER: FP unit 15 has valid output, TID=24579 (0x6003), decoded Producer ID=3, fifo_full='0', fifo_wr_en='1'
+Time: 197500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/output_router_inst/line__168  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: [2] Producer 3 received result: TID=24579 Data=40F00000
+Time: 202500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: Test 2 wait period complete - checking for results...
+Time: 287500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 Note: Test 3: Addition (5.5 + 3.25 = 8.75)
-Time: 342500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Time: 287500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: ADDSUB: Input valid, TID=16386 Op='0'
+Time: 292500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_addsub_units(0)\/addsub_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_addsub_wrapper.vhd
+Note: ADDSUB: Output valid from IP, TID=16386 Data=410C0000
+Time: 302500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_addsub_units(0)\/addsub_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_addsub_wrapper.vhd
+Note: OUTPUT_ROUTER: FP unit 15 has valid output, TID=16386 (0x4002), decoded Producer ID=2, fifo_full='0', fifo_wr_en='1'
+Time: 302500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/output_router_inst/line__168  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: [3] Producer 2 received result: TID=16386 Data=410C0000
+Time: 307500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: Test 3 wait period complete - checking for results...
+Time: 392500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 Note: Test 4: FMA (2.0 * 3.0 + 4.0 = 10.0)
-Time: 447500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Time: 392500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: FMA: Input valid, TID=8193
+Time: 397500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_fma_units(0)\/fma_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_fma_wrapper.vhd
+Note: FMA: Output valid from IP, TID=8193 Data=41200000
+Time: 407500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_fma_units(0)\/fma_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_fma_wrapper.vhd
+Note: OUTPUT_ROUTER: FP unit 10 has valid output, TID=8193 (0x2001), decoded Producer ID=1, fifo_full='0', fifo_wr_en='1'
+Time: 407500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/output_router_inst/line__168  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: [4] Producer 1 received result: TID=8193 Data=41200000
+Time: 412500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: Test 4 wait period complete - checking for results...
+Time: 497500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 Note: Test 5: Concurrent requests from multiple producers
-Time: 552500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
-Note: Producer 0 received result: TID=100 Data=40400000
-Time: 572500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
-Note: Producer 1 received result: TID=8293 Data=40A00000
-Time: 572500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
-Note: Producer 2 received result: TID=16486 Data=41100000
-Time: 572500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Time: 497500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: MULT: Input valid, TID=100
+Time: 502500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: FMA: Input valid, TID=8293
+Time: 502500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_fma_units(0)\/fma_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_fma_wrapper.vhd
+Note: ADDSUB: Input valid, TID=16486 Op='0'
+Time: 502500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_addsub_units(0)\/addsub_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_addsub_wrapper.vhd
+Note: MULT: Output valid from IP, TID=100 Data=40400000
+Time: 512500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: FMA: Output valid from IP, TID=8293 Data=40A00000
+Time: 512500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_fma_units(0)\/fma_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_fma_wrapper.vhd
+Note: ADDSUB: Output valid from IP, TID=16486 Data=41100000
+Time: 512500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_addsub_units(0)\/addsub_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_addsub_wrapper.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=100 (0x0064), decoded Producer ID=0, fifo_full='0', fifo_wr_en='1'
+Time: 512500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/output_router_inst/line__168  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 10 has valid output, TID=8293 (0x2065), decoded Producer ID=1, fifo_full='0', fifo_wr_en='1'
+Time: 512500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/output_router_inst/line__168  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 15 has valid output, TID=16486 (0x4066), decoded Producer ID=2, fifo_full='0', fifo_wr_en='1'
+Time: 512500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/output_router_inst/line__168  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: [5] Producer 0 received result: TID=100 Data=40400000
+Time: 517500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: [6] Producer 1 received result: TID=8293 Data=40A00000
+Time: 517500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: [7] Producer 2 received result: TID=16486 Data=41100000
+Time: 517500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 Note: Test 6: Burst of 5 multiplications from Producer 4
-Time: 707500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
-Note: Producer 4 received result: TID=32968 Data=3F800000
-Time: 727500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
-Note: Producer 4 received result: TID=32969 Data=40000000
-Time: 742500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
-Note: Producer 4 received result: TID=32970 Data=40400000
-Time: 757500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
-Note: Producer 4 received result: TID=32971 Data=40800000
-Time: 772500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
-Note: Producer 4 received result: TID=32972 Data=40A00000
-Time: 787500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Time: 652500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: MULT: Input valid, TID=32968
+Time: 657500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: MULT: Output valid from IP, TID=32968 Data=3F800000
+Time: 667500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=32968 (0x80C8), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 667500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/output_router_inst/line__168  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: [8] Producer 4 received result: TID=32968 Data=3F800000
+Time: 672500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: MULT: Input valid, TID=32969
+Time: 672500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: MULT: Output valid from IP, TID=32969 Data=40000000
+Time: 682500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=32969 (0x80C9), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 682500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/output_router_inst/line__168  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: [9] Producer 4 received result: TID=32969 Data=40000000
+Time: 687500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: MULT: Input valid, TID=32970
+Time: 687500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: MULT: Output valid from IP, TID=32970 Data=40400000
+Time: 697500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=32970 (0x80CA), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 697500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/output_router_inst/line__168  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: [10] Producer 4 received result: TID=32970 Data=40400000
+Time: 702500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: MULT: Input valid, TID=32971
+Time: 702500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: MULT: Output valid from IP, TID=32971 Data=40800000
+Time: 712500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=32971 (0x80CB), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 712500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/output_router_inst/line__168  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: [11] Producer 4 received result: TID=32971 Data=40800000
+Time: 717500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: MULT: Input valid, TID=32972
+Time: 717500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: MULT: Output valid from IP, TID=32972 Data=40A00000
+Time: 727500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=32972 (0x80CC), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 727500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/output_router_inst/line__168  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: [12] Producer 4 received result: TID=32972 Data=40A00000
+Time: 732500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 Note: Test 7: All producers active simultaneously
-Time: 982500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
-Note: Producer 5 received result: TID=41265 Data=42700000
-Time: 1002500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Time: 927500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: MULT: Input valid, TID=41265
+Time: 932500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: MULT: Output valid from IP, TID=41265 Data=42700000
+Time: 942500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/\gen_mult_units(0)\/mult_wrapper_inst/debug_proc  File: /home/eddie/fpga_projects/crossbar/src/hdl/fp_mult_wrapper.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=41265 (0xA131), decoded Producer ID=5, fifo_full='0', fifo_wr_en='1'
+Time: 942500 ps  Iteration: 2  Process: /crossbar_fp_system_tb/uut/output_router_inst/line__168  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: [13] Producer 5 received result: TID=41265 Data=42700000
+Time: 947500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 Note: ======================================
-Time: 1237500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Time: 1182500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 Note: All tests completed
-Time: 1237500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Time: 1182500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 Note: Check waveforms for results verification
-Time: 1237500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Time: 1182500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 Note: ======================================
-Time: 1237500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Time: 1182500 ps  Iteration: 0  Process: /crossbar_fp_system_tb/stim_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: ======================================
+Time: 1182500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: Total results captured: 13
+Time: 1182500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
+Note: ======================================
+Time: 1182500 ps  Iteration: 1  Process: /crossbar_fp_system_tb/monitor_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/crossbar_fp_system_tb.vhd
 INFO: [USF-XSim-96] XSim completed. Design snapshot 'crossbar_fp_system_tb_behav' loaded.
 INFO: [USF-XSim-97] XSim simulation ran for 200us
-launch_simulation: Time (s): cpu = 00:01:37 ; elapsed = 00:00:35 . Memory (MB): peak = 7943.344 ; gain = 54.125 ; free physical = 11721 ; free virtual = 30219
+launch_simulation: Time (s): cpu = 00:01:38 ; elapsed = 00:00:37 . Memory (MB): peak = 7936.934 ; gain = 53.102 ; free physical = 11644 ; free virtual = 30160
