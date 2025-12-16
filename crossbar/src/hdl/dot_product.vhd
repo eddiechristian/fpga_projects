@@ -49,7 +49,7 @@ entity dot_product is
     );
 end entity dot_product;
 
-architecture behavioral of dot_product_producer is
+architecture behavioral of dot_product is
 
     type state_t is (IDLE, REQUEST_MULTS, WAIT_MULT, 
                      ADD_XY, WAIT_ADD1, ADD_Z, WAIT_ADD2, COMPLETE);
