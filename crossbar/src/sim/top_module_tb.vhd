@@ -6,6 +6,7 @@ use IEEE.STD_LOGIC_TEXTIO.ALL;
 
 library work;
 use work.crossbar_pkg.all;
+use work.lin_alg_pkg.all;
 
 -- Testbench for top module with dot product producer
 entity top_module_tb is
@@ -23,8 +24,8 @@ architecture behavioral of top_module_tb is
     signal done  : std_logic;
     
     -- Input vectors
-    signal a_x, a_y, a_z : std_logic_vector(31 downto 0) := (others => '0');
-    signal b_x, b_y, b_z : std_logic_vector(31 downto 0) := (others => '0');
+    signal a : Vec3 := VEC3_ZERO;
+    signal b : Vec3 := VEC3_ZERO;
     
     -- Output
     signal result       : std_logic_vector(31 downto 0);
@@ -109,12 +110,8 @@ begin
             rst          => rst,
             start        => start,
             done         => done,
-            a_x          => a_x,
-            a_y          => a_y,
-            a_z          => a_z,
-            b_x          => b_x,
-            b_y          => b_y,
-            b_z          => b_z,
+            a            => a,
+            b            => b,
             result       => result,
             result_valid => result_valid
         );
@@ -137,12 +134,12 @@ begin
         
         -- Test 1: Simple dot product [1, 2, 3] . [4, 5, 6] = 4 + 10 + 18 = 32
         report "Test 1: [1, 2, 3] . [4, 5, 6] = 32";
-        a_x <= real_to_fp32(1.0);
-        a_y <= real_to_fp32(2.0);
-        a_z <= real_to_fp32(3.0);
-        b_x <= real_to_fp32(4.0);
-        b_y <= real_to_fp32(5.0);
-        b_z <= real_to_fp32(6.0);
+        a.x <= real_to_fp32(1.0);
+        a.y <= real_to_fp32(2.0);
+        a.z <= real_to_fp32(3.0);
+        b.x <= real_to_fp32(4.0);
+        b.y <= real_to_fp32(5.0);
+        b.z <= real_to_fp32(6.0);
         expected := 32.0;
         
         wait until rising_edge(clk);
@@ -166,12 +163,12 @@ begin
         
         -- Test 2: Unit vectors [1, 0, 0] . [0, 1, 0] = 0
         report "Test 2: [1, 0, 0] . [0, 1, 0] = 0";
-        a_x <= real_to_fp32(1.0);
-        a_y <= real_to_fp32(0.0);
-        a_z <= real_to_fp32(0.0);
-        b_x <= real_to_fp32(0.0);
-        b_y <= real_to_fp32(1.0);
-        b_z <= real_to_fp32(0.0);
+        a.x <= real_to_fp32(1.0);
+        a.y <= real_to_fp32(0.0);
+        a.z <= real_to_fp32(0.0);
+        b.x <= real_to_fp32(0.0);
+        b.y <= real_to_fp32(1.0);
+        b.z <= real_to_fp32(0.0);
         expected := 0.0;
         
         wait until rising_edge(clk);
@@ -194,12 +191,12 @@ begin
         
         -- Test 3: Same vector [2, 3, 4] . [2, 3, 4] = 4 + 9 + 16 = 29
         report "Test 3: [2, 3, 4] . [2, 3, 4] = 29";
-        a_x <= real_to_fp32(2.0);
-        a_y <= real_to_fp32(3.0);
-        a_z <= real_to_fp32(4.0);
-        b_x <= real_to_fp32(2.0);
-        b_y <= real_to_fp32(3.0);
-        b_z <= real_to_fp32(4.0);
+        a.x <= real_to_fp32(2.0);
+        a.y <= real_to_fp32(3.0);
+        a.z <= real_to_fp32(4.0);
+        b.x <= real_to_fp32(2.0);
+        b.y <= real_to_fp32(3.0);
+        b.z <= real_to_fp32(4.0);
         expected := 29.0;
         
         wait until rising_edge(clk);

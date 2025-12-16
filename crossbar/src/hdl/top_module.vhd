@@ -4,6 +4,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 library work;
 use work.crossbar_pkg.all;
+use work.lin_alg_pkg.all;
 
 -- Top-level module demonstrating dot product using crossbar
 -- This module shows how to integrate a dot product producer with the
@@ -18,9 +19,9 @@ entity top_module is
         start : in std_logic;
         done  : out std_logic;
         
-        -- Inputs: two 3-component vectors
-        a_x, a_y, a_z : in std_logic_vector(31 downto 0);
-        b_x, b_y, b_z : in std_logic_vector(31 downto 0);
+        -- Inputs: two 3D vectors
+        a : in Vec3;
+        b : in Vec3;
         
         -- Output: dot product result
         result       : out std_logic_vector(31 downto 0);
@@ -62,7 +63,7 @@ begin
         );
     
     -- Instantiate dot product producer
-    dot_product_inst : entity work.dot_product_producer
+    dot_product_inst : entity work.dot_product
         generic map (
             PRODUCER_ID => 0
         )
@@ -71,12 +72,8 @@ begin
             rst          => rst,
             start        => start,
             done         => dp_done,
-            a_x          => a_x,
-            a_y          => a_y,
-            a_z          => a_z,
-            b_x          => b_x,
-            b_y          => b_y,
-            b_z          => b_z,
+            a            => a,
+            b            => b,
             result       => dp_result,
             result_valid => dp_result_valid,
             request      => prod_requests(0),

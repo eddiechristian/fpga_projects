@@ -4,6 +4,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 library work;
 use work.crossbar_pkg.all;
+use work.lin_alg_pkg.all;
 
 -- Dot product producer that uses crossbar FP resources
 -- Computes: result = a.x*b.x + a.y*b.y + a.z*b.z
@@ -21,7 +22,7 @@ use work.crossbar_pkg.all;
 --   WAIT_ADD2 : Wait for final result
 --   DONE      : Assert done signal
 
-entity dot_product_producer is
+entity dot_product is
     generic (
         PRODUCER_ID : integer := 0
     );
@@ -33,9 +34,9 @@ entity dot_product_producer is
         start       : in  std_logic;
         done        : out std_logic;
         
-        -- Input vectors (3 components each)
-        a_x, a_y, a_z : in std_logic_vector(31 downto 0);
-        b_x, b_y, b_z : in std_logic_vector(31 downto 0);
+        -- Input vectors
+        a           : in  Vec3;
+        b           : in  Vec3;
         
         -- Output
         result      : out std_logic_vector(31 downto 0);
@@ -46,7 +47,7 @@ entity dot_product_producer is
         grant       : in  producer_grant_t;
         prod_result : in  producer_result_t
     );
-end entity dot_product_producer;
+end entity dot_product;
 
 architecture behavioral of dot_product_producer is
 
@@ -133,8 +134,8 @@ begin
                         -- Priority: X first, then Y, then Z
                         if mult_x_granted = '0' then
                             request.unit_index <= 0;
-                            request.data(31 downto 0) <= a_x;
-                            request.data(63 downto 32) <= b_x;
+                            request.data(31 downto 0) <= a.x;
+                            request.data(63 downto 32) <= b.x;
                             request.tid <= tid_mult_x;
                             if grant.granted = '1' then
                                 mult_x_granted <= '1';
@@ -142,8 +143,8 @@ begin
                             end if;
                         elsif mult_y_granted = '0' then
                             request.unit_index <= 1;
-                            request.data(31 downto 0) <= a_y;
-                            request.data(63 downto 32) <= b_y;
+                            request.data(31 downto 0) <= a.y;
+                            request.data(63 downto 32) <= b.y;
                             request.tid <= tid_mult_y;
                             if grant.granted = '1' then
                                 mult_y_granted <= '1';
@@ -151,8 +152,8 @@ begin
                             end if;
                         elsif mult_z_granted = '0' then
                             request.unit_index <= 2;
-                            request.data(31 downto 0) <= a_z;
-                            request.data(63 downto 32) <= b_z;
+                            request.data(31 downto 0) <= a.z;
+                            request.data(63 downto 32) <= b.z;
                             request.tid <= tid_mult_z;
                             if grant.granted = '1' then
                                 mult_z_granted <= '1';
