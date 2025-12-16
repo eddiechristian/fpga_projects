@@ -13,7 +13,7 @@ use work.lin_alg_pkg.all;
 -- shares FP resources through the crossbar with other producers.
 -- 
 -- State machine:
---   IDLE      : Wait for start signal
+--   IDLE      : Wait for input_valid signal
 --   MULT_XYZ  : Request 3 multiplications
 --   WAIT_MULT : Wait for all 3 MULT results
 --   ADD_XY    : Request addition of x*x + y*y
@@ -31,8 +31,7 @@ entity dot_product is
         rst         : in  std_logic;
         
         -- Control interface
-        start       : in  std_logic;
-        done        : out std_logic;
+        input_valid : in  std_logic;
         
         -- Input vectors
         a           : in  Vec3;
@@ -52,7 +51,7 @@ end entity dot_product;
 architecture behavioral of dot_product is
 
     type state_t is (IDLE, REQUEST_MULTS, WAIT_MULT, 
-                     ADD_XY, WAIT_ADD1, ADD_Z, WAIT_ADD2, COMPLETE);
+                     ADD_XY, WAIT_ADD1, ADD_Z, WAIT_ADD2);
     signal state : state_t := IDLE;
     
     -- Operation counters for TID generation
@@ -91,7 +90,6 @@ begin
             if rst = '1' then
                 state <= IDLE;
                 request <= init_producer_request;
-                done <= '0';
                 result_valid <= '0';
                 op_counter <= (others => '0');
                 mult_x_received <= '0';
@@ -105,12 +103,11 @@ begin
             else
                 -- Default: no request
                 request.valid <= '0';
-                done <= '0';
                 result_valid <= '0';
                 
                 case state is
                     when IDLE =>
-                        if start = '1' then
+                        if input_valid = '1' then
                             state <= REQUEST_MULTS;
                             mult_x_received <= '0';
                             mult_y_received <= '0';
@@ -210,17 +207,10 @@ begin
                         end if;
                     
                     when WAIT_ADD2 =>
-                        -- Final result received in result capture process
+                        -- Final result received, pulse result_valid and return to IDLE
                         if prod_result.valid = '1' and prod_result.tid = tid_add_z then
                             result <= prod_result.data;
                             result_valid <= '1';
-                            state <= COMPLETE;
-                        end if;
-                    
-                    when COMPLETE =>
-                        done <= '1';
-                        result_valid <= '0';
-                        if start = '0' then
                             state <= IDLE;
                         end if;
                         

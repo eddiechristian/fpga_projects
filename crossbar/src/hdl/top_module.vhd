@@ -16,8 +16,7 @@ entity top_module is
         rst : in std_logic;
         
         -- Control
-        start : in std_logic;
-        done  : out std_logic;
+        input_valid : in std_logic;
         
         -- Inputs: two 3D vectors (flattened for FPGA I/O)
         a_x, a_y, a_z : in std_logic_vector(31 downto 0);
@@ -39,7 +38,6 @@ architecture structural of top_module is
     -- Dot product producer signals
     signal dp_result       : std_logic_vector(31 downto 0);
     signal dp_result_valid : std_logic;
-    signal dp_done         : std_logic;
     
     -- Crossbar status
     signal locked : std_logic;
@@ -82,8 +80,7 @@ begin
         port map (
             clk          => clk,
             rst          => rst,
-            start        => start,
-            done         => dp_done,
+            input_valid  => input_valid,
             a            => a_vec,
             b            => b_vec,
             result       => dp_result,
@@ -94,7 +91,6 @@ begin
         );
     
     -- Output assignments
-    done <= dp_done;
     result <= dp_result;
     result_valid(0) <= dp_result_valid;
 

@@ -20,8 +20,7 @@ architecture behavioral of top_module_tb is
     constant CLK_PERIOD : time := 10 ns;
     
     -- Control signals
-    signal start : std_logic := '0';
-    signal done  : std_logic;
+    signal input_valid : std_logic := '0';
     
     -- Input vectors (flattened)
     signal a_x, a_y, a_z : std_logic_vector(31 downto 0) := (others => '0');
@@ -108,8 +107,7 @@ begin
         port map (
             clk          => clk,
             rst          => rst,
-            start        => start,
-            done         => done,
+            input_valid  => input_valid,
             a_x          => a_x,
             a_y          => a_y,
             a_z          => a_z,
@@ -128,7 +126,7 @@ begin
     begin
         -- Reset
         rst <= '1';
-        start <= '0';
+        input_valid <= '0';
         wait for CLK_PERIOD * 10;
         wait until rising_edge(clk);
         rst <= '0';
@@ -147,12 +145,12 @@ begin
         expected := 32.0;
         
         wait until rising_edge(clk);
-        start <= '1';
+        input_valid <= '1';
         wait until rising_edge(clk);
-        start <= '0';
+        input_valid <= '0';
         
-        -- Wait for done
-        wait until done = '1';
+        -- Wait for result
+        wait until result_valid(0) = '1';
         wait for CLK_PERIOD;
         
         result_real := fp32_to_real(result);
@@ -176,11 +174,11 @@ begin
         expected := 0.0;
         
         wait until rising_edge(clk);
-        start <= '1';
+        input_valid <= '1';
         wait until rising_edge(clk);
-        start <= '0';
+        input_valid <= '0';
         
-        wait until done = '1';
+        wait until result_valid(0) = '1';
         wait for CLK_PERIOD;
         
         result_real := fp32_to_real(result);
@@ -204,11 +202,11 @@ begin
         expected := 29.0;
         
         wait until rising_edge(clk);
-        start <= '1';
+        input_valid <= '1';
         wait until rising_edge(clk);
-        start <= '0';
+        input_valid <= '0';
         
-        wait until done = '1';
+        wait until result_valid(0) = '1';
         wait for CLK_PERIOD;
         
         result_real := fp32_to_real(result);
