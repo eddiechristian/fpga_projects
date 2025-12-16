@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="top_module_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="top_module_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="10000000fs"></ZoomEndTime>
+      <Cursor1Time time="0fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="200"></NameColumnWidth>
+      <ValueColumnWidth column_width="100"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="19" />
+   <wvobject type="logic" fp_name="/top_module_tb/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_module_tb/rst">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_module_tb/start">
+      <obj_property name="ElementShortName">start</obj_property>
+      <obj_property name="ObjectShortName">start</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_module_tb/done">
+      <obj_property name="ElementShortName">done</obj_property>
+      <obj_property name="ObjectShortName">done</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_module_tb/a_x">
+      <obj_property name="ElementShortName">a_x[31:0]</obj_property>
+      <obj_property name="ObjectShortName">a_x[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_module_tb/a_y">
+      <obj_property name="ElementShortName">a_y[31:0]</obj_property>
+      <obj_property name="ObjectShortName">a_y[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_module_tb/a_z">
+      <obj_property name="ElementShortName">a_z[31:0]</obj_property>
+      <obj_property name="ObjectShortName">a_z[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_module_tb/b_x">
+      <obj_property name="ElementShortName">b_x[31:0]</obj_property>
+      <obj_property name="ObjectShortName">b_x[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_module_tb/b_y">
+      <obj_property name="ElementShortName">b_y[31:0]</obj_property>
+      <obj_property name="ObjectShortName">b_y[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_module_tb/b_z">
+      <obj_property name="ElementShortName">b_z[31:0]</obj_property>
+      <obj_property name="ObjectShortName">b_z[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_module_tb/result">
+      <obj_property name="ElementShortName">result[31:0]</obj_property>
+      <obj_property name="ObjectShortName">result[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_module_tb/result_valid">
+      <obj_property name="ElementShortName">result_valid[0:0]</obj_property>
+      <obj_property name="ObjectShortName">result_valid[0:0]</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group0">
+      <obj_property name="label">Producer State</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="other" fp_name="/top_module_tb/dut/dot_product_inst/state">
+         <obj_property name="ElementShortName">state</obj_property>
+         <obj_property name="ObjectShortName">state</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/dot_product_inst/op_counter">
+         <obj_property name="ElementShortName">op_counter[10:0]</obj_property>
+         <obj_property name="ObjectShortName">op_counter[10:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group1">
+      <obj_property name="label">Request/Grant</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/top_module_tb/dut/dot_product_inst/request.valid">
+         <obj_property name="ElementShortName">valid</obj_property>
+         <obj_property name="ObjectShortName">valid</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/top_module_tb/dut/dot_product_inst/request.unit_type">
+         <obj_property name="ElementShortName">unit_type</obj_property>
+         <obj_property name="ObjectShortName">unit_type</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/dot_product_inst/request.unit_index">
+         <obj_property name="ElementShortName">unit_index[3:0]</obj_property>
+         <obj_property name="ObjectShortName">unit_index[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/dot_product_inst/request.tid">
+         <obj_property name="ElementShortName">tid[15:0]</obj_property>
+         <obj_property name="ObjectShortName">tid[15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top_module_tb/dut/dot_product_inst/grant.granted">
+         <obj_property name="ElementShortName">granted</obj_property>
+         <obj_property name="ObjectShortName">granted</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group2">
+      <obj_property name="label">Intermediate Results</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/top_module_tb/dut/dot_product_inst/mult_x_result">
+         <obj_property name="ElementShortName">mult_x_result[31:0]</obj_property>
+         <obj_property name="ObjectShortName">mult_x_result[31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/dot_product_inst/mult_y_result">
+         <obj_property name="ElementShortName">mult_y_result[31:0]</obj_property>
+         <obj_property name="ObjectShortName">mult_y_result[31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/dot_product_inst/mult_z_result">
+         <obj_property name="ElementShortName">mult_z_result[31:0]</obj_property>
+         <obj_property name="ObjectShortName">mult_z_result[31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/dot_product_inst/add_xy_result">
+         <obj_property name="ElementShortName">add_xy_result[31:0]</obj_property>
+         <obj_property name="ObjectShortName">add_xy_result[31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top_module_tb/dut/dot_product_inst/mult_x_received">
+         <obj_property name="ElementShortName">mult_x_received</obj_property>
+         <obj_property name="ObjectShortName">mult_x_received</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top_module_tb/dut/dot_product_inst/mult_y_received">
+         <obj_property name="ElementShortName">mult_y_received</obj_property>
+         <obj_property name="ObjectShortName">mult_y_received</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top_module_tb/dut/dot_product_inst/mult_z_received">
+         <obj_property name="ElementShortName">mult_z_received</obj_property>
+         <obj_property name="ObjectShortName">mult_z_received</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top_module_tb/dut/dot_product_inst/add_xy_received">
+         <obj_property name="ElementShortName">add_xy_received</obj_property>
+         <obj_property name="ObjectShortName">add_xy_received</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group3">
+      <obj_property name="label">Producer Result</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/top_module_tb/dut/dot_product_inst/prod_result.valid">
+         <obj_property name="ElementShortName">valid</obj_property>
+         <obj_property name="ObjectShortName">valid</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/dot_product_inst/prod_result.tid">
+         <obj_property name="ElementShortName">tid[15:0]</obj_property>
+         <obj_property name="ObjectShortName">tid[15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/dot_product_inst/prod_result.data">
+         <obj_property name="ElementShortName">data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">data[31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>
