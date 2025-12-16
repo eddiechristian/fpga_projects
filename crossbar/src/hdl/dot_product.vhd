@@ -1,10 +1,10 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
 
-library work;
-use work.crossbar_pkg.all;
-use work.lin_alg_pkg.all;
+LIBRARY work;
+USE work.crossbar_pkg.ALL;
+USE work.lin_alg_pkg.ALL;
 
 -- Dot product producer that uses crossbar FP resources
 -- Computes: result = a.x*b.x + a.y*b.y + a.z*b.z
@@ -22,227 +22,233 @@ use work.lin_alg_pkg.all;
 --   WAIT_ADD2 : Wait for final result
 --   DONE      : Assert done signal
 
-entity dot_product is
-    generic (
-        PRODUCER_ID : integer := 0
+ENTITY dot_product IS
+    GENERIC (
+        PRODUCER_ID : INTEGER := 0
     );
-    port (
-        clk         : in  std_logic;
-        rst         : in  std_logic;
-        
+    PORT (
+        clk          : IN STD_LOGIC;
+        rst          : IN STD_LOGIC;
+
         -- Control interface
-        input_valid : in  std_logic;
-        
+        input_valid  : IN STD_LOGIC;
+
         -- Input vectors
-        a           : in  Vec3;
-        b           : in  Vec3;
-        
+        a            : IN Vec3;
+        b            : IN Vec3;
+
+        --Input unit indexes
+        mult_x_index : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
+        mult_y_index : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
+        mult_z_index : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
+        add_index    : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
+
         -- Output
-        result      : out std_logic_vector(31 downto 0);
-        result_valid : out std_logic;
-        
+        result       : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        result_valid : OUT STD_LOGIC;
+
         -- Crossbar interface
-        request     : out producer_request_t;
-        grant       : in  producer_grant_t;
-        prod_result : in  producer_result_t
+        request      : OUT producer_request_t;
+        grant        : IN producer_grant_t;
+        prod_result  : IN producer_result_t
     );
-end entity dot_product;
+END ENTITY dot_product;
 
-architecture behavioral of dot_product is
+ARCHITECTURE behavioral OF dot_product IS
 
-    type state_t is (IDLE, REQUEST_MULTS, WAIT_MULT, 
-                     ADD_XY, WAIT_ADD1, ADD_Z, WAIT_ADD2);
-    signal state : state_t := IDLE;
-    
+    TYPE state_t IS (IDLE, REQUEST_MULTS, WAIT_MULT,
+        ADD_XY, WAIT_ADD1, ADD_Z, WAIT_ADD2);
+    SIGNAL state           : state_t               := IDLE;
+
     -- Operation counters for TID generation
-    signal op_counter : unsigned(10 downto 0) := (others => '0');
-    
-    -- Storage for intermediate results
-    signal mult_x_result : std_logic_vector(31 downto 0);
-    signal mult_y_result : std_logic_vector(31 downto 0);
-    signal mult_z_result : std_logic_vector(31 downto 0);
-    signal add_xy_result : std_logic_vector(31 downto 0);
-    
-    -- Flags for received results
-    signal mult_x_received : std_logic := '0';
-    signal mult_y_received : std_logic := '0';
-    signal mult_z_received : std_logic := '0';
-    signal add_xy_received : std_logic := '0';
-    
-    -- Flags for granted requests (to track which MULTs have been granted)
-    signal mult_x_granted : std_logic := '0';
-    signal mult_y_granted : std_logic := '0';
-    signal mult_z_granted : std_logic := '0';
-    
-    -- TID tracking
-    signal tid_mult_x : std_logic_vector(15 downto 0);
-    signal tid_mult_y : std_logic_vector(15 downto 0);
-    signal tid_mult_z : std_logic_vector(15 downto 0);
-    signal tid_add_xy : std_logic_vector(15 downto 0);
-    signal tid_add_z  : std_logic_vector(15 downto 0);
+    SIGNAL op_counter      : unsigned(10 DOWNTO 0) := (OTHERS => '0');
 
-begin
+    -- Storage for intermediate results
+    SIGNAL mult_x_result   : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    SIGNAL mult_y_result   : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    SIGNAL mult_z_result   : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    SIGNAL add_xy_result   : STD_LOGIC_VECTOR(31 DOWNTO 0);
+
+    -- Flags for received results
+    SIGNAL mult_x_received : STD_LOGIC := '0';
+    SIGNAL mult_y_received : STD_LOGIC := '0';
+    SIGNAL mult_z_received : STD_LOGIC := '0';
+    SIGNAL add_xy_received : STD_LOGIC := '0';
+
+    -- Flags for granted requests (to track which MULTs have been granted)
+    SIGNAL mult_x_granted  : STD_LOGIC := '0';
+    SIGNAL mult_y_granted  : STD_LOGIC := '0';
+    SIGNAL mult_z_granted  : STD_LOGIC := '0';
+
+    -- TID tracking
+    SIGNAL tid_mult_x      : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL tid_mult_y      : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL tid_mult_z      : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL tid_add_xy      : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL tid_add_z       : STD_LOGIC_VECTOR(15 DOWNTO 0);
+
+BEGIN
 
     -- Main state machine
-    process(clk)
-    begin
-        if rising_edge(clk) then
-            if rst = '1' then
-                state <= IDLE;
-                request <= init_producer_request;
-                result_valid <= '0';
-                op_counter <= (others => '0');
+    PROCESS (clk)
+    BEGIN
+        IF rising_edge(clk) THEN
+            IF rst = '1' THEN
+                state           <= IDLE;
+                request         <= init_producer_request;
+                result_valid    <= '0';
+                op_counter      <= (OTHERS => '0');
                 mult_x_received <= '0';
                 mult_y_received <= '0';
                 mult_z_received <= '0';
                 add_xy_received <= '0';
-                mult_x_granted <= '0';
-                mult_y_granted <= '0';
-                mult_z_granted <= '0';
-                
-            else
+                mult_x_granted  <= '0';
+                mult_y_granted  <= '0';
+                mult_z_granted  <= '0';
+
+            ELSE
                 -- Default: no request
                 request.valid <= '0';
-                result_valid <= '0';
-                
-                case state is
-                    when IDLE =>
-                        if input_valid = '1' then
-                            state <= REQUEST_MULTS;
+                result_valid  <= '0';
+
+                CASE state IS
+                    WHEN IDLE =>
+                        IF input_valid = '1' THEN
+                            state           <= REQUEST_MULTS;
                             mult_x_received <= '0';
                             mult_y_received <= '0';
                             mult_z_received <= '0';
                             add_xy_received <= '0';
-                            mult_x_granted <= '0';
-                            mult_y_granted <= '0';
-                            mult_z_granted <= '0';
+                            mult_x_granted  <= '0';
+                            mult_y_granted  <= '0';
+                            mult_z_granted  <= '0';
                             -- Pre-assign TIDs for all 3 multiplications
-                            tid_mult_x <= make_tid(PRODUCER_ID, 0);
-                            tid_mult_y <= make_tid(PRODUCER_ID, 1);
-                            tid_mult_z <= make_tid(PRODUCER_ID, 2);
-                            op_counter <= to_unsigned(3, op_counter'length);
-                        end if;
-                    
-                    when REQUEST_MULTS =>
+                            tid_mult_x      <= make_tid(PRODUCER_ID, 0);
+                            tid_mult_y      <= make_tid(PRODUCER_ID, 1);
+                            tid_mult_z      <= make_tid(PRODUCER_ID, 2);
+                            op_counter      <= to_unsigned(3, op_counter'length);
+                        END IF;
+
+                    WHEN REQUEST_MULTS =>
                         -- Request whichever MULTs haven't been granted yet (in parallel)
-                        request.valid <= '1';
+                        request.valid     <= '1';
                         request.unit_type <= UNIT_MULT;
-                        
+
                         -- Priority: X first, then Y, then Z
-                        if mult_x_granted = '0' then
-                            request.unit_index <= 0;
-                            request.data(31 downto 0) <= a.x;
-                            request.data(63 downto 32) <= b.x;
-                            request.tid <= tid_mult_x;
-                            if grant.granted = '1' then
+                        IF mult_x_granted = '0' THEN
+                            request.unit_index         <= to_integer(unsigned(mult_x_index));
+                            request.data(31 DOWNTO 0)  <= a.x;
+                            request.data(63 DOWNTO 32) <= b.x;
+                            request.tid                <= tid_mult_x;
+                            IF grant.granted = '1' THEN
                                 mult_x_granted <= '1';
-                                report "DOT_PROD: MULT_X granted in parallel, TID=" & integer'image(to_integer(unsigned(tid_mult_x)));
-                            end if;
-                        elsif mult_y_granted = '0' then
-                            request.unit_index <= 1;
-                            request.data(31 downto 0) <= a.y;
-                            request.data(63 downto 32) <= b.y;
-                            request.tid <= tid_mult_y;
-                            if grant.granted = '1' then
+                                REPORT "DOT_PROD: MULT_X granted in parallel, TID=" & INTEGER'image(to_integer(unsigned(tid_mult_x)));
+                            END IF;
+                        ELSIF mult_y_granted = '0' THEN
+                            request.unit_index         <=to_integer(unsigned(mult_y_index));
+                            request.data(31 DOWNTO 0)  <= a.y;
+                            request.data(63 DOWNTO 32) <= b.y;
+                            request.tid                <= tid_mult_y;
+                            IF grant.granted = '1' THEN
                                 mult_y_granted <= '1';
-                                report "DOT_PROD: MULT_Y granted in parallel, TID=" & integer'image(to_integer(unsigned(tid_mult_y)));
-                            end if;
-                        elsif mult_z_granted = '0' then
-                            request.unit_index <= 2;
-                            request.data(31 downto 0) <= a.z;
-                            request.data(63 downto 32) <= b.z;
-                            request.tid <= tid_mult_z;
-                            if grant.granted = '1' then
+                                REPORT "DOT_PROD: MULT_Y granted in parallel, TID=" & INTEGER'image(to_integer(unsigned(tid_mult_y)));
+                            END IF;
+                        ELSIF mult_z_granted = '0' THEN
+                            request.unit_index         <= to_integer(unsigned(mult_z_index));
+                            request.data(31 DOWNTO 0)  <= a.z;
+                            request.data(63 DOWNTO 32) <= b.z;
+                            request.tid                <= tid_mult_z;
+                            IF grant.granted = '1' THEN
                                 mult_z_granted <= '1';
-                                report "DOT_PROD: MULT_Z granted in parallel, TID=" & integer'image(to_integer(unsigned(tid_mult_z)));
-                            end if;
-                        else
+                                REPORT "DOT_PROD: MULT_Z granted in parallel, TID=" & INTEGER'image(to_integer(unsigned(tid_mult_z)));
+                            END IF;
+                        ELSE
                             -- All 3 MULTs granted, move to wait state
                             request.valid <= '0';
-                            state <= WAIT_MULT;
-                        end if;
-                    
-                    when WAIT_MULT =>
-                        -- Wait for all 3 MULT results
-                        if mult_x_received = '1' and mult_y_received = '1' and mult_z_received = '1' then
-                            state <= ADD_XY;
-                        end if;
-                    
-                    when ADD_XY =>
-                        -- Request addition of X + Y results
-                        request.valid <= '1';
-                        request.unit_type <= UNIT_ADDSUB;
-                        request.unit_index <= 0;
-                        request.data(31 downto 0) <= mult_x_result;
-                        request.data(63 downto 32) <= mult_y_result;
-                        request.data(64) <= '0';  -- ADD operation
-                        tid_add_xy <= make_tid(PRODUCER_ID, to_integer(op_counter));
-                        request.tid <= tid_add_xy;
-                        
-                        if grant.granted = '1' then
-                            op_counter <= op_counter + 1;
-                            state <= WAIT_ADD1;
-                        end if;
-                    
-                    when WAIT_ADD1 =>
-                        -- Wait for first ADD result
-                        if add_xy_received = '1' then
-                            state <= ADD_Z;
-                        end if;
-                    
-                    when ADD_Z =>
-                        -- Request addition of (X+Y) + Z
-                        request.valid <= '1';
-                        request.unit_type <= UNIT_ADDSUB;
-                        request.unit_index <= 0;
-                        request.data(31 downto 0) <= add_xy_result;
-                        request.data(63 downto 32) <= mult_z_result;
-                        request.data(64) <= '0';  -- ADD operation
-                        tid_add_z <= make_tid(PRODUCER_ID, to_integer(op_counter));
-                        request.tid <= tid_add_z;
-                        
-                        if grant.granted = '1' then
-                            op_counter <= op_counter + 1;
-                            state <= WAIT_ADD2;
-                        end if;
-                    
-                    when WAIT_ADD2 =>
-                        -- Final result received, pulse result_valid and return to IDLE
-                        if prod_result.valid = '1' and prod_result.tid = tid_add_z then
-                            result <= prod_result.data;
-                            result_valid <= '1';
-                            state <= IDLE;
-                        end if;
-                        
-                end case;
-                
-                -- Result capture process (runs in parallel with state machine)
-                if prod_result.valid = '1' then
-                    report "DOT_PROD: Received result TID=" & integer'image(to_integer(unsigned(prod_result.tid)))
-                           & " Expected: X=" & integer'image(to_integer(unsigned(tid_mult_x)))
-                           & " Y=" & integer'image(to_integer(unsigned(tid_mult_y)))
-                           & " Z=" & integer'image(to_integer(unsigned(tid_mult_z)));
-                    if prod_result.tid = tid_mult_x then
-                        mult_x_result <= prod_result.data;
-                        mult_x_received <= '1';
-                        report "DOT_PROD: MULT_X result captured";
-                    elsif prod_result.tid = tid_mult_y then
-                        mult_y_result <= prod_result.data;
-                        mult_y_received <= '1';
-                        report "DOT_PROD: MULT_Y result captured";
-                    elsif prod_result.tid = tid_mult_z then
-                        mult_z_result <= prod_result.data;
-                        mult_z_received <= '1';
-                        report "DOT_PROD: MULT_Z result captured";
-                    elsif prod_result.tid = tid_add_xy then
-                        add_xy_result <= prod_result.data;
-                        add_xy_received <= '1';
-                        report "DOT_PROD: ADD_XY result captured";
-                    end if;
-                end if;
-                
-            end if;
-        end if;
-    end process;
+                            state         <= WAIT_MULT;
+                        END IF;
 
-end architecture behavioral;
+                    WHEN WAIT_MULT =>
+                        -- Wait for all 3 MULT results
+                        IF mult_x_received = '1' AND mult_y_received = '1' AND mult_z_received = '1' THEN
+                            state <= ADD_XY;
+                        END IF;
+
+                    WHEN ADD_XY =>
+                        -- Request addition of X + Y results
+                        request.valid              <= '1';
+                        request.unit_type          <= UNIT_ADDSUB;
+                        request.unit_index         <= 0;
+                        request.data(31 DOWNTO 0)  <= mult_x_result;
+                        request.data(63 DOWNTO 32) <= mult_y_result;
+                        request.data(64)           <= '0'; -- ADD operation
+                        tid_add_xy                 <= make_tid(PRODUCER_ID, to_integer(op_counter));
+                        request.tid                <= tid_add_xy;
+
+                        IF grant.granted = '1' THEN
+                            op_counter <= op_counter + 1;
+                            state      <= WAIT_ADD1;
+                        END IF;
+
+                    WHEN WAIT_ADD1 =>
+                        -- Wait for first ADD result
+                        IF add_xy_received = '1' THEN
+                            state <= ADD_Z;
+                        END IF;
+
+                    WHEN ADD_Z =>
+                        -- Request addition of (X+Y) + Z
+                        request.valid              <= '1';
+                        request.unit_type          <= UNIT_ADDSUB;
+                        request.unit_index         <= 0;
+                        request.data(31 DOWNTO 0)  <= add_xy_result;
+                        request.data(63 DOWNTO 32) <= mult_z_result;
+                        request.data(64)           <= '0'; -- ADD operation
+                        tid_add_z                  <= make_tid(PRODUCER_ID, to_integer(op_counter));
+                        request.tid                <= tid_add_z;
+
+                        IF grant.granted = '1' THEN
+                            op_counter <= op_counter + 1;
+                            state      <= WAIT_ADD2;
+                        END IF;
+
+                    WHEN WAIT_ADD2 =>
+                        -- Final result received, pulse result_valid and return to IDLE
+                        IF prod_result.valid = '1' AND prod_result.tid = tid_add_z THEN
+                            result       <= prod_result.data;
+                            result_valid <= '1';
+                            state        <= IDLE;
+                        END IF;
+
+                END CASE;
+
+                -- Result capture process (runs in parallel with state machine)
+                IF prod_result.valid = '1' THEN
+                    REPORT "DOT_PROD: Received result TID=" & INTEGER'image(to_integer(unsigned(prod_result.tid)))
+                        & " Expected: X=" & INTEGER'image(to_integer(unsigned(tid_mult_x)))
+                        & " Y=" & INTEGER'image(to_integer(unsigned(tid_mult_y)))
+                        & " Z=" & INTEGER'image(to_integer(unsigned(tid_mult_z)));
+                    IF prod_result.tid = tid_mult_x THEN
+                        mult_x_result   <= prod_result.data;
+                        mult_x_received <= '1';
+                        REPORT "DOT_PROD: MULT_X result captured";
+                    ELSIF prod_result.tid = tid_mult_y THEN
+                        mult_y_result   <= prod_result.data;
+                        mult_y_received <= '1';
+                        REPORT "DOT_PROD: MULT_Y result captured";
+                    ELSIF prod_result.tid = tid_mult_z THEN
+                        mult_z_result   <= prod_result.data;
+                        mult_z_received <= '1';
+                        REPORT "DOT_PROD: MULT_Z result captured";
+                    ELSIF prod_result.tid = tid_add_xy THEN
+                        add_xy_result   <= prod_result.data;
+                        add_xy_received <= '1';
+                        REPORT "DOT_PROD: ADD_XY result captured";
+                    END IF;
+                END IF;
+
+            END IF;
+        END IF;
+    END PROCESS;
+
+END ARCHITECTURE behavioral;
