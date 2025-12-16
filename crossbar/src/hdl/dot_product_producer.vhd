@@ -50,7 +50,7 @@ end entity dot_product_producer;
 
 architecture behavioral of dot_product_producer is
 
-    type state_t is (IDLE, MULT_X, MULT_Y, MULT_Z, WAIT_MULT, 
+    type state_t is (IDLE, REQUEST_MULTS, WAIT_MULT, 
                      ADD_XY, WAIT_ADD1, ADD_Z, WAIT_ADD2, COMPLETE);
     signal state : state_t := IDLE;
     
@@ -68,6 +68,11 @@ architecture behavioral of dot_product_producer is
     signal mult_y_received : std_logic := '0';
     signal mult_z_received : std_logic := '0';
     signal add_xy_received : std_logic := '0';
+    
+    -- Flags for granted requests (to track which MULTs have been granted)
+    signal mult_x_granted : std_logic := '0';
+    signal mult_y_granted : std_logic := '0';
+    signal mult_z_granted : std_logic := '0';
     
     -- TID tracking
     signal tid_mult_x : std_logic_vector(15 downto 0);
@@ -92,6 +97,9 @@ begin
                 mult_y_received <= '0';
                 mult_z_received <= '0';
                 add_xy_received <= '0';
+                mult_x_granted <= '0';
+                mult_y_granted <= '0';
+                mult_z_granted <= '0';
                 
             else
                 -- Default: no request
@@ -102,61 +110,57 @@ begin
                 case state is
                     when IDLE =>
                         if start = '1' then
-                            state <= MULT_X;
+                            state <= REQUEST_MULTS;
                             mult_x_received <= '0';
                             mult_y_received <= '0';
                             mult_z_received <= '0';
                             add_xy_received <= '0';
+                            mult_x_granted <= '0';
+                            mult_y_granted <= '0';
+                            mult_z_granted <= '0';
+                            -- Pre-assign TIDs for all 3 multiplications
+                            tid_mult_x <= make_tid(PRODUCER_ID, 0);
+                            tid_mult_y <= make_tid(PRODUCER_ID, 1);
+                            tid_mult_z <= make_tid(PRODUCER_ID, 2);
+                            op_counter <= to_unsigned(3, op_counter'length);
                         end if;
                     
-                    when MULT_X =>
-                        -- Request X multiplication
+                    when REQUEST_MULTS =>
+                        -- Request whichever MULTs haven't been granted yet (in parallel)
                         request.valid <= '1';
                         request.unit_type <= UNIT_MULT;
-                        request.unit_index <= 0;  -- Try unit 0 first
-                        request.data(31 downto 0) <= a_x;
-                        request.data(63 downto 32) <= b_x;
-                        tid_mult_x <= make_tid(PRODUCER_ID, to_integer(op_counter));
-                        request.tid <= make_tid(PRODUCER_ID, to_integer(op_counter));
                         
-                        if grant.granted = '1' then
-                            report "DOT_PROD: MULT_X granted, TID=" & integer'image(to_integer(unsigned(tid_mult_x))) 
-                                   & " op_counter=" & integer'image(to_integer(op_counter));
-                            op_counter <= op_counter + 1;
-                            state <= MULT_Y;
-                        end if;
-                    
-                    when MULT_Y =>
-                        -- Request Y multiplication
-                        request.valid <= '1';
-                        request.unit_type <= UNIT_MULT;
-                        request.unit_index <= 1;  -- Try unit 1
-                        request.data(31 downto 0) <= a_y;
-                        request.data(63 downto 32) <= b_y;
-                        tid_mult_y <= make_tid(PRODUCER_ID, to_integer(op_counter));
-                        request.tid <= make_tid(PRODUCER_ID, to_integer(op_counter));
-                        
-                        if grant.granted = '1' then
-                            report "DOT_PROD: MULT_Y granted, TID=" & integer'image(to_integer(unsigned(tid_mult_y)))
-                                   & " op_counter=" & integer'image(to_integer(op_counter));
-                            op_counter <= op_counter + 1;
-                            state <= MULT_Z;
-                        end if;
-                    
-                    when MULT_Z =>
-                        -- Request Z multiplication
-                        request.valid <= '1';
-                        request.unit_type <= UNIT_MULT;
-                        request.unit_index <= 2;  -- Try unit 2
-                        request.data(31 downto 0) <= a_z;
-                        request.data(63 downto 32) <= b_z;
-                        tid_mult_z <= make_tid(PRODUCER_ID, to_integer(op_counter));
-                        request.tid <= make_tid(PRODUCER_ID, to_integer(op_counter));
-                        
-                        if grant.granted = '1' then
-                            report "DOT_PROD: MULT_Z granted, TID=" & integer'image(to_integer(unsigned(tid_mult_z)))
-                                   & " op_counter=" & integer'image(to_integer(op_counter));
-                            op_counter <= op_counter + 1;
+                        -- Priority: X first, then Y, then Z
+                        if mult_x_granted = '0' then
+                            request.unit_index <= 0;
+                            request.data(31 downto 0) <= a_x;
+                            request.data(63 downto 32) <= b_x;
+                            request.tid <= tid_mult_x;
+                            if grant.granted = '1' then
+                                mult_x_granted <= '1';
+                                report "DOT_PROD: MULT_X granted in parallel, TID=" & integer'image(to_integer(unsigned(tid_mult_x)));
+                            end if;
+                        elsif mult_y_granted = '0' then
+                            request.unit_index <= 1;
+                            request.data(31 downto 0) <= a_y;
+                            request.data(63 downto 32) <= b_y;
+                            request.tid <= tid_mult_y;
+                            if grant.granted = '1' then
+                                mult_y_granted <= '1';
+                                report "DOT_PROD: MULT_Y granted in parallel, TID=" & integer'image(to_integer(unsigned(tid_mult_y)));
+                            end if;
+                        elsif mult_z_granted = '0' then
+                            request.unit_index <= 2;
+                            request.data(31 downto 0) <= a_z;
+                            request.data(63 downto 32) <= b_z;
+                            request.tid <= tid_mult_z;
+                            if grant.granted = '1' then
+                                mult_z_granted <= '1';
+                                report "DOT_PROD: MULT_Z granted in parallel, TID=" & integer'image(to_integer(unsigned(tid_mult_z)));
+                            end if;
+                        else
+                            -- All 3 MULTs granted, move to wait state
+                            request.valid <= '0';
                             state <= WAIT_MULT;
                         end if;
                     
