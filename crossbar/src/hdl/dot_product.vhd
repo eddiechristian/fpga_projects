@@ -28,7 +28,7 @@ ENTITY dot_product IS
         MULT_X_INDEX : INTEGER := 0;
         MULT_Y_INDEX : INTEGER := 1;
         MULT_Z_INDEX : INTEGER := 2;
-        ADD_INDEX    : INTEGER := 0;
+        ADD_INDEX    : INTEGER := 0
     );
     PORT (
         clk          : IN STD_LOGIC;
@@ -45,10 +45,12 @@ ENTITY dot_product IS
         result       : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
         result_valid : OUT STD_LOGIC;
 
-        -- Crossbar interface
-        request      : OUT producer_request_t;
-        grant        : IN producer_grant_t;
-        prod_result  : IN producer_result_t
+        -- Crossbar interface (separate request per unit type)
+        mult_request   : OUT producer_mult_request_t;
+        fma_request    : OUT producer_fma_request_t;
+        addsub_request : OUT producer_addsub_request_t;
+        grant          : IN producer_grant_t;
+        prod_result    : IN producer_result_t
     );
 END ENTITY dot_product;
 
@@ -92,13 +94,18 @@ BEGIN
     BEGIN
         IF rising_edge(clk) THEN
             IF rst = '1' THEN
-                state              <= IDLE;
-                request.valid      <= '0';
-                request.unit_type  <= UNIT_MULT;
-                request.unit_index <= 0;
-                request.tid        <= (OTHERS => '0');
-                -- request.data is combinational, don't initialize (saves 96 FFs)
-                result_valid       <= '0';
+                state                    <= IDLE;
+                mult_request.valid       <= '0';
+                mult_request.unit_index  <= 0;
+                mult_request.tid         <= (OTHERS => '0');
+                fma_request.valid        <= '0';
+                fma_request.unit_index   <= 0;
+                fma_request.tid          <= (OTHERS => '0');
+                addsub_request.valid     <= '0';
+                addsub_request.unit_index <= 0;
+                addsub_request.tid       <= (OTHERS => '0');
+                -- .data fields are combinational, don't initialize
+                result_valid             <= '0';
                 op_counter         <= (OTHERS => '0');
                 mult_x_received    <= '0';
                 mult_y_received    <= '0';
@@ -109,9 +116,11 @@ BEGIN
                 mult_z_granted     <= '0';
 
                 ELSE
-                -- Default: no request
-                request.valid <= '0';
-                result_valid  <= '0';
+                -- Default: no requests
+                mult_request.valid   <= '0';
+                fma_request.valid    <= '0';
+                addsub_request.valid <= '0';
+                result_valid         <= '0';
 
                 CASE state IS
                     WHEN IDLE =>
@@ -133,41 +142,40 @@ BEGIN
 
                     WHEN REQUEST_MULTS =>
                         -- Request whichever MULTs haven't been granted yet (in parallel)
-                        request.valid     <= '1';
-                        request.unit_type <= UNIT_MULT;
+                        mult_request.valid <= '1';
 
                         -- Priority: X first, then Y, then Z
                         IF mult_x_granted = '0' THEN
-                            request.unit_index         <= MULT_X_INDEX;
-                            request.data(31 DOWNTO 0)  <= a.x;
-                            request.data(63 DOWNTO 32) <= b.x;
-                            request.tid                <= tid_mult_x;
+                            mult_request.unit_index         <= MULT_X_INDEX;
+                            mult_request.data(31 DOWNTO 0)  <= a.x;
+                            mult_request.data(63 DOWNTO 32) <= b.x;
+                            mult_request.tid                <= tid_mult_x;
                             IF grant.granted = '1' THEN
                                 mult_x_granted <= '1';
                                 REPORT "DOT_PROD: MULT_X granted in parallel, TID=" & INTEGER'image(to_integer(unsigned(tid_mult_x)));
                             END IF;
                         ELSIF mult_y_granted = '0' THEN
-                            request.unit_index         <= MULT_Y_INDEX;
-                            request.data(31 DOWNTO 0)  <= a.y;
-                            request.data(63 DOWNTO 32) <= b.y;
-                            request.tid                <= tid_mult_y;
+                            mult_request.unit_index         <= MULT_Y_INDEX;
+                            mult_request.data(31 DOWNTO 0)  <= a.y;
+                            mult_request.data(63 DOWNTO 32) <= b.y;
+                            mult_request.tid                <= tid_mult_y;
                             IF grant.granted = '1' THEN
                                 mult_y_granted <= '1';
                                 REPORT "DOT_PROD: MULT_Y granted in parallel, TID=" & INTEGER'image(to_integer(unsigned(tid_mult_y)));
                             END IF;
                         ELSIF mult_z_granted = '0' THEN
-                            request.unit_index         <= MULT_Z_INDEX;
-                            request.data(31 DOWNTO 0)  <= a.z;
-                            request.data(63 DOWNTO 32) <= b.z;
-                            request.tid                <= tid_mult_z;
+                            mult_request.unit_index         <= MULT_Z_INDEX;
+                            mult_request.data(31 DOWNTO 0)  <= a.z;
+                            mult_request.data(63 DOWNTO 32) <= b.z;
+                            mult_request.tid                <= tid_mult_z;
                             IF grant.granted = '1' THEN
                                 mult_z_granted <= '1';
                                 REPORT "DOT_PROD: MULT_Z granted in parallel, TID=" & INTEGER'image(to_integer(unsigned(tid_mult_z)));
                             END IF;
                         ELSE
                             -- All 3 MULTs granted, move to wait state
-                            request.valid <= '0';
-                            state         <= WAIT_MULT;
+                            mult_request.valid <= '0';
+                            state              <= WAIT_MULT;
                         END IF;
 
                     WHEN WAIT_MULT =>
@@ -178,14 +186,13 @@ BEGIN
 
                     WHEN ADD_XY =>
                         -- Request addition of X + Y results
-                        request.valid              <= '1';
-                        request.unit_type          <= UNIT_ADDSUB;
-                        request.unit_index         <= ADD_INDEX;
-                        request.data(31 DOWNTO 0)  <= mult_x_result;
-                        request.data(63 DOWNTO 32) <= mult_y_result;
-                        request.data(64)           <= '0'; -- ADD operation
-                        tid_add_xy                 <= make_tid(PRODUCER_ID, to_integer(op_counter));
-                        request.tid                <= tid_add_xy;
+                        addsub_request.valid              <= '1';
+                        addsub_request.unit_index         <= ADD_INDEX;
+                        addsub_request.data(31 DOWNTO 0)  <= mult_x_result;
+                        addsub_request.data(63 DOWNTO 32) <= mult_y_result;
+                        addsub_request.data(64)           <= '0'; -- ADD operation
+                        tid_add_xy                        <= make_tid(PRODUCER_ID, to_integer(op_counter));
+                        addsub_request.tid                <= tid_add_xy;
 
                         IF grant.granted = '1' THEN
                             op_counter <= op_counter + 1;
@@ -200,14 +207,13 @@ BEGIN
 
                     WHEN ADD_Z =>
                         -- Request addition of (X+Y) + Z
-                        request.valid              <= '1';
-                        request.unit_type          <= UNIT_ADDSUB;
-                        request.unit_index         <= ADD_INDEX;
-                        request.data(31 DOWNTO 0)  <= add_xy_result;
-                        request.data(63 DOWNTO 32) <= mult_z_result;
-                        request.data(64)           <= '0'; -- ADD operation
-                        tid_add_z                  <= make_tid(PRODUCER_ID, to_integer(op_counter));
-                        request.tid                <= tid_add_z;
+                        addsub_request.valid              <= '1';
+                        addsub_request.unit_index         <= ADD_INDEX;
+                        addsub_request.data(31 DOWNTO 0)  <= add_xy_result;
+                        addsub_request.data(63 DOWNTO 32) <= mult_z_result;
+                        addsub_request.data(64)           <= '0'; -- ADD operation
+                        tid_add_z                         <= make_tid(PRODUCER_ID, to_integer(op_counter));
+                        addsub_request.tid                <= tid_add_z;
 
                         IF grant.granted = '1' THEN
                             op_counter <= op_counter + 1;

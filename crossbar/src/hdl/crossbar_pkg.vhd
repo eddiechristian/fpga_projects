@@ -32,12 +32,25 @@ package crossbar_pkg is
     -- Unit type enumeration
     type unit_type_t is (UNIT_MULT, UNIT_FMA, UNIT_ADDSUB);
     
-    -- Producer request record
-    type producer_request_t is record
+    -- Producer request records (separate type per unit to avoid MAX_DATA_WIDTH waste)
+    type producer_mult_request_t is record
         valid       : std_logic;
-        unit_type   : unit_type_t;
-        unit_index  : integer range 0 to 15;  -- Which unit of that type
-        data        : std_logic_vector(MAX_DATA_WIDTH-1 downto 0);
+        unit_index  : integer range 0 to 15;  -- Which MULT unit
+        data        : std_logic_vector(MULT_DATA_WIDTH-1 downto 0);
+        tid         : std_logic_vector(TID_WIDTH-1 downto 0);
+    end record;
+    
+    type producer_fma_request_t is record
+        valid       : std_logic;
+        unit_index  : integer range 0 to 15;  -- Which FMA unit
+        data        : std_logic_vector(FMA_DATA_WIDTH-1 downto 0);
+        tid         : std_logic_vector(TID_WIDTH-1 downto 0);
+    end record;
+    
+    type producer_addsub_request_t is record
+        valid       : std_logic;
+        unit_index  : integer range 0 to 15;  -- Which ADDSUB unit
+        data        : std_logic_vector(ADDSUB_DATA_WIDTH-1 downto 0);
         tid         : std_logic_vector(TID_WIDTH-1 downto 0);
     end record;
     
@@ -56,8 +69,10 @@ package crossbar_pkg is
         ready       : std_logic;  -- Backpressure from producer
     end record;
     
-    -- Array types for multiple producers
-    type producer_request_array_t is array (0 to NUM_PRODUCERS-1) of producer_request_t;
+    -- Array types for multiple producers (one array per unit type)
+    type producer_mult_request_array_t is array (0 to NUM_PRODUCERS-1) of producer_mult_request_t;
+    type producer_fma_request_array_t is array (0 to NUM_PRODUCERS-1) of producer_fma_request_t;
+    type producer_addsub_request_array_t is array (0 to NUM_PRODUCERS-1) of producer_addsub_request_t;
     type producer_grant_array_t is array (0 to NUM_PRODUCERS-1) of producer_grant_t;
     type producer_result_array_t is array (0 to NUM_PRODUCERS-1) of producer_result_t;
     
@@ -72,10 +87,22 @@ package crossbar_pkg is
     type grant_vector_fma_t is array (0 to NUM_FMA_UNITS-1) of integer range -1 to NUM_PRODUCERS-1;
     type grant_vector_addsub_t is array (0 to NUM_ADDSUB_UNITS-1) of integer range -1 to NUM_PRODUCERS-1;
     
-    -- FP unit interface types
-    type fp_unit_input_t is record
+    -- FP unit interface types (separate types per unit to match data widths)
+    type fp_mult_input_t is record
         valid       : std_logic;
-        data        : std_logic_vector(MAX_DATA_WIDTH-1 downto 0);
+        data        : std_logic_vector(MULT_DATA_WIDTH-1 downto 0);
+        tid         : std_logic_vector(TID_WIDTH-1 downto 0);
+    end record;
+    
+    type fp_fma_input_t is record
+        valid       : std_logic;
+        data        : std_logic_vector(FMA_DATA_WIDTH-1 downto 0);
+        tid         : std_logic_vector(TID_WIDTH-1 downto 0);
+    end record;
+    
+    type fp_addsub_input_t is record
+        valid       : std_logic;
+        data        : std_logic_vector(ADDSUB_DATA_WIDTH-1 downto 0);
         tid         : std_logic_vector(TID_WIDTH-1 downto 0);
     end record;
     
@@ -86,11 +113,11 @@ package crossbar_pkg is
     end record;
     
     -- Arrays for FP unit interfaces
-    type fp_mult_input_array_t is array (0 to NUM_MULT_UNITS-1) of fp_unit_input_t;
+    type fp_mult_input_array_t is array (0 to NUM_MULT_UNITS-1) of fp_mult_input_t;
     type fp_mult_output_array_t is array (0 to NUM_MULT_UNITS-1) of fp_unit_output_t;
-    type fp_fma_input_array_t is array (0 to NUM_FMA_UNITS-1) of fp_unit_input_t;
+    type fp_fma_input_array_t is array (0 to NUM_FMA_UNITS-1) of fp_fma_input_t;
     type fp_fma_output_array_t is array (0 to NUM_FMA_UNITS-1) of fp_unit_output_t;
-    type fp_addsub_input_array_t is array (0 to NUM_ADDSUB_UNITS-1) of fp_unit_input_t;
+    type fp_addsub_input_array_t is array (0 to NUM_ADDSUB_UNITS-1) of fp_addsub_input_t;
     type fp_addsub_output_array_t is array (0 to NUM_ADDSUB_UNITS-1) of fp_unit_output_t;
     
     -- Utility functions
@@ -101,8 +128,10 @@ package crossbar_pkg is
     -- Create TID from producer ID and operation index
     function make_tid(producer_id : integer; op_index : integer) return std_logic_vector;
     
-    -- Initialize producer request to idle state
-    function init_producer_request return producer_request_t;
+    -- Initialize producer requests to idle state
+    function init_producer_mult_request return producer_mult_request_t;
+    function init_producer_fma_request return producer_fma_request_t;
+    function init_producer_addsub_request return producer_addsub_request_t;
     
     -- Initialize producer grant to no grant
     function init_producer_grant return producer_grant_t;
@@ -129,12 +158,33 @@ package body crossbar_pkg is
         return tid;
     end function;
     
-    -- Initialize producer request to idle state
-    function init_producer_request return producer_request_t is
-        variable req : producer_request_t;
+    -- Initialize producer MULT request to idle state
+    function init_producer_mult_request return producer_mult_request_t is
+        variable req : producer_mult_request_t;
     begin
         req.valid := '0';
-        req.unit_type := UNIT_MULT;
+        req.unit_index := 0;
+        req.data := (others => '0');
+        req.tid := (others => '0');
+        return req;
+    end function;
+    
+    -- Initialize producer FMA request to idle state
+    function init_producer_fma_request return producer_fma_request_t is
+        variable req : producer_fma_request_t;
+    begin
+        req.valid := '0';
+        req.unit_index := 0;
+        req.data := (others => '0');
+        req.tid := (others => '0');
+        return req;
+    end function;
+    
+    -- Initialize producer ADDSUB request to idle state
+    function init_producer_addsub_request return producer_addsub_request_t is
+        variable req : producer_addsub_request_t;
+    begin
+        req.valid := '0';
         req.unit_index := 0;
         req.data := (others => '0');
         req.tid := (others => '0');

@@ -10,8 +10,10 @@ entity crossbar_arbiter is
         clk             : in std_logic;
         rst             : in std_logic;
         
-        -- Producer requests
-        prod_requests   : in producer_request_array_t;
+        -- Producer requests (one array per unit type)
+        mult_requests   : in producer_mult_request_array_t;
+        fma_requests    : in producer_fma_request_array_t;
+        addsub_requests : in producer_addsub_request_array_t;
         
         -- Producer grants
         prod_grants     : out producer_grant_array_t;
@@ -51,31 +53,32 @@ architecture Behavioral of crossbar_arbiter is
 
 begin
 
-    -- Decode producer requests into request matrices
-    process(prod_requests)
+    -- Decode producer requests into request matrices (now simpler with separate arrays)
+    process(mult_requests, fma_requests, addsub_requests)
     begin
         -- Initialize all requests to 0
         req_mult <= (others => (others => '0'));
         req_fma <= (others => (others => '0'));
         req_addsub <= (others => (others => '0'));
         
-        -- Decode each producer's request
+        -- Decode MULT requests
         for i in 0 to NUM_PRODUCERS-1 loop
-            if prod_requests(i).valid = '1' then
-                case prod_requests(i).unit_type is
-                    when UNIT_MULT =>
-                        if prod_requests(i).unit_index < NUM_MULT_UNITS then
-                            req_mult(i, prod_requests(i).unit_index) <= '1';
-                        end if;
-                    when UNIT_FMA =>
-                        if prod_requests(i).unit_index < NUM_FMA_UNITS then
-                            req_fma(i, prod_requests(i).unit_index) <= '1';
-                        end if;
-                    when UNIT_ADDSUB =>
-                        if prod_requests(i).unit_index < NUM_ADDSUB_UNITS then
-                            req_addsub(i, prod_requests(i).unit_index) <= '1';
-                        end if;
-                end case;
+            if mult_requests(i).valid = '1' and mult_requests(i).unit_index < NUM_MULT_UNITS then
+                req_mult(i, mult_requests(i).unit_index) <= '1';
+            end if;
+        end loop;
+        
+        -- Decode FMA requests
+        for i in 0 to NUM_PRODUCERS-1 loop
+            if fma_requests(i).valid = '1' and fma_requests(i).unit_index < NUM_FMA_UNITS then
+                req_fma(i, fma_requests(i).unit_index) <= '1';
+            end if;
+        end loop;
+        
+        -- Decode ADDSUB requests
+        for i in 0 to NUM_PRODUCERS-1 loop
+            if addsub_requests(i).valid = '1' and addsub_requests(i).unit_index < NUM_ADDSUB_UNITS then
+                req_addsub(i, addsub_requests(i).unit_index) <= '1';
             end if;
         end loop;
     end process;

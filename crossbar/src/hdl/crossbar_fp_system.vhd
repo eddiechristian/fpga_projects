@@ -11,8 +11,10 @@ entity crossbar_fp_system is
         rst             : in std_logic;
         locked          : out std_logic;
         
-        -- Producer interfaces (simplified for now - can be expanded)
-        prod_requests   : in producer_request_array_t;
+        -- Producer interfaces (separate array per unit type)
+        mult_requests   : in producer_mult_request_array_t;
+        fma_requests    : in producer_fma_request_array_t;
+        addsub_requests : in producer_addsub_request_array_t;
         prod_grants     : out producer_grant_array_t;
         prod_results    : out producer_result_array_t
     );
@@ -72,25 +74,29 @@ begin
     -- Crossbar arbiter
     arbiter_inst : entity work.crossbar_arbiter
         port map (
-            clk           => clk_internal,
-            rst           => rst,
-            prod_requests => prod_requests,
-            prod_grants   => prod_grants,
-            mult_mux_sel  => mult_mux_sel,
-            fma_mux_sel   => fma_mux_sel,
-            addsub_mux_sel => addsub_mux_sel
+            clk             => clk_internal,
+            rst             => rst,
+            mult_requests   => mult_requests,
+            fma_requests    => fma_requests,
+            addsub_requests => addsub_requests,
+            prod_grants     => prod_grants,
+            mult_mux_sel    => mult_mux_sel,
+            fma_mux_sel     => fma_mux_sel,
+            addsub_mux_sel  => addsub_mux_sel
         );
     
     -- Input multiplexer
     input_mux_inst : entity work.crossbar_input_mux
         port map (
-            prod_requests  => prod_requests,
-            mult_mux_sel   => mult_mux_sel,
-            fma_mux_sel    => fma_mux_sel,
-            addsub_mux_sel => addsub_mux_sel,
-            mult_inputs    => mult_inputs,
-            fma_inputs     => fma_inputs,
-            addsub_inputs  => addsub_inputs
+            mult_requests   => mult_requests,
+            fma_requests    => fma_requests,
+            addsub_requests => addsub_requests,
+            mult_mux_sel    => mult_mux_sel,
+            fma_mux_sel     => fma_mux_sel,
+            addsub_mux_sel  => addsub_mux_sel,
+            mult_inputs     => mult_inputs,
+            fma_inputs      => fma_inputs,
+            addsub_inputs   => addsub_inputs
         );
     
     -- Generate MULT unit wrappers
