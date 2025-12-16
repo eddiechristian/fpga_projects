@@ -45,10 +45,6 @@ ARCHITECTURE structural OF top_module IS
     -- Pack input scalars into Vec3 records
     SIGNAL a_vec           : Vec3;
     SIGNAL b_vec           : Vec3;
-    SIGNAL mult_x_index    : STD_LOGIC_VECTOR(5 DOWNTO 0);
-    SIGNAL mult_y_index    : STD_LOGIC_VECTOR(5 DOWNTO 0);
-    SIGNAL mult_z_index    : STD_LOGIC_VECTOR(5 DOWNTO 0);
-    SIGNAL add_index       : STD_LOGIC_VECTOR(5 DOWNTO 0);
 BEGIN
 
     -- Pack scalar inputs into Vec3 records for internal use
@@ -78,7 +74,11 @@ BEGIN
     -- Instantiate dot product producer
     dot_product_inst : ENTITY work.dot_product
         GENERIC MAP(
-            PRODUCER_ID => 0
+            PRODUCER_ID => 0;
+            MULT_X_INDEX => 0;
+            MULT_Y_INDEX => 1;
+            MULT_Z_INDEX => 2;
+            ADD_INDEX => 0
         )
         PORT MAP(
             clk          => clk,
@@ -86,10 +86,6 @@ BEGIN
             input_valid  => input_valid,
             a            => a_vec,
             b            => b_vec,
-            mult_x_index => mult_x_index,
-            mult_y_index => mult_y_index,
-            mult_z_index => mult_z_index,
-            add_index    => add_index,
             result       => dp_result,
             result_valid => dp_result_valid,
             request      => prod_requests(0),
@@ -100,8 +96,4 @@ BEGIN
     -- Output assignments
     result          <= dp_result;
     result_valid(0) <= dp_result_valid;
-    mult_x_index    <= "000000";
-    mult_y_index    <= "000001";
-    mult_z_index    <= "000010";
-    add_index       <= "000000";
 END ARCHITECTURE structural;

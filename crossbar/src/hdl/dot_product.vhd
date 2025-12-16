@@ -24,7 +24,11 @@ USE work.lin_alg_pkg.ALL;
 
 ENTITY dot_product IS
     GENERIC (
-        PRODUCER_ID : INTEGER := 0
+        PRODUCER_ID  : INTEGER := 0;
+        MULT_X_INDEX : INTEGER := 0;
+        MULT_Y_INDEX : INTEGER := 1;
+        MULT_Z_INDEX : INTEGER := 2;
+        ADD_INDEX    : INTEGER := 0;
     );
     PORT (
         clk          : IN STD_LOGIC;
@@ -36,12 +40,6 @@ ENTITY dot_product IS
         -- Input vectors
         a            : IN Vec3;
         b            : IN Vec3;
-
-        --Input unit indexes
-        mult_x_index : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
-        mult_y_index : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
-        mult_z_index : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
-        add_index    : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
 
         -- Output
         result       : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -94,19 +92,23 @@ BEGIN
     BEGIN
         IF rising_edge(clk) THEN
             IF rst = '1' THEN
-                state           <= IDLE;
-                request         <= init_producer_request;
-                result_valid    <= '0';
-                op_counter      <= (OTHERS => '0');
-                mult_x_received <= '0';
-                mult_y_received <= '0';
-                mult_z_received <= '0';
-                add_xy_received <= '0';
-                mult_x_granted  <= '0';
-                mult_y_granted  <= '0';
-                mult_z_granted  <= '0';
+                state              <= IDLE;
+                request.valid      <= '0';
+                request.unit_type  <= UNIT_MULT;
+                request.unit_index <= 0;
+                request.tid        <= (OTHERS => '0');
+                -- request.data is combinational, don't initialize (saves 96 FFs)
+                result_valid       <= '0';
+                op_counter         <= (OTHERS => '0');
+                mult_x_received    <= '0';
+                mult_y_received    <= '0';
+                mult_z_received    <= '0';
+                add_xy_received    <= '0';
+                mult_x_granted     <= '0';
+                mult_y_granted     <= '0';
+                mult_z_granted     <= '0';
 
-            ELSE
+                ELSE
                 -- Default: no request
                 request.valid <= '0';
                 result_valid  <= '0';
@@ -136,7 +138,7 @@ BEGIN
 
                         -- Priority: X first, then Y, then Z
                         IF mult_x_granted = '0' THEN
-                            request.unit_index         <= to_integer(unsigned(mult_x_index));
+                            request.unit_index         <= MULT_X_INDEX;
                             request.data(31 DOWNTO 0)  <= a.x;
                             request.data(63 DOWNTO 32) <= b.x;
                             request.tid                <= tid_mult_x;
@@ -145,7 +147,7 @@ BEGIN
                                 REPORT "DOT_PROD: MULT_X granted in parallel, TID=" & INTEGER'image(to_integer(unsigned(tid_mult_x)));
                             END IF;
                         ELSIF mult_y_granted = '0' THEN
-                            request.unit_index         <=to_integer(unsigned(mult_y_index));
+                            request.unit_index         <= MULT_Y_INDEX;
                             request.data(31 DOWNTO 0)  <= a.y;
                             request.data(63 DOWNTO 32) <= b.y;
                             request.tid                <= tid_mult_y;
@@ -154,7 +156,7 @@ BEGIN
                                 REPORT "DOT_PROD: MULT_Y granted in parallel, TID=" & INTEGER'image(to_integer(unsigned(tid_mult_y)));
                             END IF;
                         ELSIF mult_z_granted = '0' THEN
-                            request.unit_index         <= to_integer(unsigned(mult_z_index));
+                            request.unit_index         <= MULT_Z_INDEX;
                             request.data(31 DOWNTO 0)  <= a.z;
                             request.data(63 DOWNTO 32) <= b.z;
                             request.tid                <= tid_mult_z;
@@ -178,7 +180,7 @@ BEGIN
                         -- Request addition of X + Y results
                         request.valid              <= '1';
                         request.unit_type          <= UNIT_ADDSUB;
-                        request.unit_index         <= 0;
+                        request.unit_index         <= ADD_INDEX;
                         request.data(31 DOWNTO 0)  <= mult_x_result;
                         request.data(63 DOWNTO 32) <= mult_y_result;
                         request.data(64)           <= '0'; -- ADD operation
@@ -200,7 +202,7 @@ BEGIN
                         -- Request addition of (X+Y) + Z
                         request.valid              <= '1';
                         request.unit_type          <= UNIT_ADDSUB;
-                        request.unit_index         <= 0;
+                        request.unit_index         <= ADD_INDEX;
                         request.data(31 DOWNTO 0)  <= add_xy_result;
                         request.data(63 DOWNTO 32) <= mult_z_result;
                         request.data(64)           <= '0'; -- ADD operation
@@ -225,22 +227,22 @@ BEGIN
                 -- Result capture process (runs in parallel with state machine)
                 IF prod_result.valid = '1' THEN
                     REPORT "DOT_PROD: Received result TID=" & INTEGER'image(to_integer(unsigned(prod_result.tid)))
-                        & " Expected: X=" & INTEGER'image(to_integer(unsigned(tid_mult_x)))
-                        & " Y=" & INTEGER'image(to_integer(unsigned(tid_mult_y)))
-                        & " Z=" & INTEGER'image(to_integer(unsigned(tid_mult_z)));
+                    & " Expected: X=" & INTEGER'image(to_integer(unsigned(tid_mult_x)))
+                    & " Y=" & INTEGER'image(to_integer(unsigned(tid_mult_y)))
+                    & " Z=" & INTEGER'image(to_integer(unsigned(tid_mult_z)));
                     IF prod_result.tid = tid_mult_x THEN
                         mult_x_result   <= prod_result.data;
                         mult_x_received <= '1';
                         REPORT "DOT_PROD: MULT_X result captured";
-                    ELSIF prod_result.tid = tid_mult_y THEN
+                        ELSIF prod_result.tid = tid_mult_y THEN
                         mult_y_result   <= prod_result.data;
                         mult_y_received <= '1';
                         REPORT "DOT_PROD: MULT_Y result captured";
-                    ELSIF prod_result.tid = tid_mult_z THEN
+                        ELSIF prod_result.tid = tid_mult_z THEN
                         mult_z_result   <= prod_result.data;
                         mult_z_received <= '1';
                         REPORT "DOT_PROD: MULT_Z result captured";
-                    ELSIF prod_result.tid = tid_add_xy THEN
+                        ELSIF prod_result.tid = tid_add_xy THEN
                         add_xy_result   <= prod_result.data;
                         add_xy_received <= '1';
                         REPORT "DOT_PROD: ADD_XY result captured";
