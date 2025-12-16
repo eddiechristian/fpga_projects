@@ -19,9 +19,9 @@ entity top_module is
         start : in std_logic;
         done  : out std_logic;
         
-        -- Inputs: two 3D vectors
-        a : in Vec3;
-        b : in Vec3;
+        -- Inputs: two 3D vectors (flattened for FPGA I/O)
+        a_x, a_y, a_z : in std_logic_vector(31 downto 0);
+        b_x, b_y, b_z : in std_logic_vector(31 downto 0);
         
         -- Output: dot product result
         result       : out std_logic_vector(31 downto 0);
@@ -43,8 +43,20 @@ architecture structural of top_module is
     
     -- Crossbar status
     signal locked : std_logic;
+    
+    -- Pack input scalars into Vec3 records
+    signal a_vec : Vec3;
+    signal b_vec : Vec3;
 
 begin
+
+    -- Pack scalar inputs into Vec3 records for internal use
+    a_vec.x <= a_x;
+    a_vec.y <= a_y;
+    a_vec.z <= a_z;
+    b_vec.x <= b_x;
+    b_vec.y <= b_y;
+    b_vec.z <= b_z;
 
     -- Initialize unused producer slots (producers 1-9)
     gen_unused_producers: for i in 1 to NUM_PRODUCERS-1 generate
@@ -72,8 +84,8 @@ begin
             rst          => rst,
             start        => start,
             done         => dp_done,
-            a            => a,
-            b            => b,
+            a            => a_vec,
+            b            => b_vec,
             result       => dp_result,
             result_valid => dp_result_valid,
             request      => prod_requests(0),

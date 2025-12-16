@@ -35,34 +35,34 @@
       <obj_property name="ElementShortName">done</obj_property>
       <obj_property name="ObjectShortName">done</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/a.x">
-      <obj_property name="ElementShortName">x[31:0]</obj_property>
-      <obj_property name="ObjectShortName">x[31:0]</obj_property>
+   <wvobject type="array" fp_name="/top_module_tb/a_x">
+      <obj_property name="ElementShortName">a_x[31:0]</obj_property>
+      <obj_property name="ObjectShortName">a_x[31:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/a.y">
-      <obj_property name="ElementShortName">y[31:0]</obj_property>
-      <obj_property name="ObjectShortName">y[31:0]</obj_property>
+   <wvobject type="array" fp_name="/top_module_tb/a_y">
+      <obj_property name="ElementShortName">a_y[31:0]</obj_property>
+      <obj_property name="ObjectShortName">a_y[31:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/a.z">
-      <obj_property name="ElementShortName">z[31:0]</obj_property>
-      <obj_property name="ObjectShortName">z[31:0]</obj_property>
+   <wvobject type="array" fp_name="/top_module_tb/a_z">
+      <obj_property name="ElementShortName">a_z[31:0]</obj_property>
+      <obj_property name="ObjectShortName">a_z[31:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/b.x">
-      <obj_property name="ElementShortName">x[31:0]</obj_property>
-      <obj_property name="ObjectShortName">x[31:0]</obj_property>
+   <wvobject type="array" fp_name="/top_module_tb/b_x">
+      <obj_property name="ElementShortName">b_x[31:0]</obj_property>
+      <obj_property name="ObjectShortName">b_x[31:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/b.y">
-      <obj_property name="ElementShortName">y[31:0]</obj_property>
-      <obj_property name="ObjectShortName">y[31:0]</obj_property>
+   <wvobject type="array" fp_name="/top_module_tb/b_y">
+      <obj_property name="ElementShortName">b_y[31:0]</obj_property>
+      <obj_property name="ObjectShortName">b_y[31:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/b.z">
-      <obj_property name="ElementShortName">z[31:0]</obj_property>
-      <obj_property name="ObjectShortName">z[31:0]</obj_property>
+   <wvobject type="array" fp_name="/top_module_tb/b_z">
+      <obj_property name="ElementShortName">b_z[31:0]</obj_property>
+      <obj_property name="ObjectShortName">b_z[31:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top_module_tb/result">
