@@ -31,6 +31,7 @@ END ENTITY top_module;
 ARCHITECTURE structural OF top_module IS
 
     -- Crossbar signals (must match package size NUM_PRODUCERS=10)
+    SIGNAL dot_requests    : producer_dot_request_array_t;
     SIGNAL mult_requests   : producer_mult_request_array_t;
     SIGNAL fma_requests    : producer_fma_request_array_t;
     SIGNAL addsub_requests : producer_addsub_request_array_t;
@@ -58,17 +59,69 @@ BEGIN
     b_vec.z <= b_z;
 
     -- Initialize unused producer slots (producers 1-9)
+    gen_unused_dot : FOR i IN 1 TO NUM_PRODUCERS - 1 GENERATE
+        dot_requests(i) <= init_producer_dot_request;
+    END GENERATE;
+
     gen_unused_mult : FOR i IN 1 TO NUM_PRODUCERS - 1 GENERATE
         mult_requests(i) <= init_producer_mult_request;
     END GENERATE;
-    
+
     gen_unused_fma : FOR i IN 1 TO NUM_PRODUCERS - 1 GENERATE
         fma_requests(i) <= init_producer_fma_request;
     END GENERATE;
-    
+
     gen_unused_addsub : FOR i IN 1 TO NUM_PRODUCERS - 1 GENERATE
         addsub_requests(i) <= init_producer_addsub_request;
     END GENERATE;
+
+    -- Simple DOT producer (producer 0)
+    -- Generate DOT request when input_valid is asserted
+    PROCESS (clk)
+    BEGIN
+        IF rising_edge(clk) THEN
+            IF rst = '1' THEN
+                dot_requests(0).valid <= '0';
+                dot_requests(0).unit_index <= 0;
+                dot_requests(0).tid <= (OTHERS => '0');
+            ELSE
+                IF input_valid = '1' THEN
+                    dot_requests(0).valid <= '1';
+                    dot_requests(0).unit_index <= 0;  -- Use DOT unit 0
+                    dot_requests(0).a <= a_vec;
+                    dot_requests(0).b <= b_vec;
+                    dot_requests(0).tid <= X"0000";  -- Producer 0, operation 0
+                    REPORT "TOP: DOT request issued - a_vec=" & 
+                           INTEGER'image(to_integer(unsigned(a_vec.x(30 DOWNTO 23)))) & "," &
+                           INTEGER'image(to_integer(unsigned(a_vec.y(30 DOWNTO 23)))) & "," &
+                           INTEGER'image(to_integer(unsigned(a_vec.z(30 DOWNTO 23))));
+                ELSE
+                    dot_requests(0).valid <= '0';
+                END IF;
+            END IF;
+        END IF;
+    END PROCESS;
+
+    -- Capture result from crossbar output router
+    PROCESS (clk)
+    BEGIN
+        IF rising_edge(clk) THEN
+            IF rst = '1' THEN
+                dp_result <= (OTHERS => '0');
+                dp_result_valid <= '0';
+            ELSE
+                -- Producer 0 results come from prod_results(0)
+                IF prod_results(0).valid = '1' THEN
+                    dp_result <= prod_results(0).data;
+                    dp_result_valid <= '1';
+                    REPORT "TOP: Result received! TID=" & INTEGER'image(to_integer(unsigned(prod_results(0).tid))) & 
+                           " data=" & INTEGER'image(to_integer(unsigned(prod_results(0).data(30 DOWNTO 23))));
+                ELSE
+                    dp_result_valid <= '0';
+                END IF;
+            END IF;
+        END IF;
+    END PROCESS;
 
     -- Instantiate the crossbar FP system
     crossbar_inst : ENTITY work.crossbar_fp_system
@@ -76,37 +129,14 @@ BEGIN
             clk_100mhz      => clk,
             rst             => rst,
             locked          => locked,
+            dot_requests    => dot_requests,
             mult_requests   => mult_requests,
             fma_requests    => fma_requests,
             addsub_requests => addsub_requests,
             prod_grants     => prod_grants,
             prod_results    => prod_results
         );
-
-    -- Instantiate dot product producer
-    dot_product_inst : ENTITY work.dot_product
-        GENERIC MAP(
-            PRODUCER_ID  => 0,
-            MULT_X_INDEX => 0,
-            MULT_Y_INDEX => 1,
-            MULT_Z_INDEX => 2,
-            ADD_INDEX    => 0
-        )
-        PORT MAP(
-            clk            => clk,
-            rst            => rst,
-            input_valid    => input_valid,
-            a              => a_vec,
-            b              => b_vec,
-            result         => dp_result,
-            result_valid   => dp_result_valid,
-            mult_request   => mult_requests(0),
-            fma_request    => fma_requests(0),
-            addsub_request => addsub_requests(0),
-            grant          => prod_grants(0),
-            prod_result    => prod_results(0)
-        );
-
+    
     -- Output assignments
     result          <= dp_result;
     result_valid(0) <= dp_result_valid;

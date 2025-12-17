@@ -4,6 +4,7 @@ USE IEEE.NUMERIC_STD.ALL;
 
 LIBRARY work;
 USE work.crossbar_pkg.ALL;
+USE work.lin_alg_pkg.ALL;
 
 ENTITY crossbar_fp_system IS
     PORT (
@@ -12,6 +13,7 @@ ENTITY crossbar_fp_system IS
         locked          : OUT STD_LOGIC;
 
         -- Producer interfaces (separate array per unit type)
+        dot_requests    : IN producer_dot_request_array_t;
         mult_requests   : IN producer_mult_request_array_t;
         fma_requests    : IN producer_fma_request_array_t;
         addsub_requests : IN producer_addsub_request_array_t;
@@ -38,16 +40,19 @@ ARCHITECTURE Structural OF crossbar_fp_system IS
     SIGNAL locked_i       : STD_LOGIC;
 
     -- Arbiter outputs
+    SIGNAL dot_mux_sel    : grant_vector_dot_t;
     SIGNAL mult_mux_sel   : grant_vector_mult_t;
     SIGNAL fma_mux_sel    : grant_vector_fma_t;
     SIGNAL addsub_mux_sel : grant_vector_addsub_t;
 
     -- Input mux outputs to FP units
+    SIGNAL dot_inputs     : fp_dot_input_array_t;
     SIGNAL mult_inputs    : fp_mult_input_array_t;
     SIGNAL fma_inputs     : fp_fma_input_array_t;
     SIGNAL addsub_inputs  : fp_addsub_input_array_t;
 
     -- FP unit outputs
+    SIGNAL dot_outputs    : fp_dot_output_array_t;
     SIGNAL mult_outputs   : fp_mult_output_array_t;
     SIGNAL fma_outputs    : fp_fma_output_array_t;
     SIGNAL addsub_outputs : fp_addsub_output_array_t;
@@ -76,10 +81,12 @@ BEGIN
         PORT MAP(
             clk             => clk_internal,
             rst             => rst,
+            dot_requests    => dot_requests,
             mult_requests   => mult_requests,
             fma_requests    => fma_requests,
             addsub_requests => addsub_requests,
             prod_grants     => prod_grants,
+            dot_mux_sel     => dot_mux_sel,
             mult_mux_sel    => mult_mux_sel,
             fma_mux_sel     => fma_mux_sel,
             addsub_mux_sel  => addsub_mux_sel
@@ -88,16 +95,35 @@ BEGIN
     -- Input multiplexer
     input_mux_inst : ENTITY work.crossbar_input_mux
         PORT MAP(
+            dot_requests    => dot_requests,
             mult_requests   => mult_requests,
             fma_requests    => fma_requests,
             addsub_requests => addsub_requests,
+            dot_mux_sel     => dot_mux_sel,
             mult_mux_sel    => mult_mux_sel,
             fma_mux_sel     => fma_mux_sel,
             addsub_mux_sel  => addsub_mux_sel,
+            dot_inputs      => dot_inputs,
             mult_inputs     => mult_inputs,
             fma_inputs      => fma_inputs,
             addsub_inputs   => addsub_inputs
         );
+
+    -- Generate DOT unit wrappers
+    gen_dot_units : FOR i IN 0 TO NUM_DOT_UNITS - 1 GENERATE
+        dot_inst : ENTITY work.vec3_dot_hw
+            PORT MAP(
+                clk         => clk_internal,
+                aresetn     => aresetn,  -- Active-LOW reset (matches other FP units)
+                input_valid => dot_inputs(i).valid,
+                input_tid   => dot_inputs(i).tid,
+                a           => dot_inputs(i).a,
+                b           => dot_inputs(i).b,
+                valid_out   => dot_outputs(i).valid,
+                result      => dot_outputs(i).data,
+                output_tid  => dot_outputs(i).tid
+            );
+    END GENERATE;
 
     -- Generate MULT unit wrappers
     gen_mult_units : FOR i IN 0 TO NUM_MULT_UNITS - 1 GENERATE
@@ -149,6 +175,7 @@ BEGIN
         PORT MAP(
             clk            => clk_internal,
             rst            => rst,
+            dot_outputs    => dot_outputs,
             mult_outputs   => mult_outputs,
             fma_outputs    => fma_outputs,
             addsub_outputs => addsub_outputs,

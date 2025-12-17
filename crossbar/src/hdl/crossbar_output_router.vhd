@@ -11,6 +11,7 @@ ENTITY crossbar_output_router IS
         rst            : IN STD_LOGIC;
 
         -- FP unit outputs
+        dot_outputs   : IN fp_dot_output_array_t;
         mult_outputs   : IN fp_mult_output_array_t;
         fma_outputs    : IN fp_fma_output_array_t;
         addsub_outputs : IN fp_addsub_output_array_t;
@@ -61,10 +62,16 @@ ARCHITECTURE Behavioral OF crossbar_output_router IS
 BEGIN
 
     -- Aggregate all FP unit outputs into single array for easier processing
-    PROCESS (mult_outputs, fma_outputs, addsub_outputs)
+    PROCESS (dot_outputs, mult_outputs, fma_outputs, addsub_outputs)
         VARIABLE idx : INTEGER;
     BEGIN
         idx := 0; -- Reset at start of each evaluation
+
+        -- Collect DOT outputs
+        FOR i IN 0 TO NUM_DOT_UNITS - 1 LOOP
+            all_fp_outputs(idx) <= dot_outputs(i);
+            idx := idx + 1;
+        END LOOP;
 
         -- Collect MULT outputs
         FOR i IN 0 TO NUM_MULT_UNITS - 1 LOOP
