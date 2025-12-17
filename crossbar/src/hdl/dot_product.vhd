@@ -31,19 +31,19 @@ ENTITY dot_product IS
         ADD_INDEX    : INTEGER := 0
     );
     PORT (
-        clk          : IN STD_LOGIC;
-        rst          : IN STD_LOGIC;
+        clk            : IN STD_LOGIC;
+        rst            : IN STD_LOGIC;
 
         -- Control interface
-        input_valid  : IN STD_LOGIC;
+        input_valid    : IN STD_LOGIC;
 
         -- Input vectors
-        a            : IN Vec3;
-        b            : IN Vec3;
+        a              : IN Vec3;
+        b              : IN Vec3;
 
         -- Output
-        result       : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-        result_valid : OUT STD_LOGIC;
+        result         : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        result_valid   : OUT STD_LOGIC;
 
         -- Crossbar interface (separate request per unit type)
         mult_request   : OUT producer_mult_request_t;
@@ -94,26 +94,26 @@ BEGIN
     BEGIN
         IF rising_edge(clk) THEN
             IF rst = '1' THEN
-                state                    <= IDLE;
-                mult_request.valid       <= '0';
-                mult_request.unit_index  <= 0;
-                mult_request.tid         <= (OTHERS => '0');
-                fma_request.valid        <= '0';
-                fma_request.unit_index   <= 0;
-                fma_request.tid          <= (OTHERS => '0');
-                addsub_request.valid     <= '0';
+                state                     <= IDLE;
+                mult_request.valid        <= '0';
+                mult_request.unit_index   <= 0;
+                mult_request.tid          <= (OTHERS => '0');
+                fma_request.valid         <= '0';
+                fma_request.unit_index    <= 0;
+                fma_request.tid           <= (OTHERS => '0');
+                addsub_request.valid      <= '0';
                 addsub_request.unit_index <= 0;
-                addsub_request.tid       <= (OTHERS => '0');
+                addsub_request.tid        <= (OTHERS => '0');
                 -- .data fields are combinational, don't initialize
-                result_valid             <= '0';
-                op_counter         <= (OTHERS => '0');
-                mult_x_received    <= '0';
-                mult_y_received    <= '0';
-                mult_z_received    <= '0';
-                add_xy_received    <= '0';
-                mult_x_granted     <= '0';
-                mult_y_granted     <= '0';
-                mult_z_granted     <= '0';
+                result_valid              <= '0';
+                op_counter                <= (OTHERS => '0');
+                mult_x_received           <= '0';
+                mult_y_received           <= '0';
+                mult_z_received           <= '0';
+                add_xy_received           <= '0';
+                mult_x_granted            <= '0';
+                mult_y_granted            <= '0';
+                mult_z_granted            <= '0';
 
                 ELSE
                 -- Default: no requests

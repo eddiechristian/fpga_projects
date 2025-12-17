@@ -1,184 +1,184 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
 
-library work;
-use work.crossbar_pkg.all;
+LIBRARY work;
+USE work.crossbar_pkg.ALL;
 
-entity crossbar_output_router is
-    Port (
-        clk             : in std_logic;
-        rst             : in std_logic;
-        
+ENTITY crossbar_output_router IS
+    PORT (
+        clk            : IN STD_LOGIC;
+        rst            : IN STD_LOGIC;
+
         -- FP unit outputs
-        mult_outputs    : in fp_mult_output_array_t;
-        fma_outputs     : in fp_fma_output_array_t;
-        addsub_outputs  : in fp_addsub_output_array_t;
-        
-        -- Producer results
-        prod_results    : out producer_result_array_t
-    );
-end crossbar_output_router;
+        mult_outputs   : IN fp_mult_output_array_t;
+        fma_outputs    : IN fp_fma_output_array_t;
+        addsub_outputs : IN fp_addsub_output_array_t;
 
-architecture Behavioral of crossbar_output_router is
+        -- Producer results
+        prod_results   : OUT producer_result_array_t
+    );
+END crossbar_output_router;
+
+ARCHITECTURE Behavioral OF crossbar_output_router IS
 
     -- Simple FIFO for producer outputs
-    component simple_fifo is
-        generic (
-            DATA_WIDTH : integer := 48;  -- 32 bits data + 16 bits TID
-            DEPTH      : integer := OUTPUT_FIFO_DEPTH
+    COMPONENT simple_fifo IS
+        GENERIC (
+            DATA_WIDTH : INTEGER := 48; -- 32 bits data + 16 bits TID
+            DEPTH      : INTEGER := OUTPUT_FIFO_DEPTH
         );
-        port (
-            clk        : in std_logic;
-            rst        : in std_logic;
-            wr_en      : in std_logic;
-            wr_data    : in std_logic_vector(DATA_WIDTH-1 downto 0);
-            rd_en      : in std_logic;
-            rd_data    : out std_logic_vector(DATA_WIDTH-1 downto 0);
-            empty      : out std_logic;
-            full       : out std_logic
+        PORT (
+            clk     : IN STD_LOGIC;
+            rst     : IN STD_LOGIC;
+            wr_en   : IN STD_LOGIC;
+            wr_data : IN STD_LOGIC_VECTOR(DATA_WIDTH - 1 DOWNTO 0);
+            rd_en   : IN STD_LOGIC;
+            rd_data : OUT STD_LOGIC_VECTOR(DATA_WIDTH - 1 DOWNTO 0);
+            empty   : OUT STD_LOGIC;
+            full    : OUT STD_LOGIC
         );
-    end component;
-    
-    -- Aggregated results from all FP units
-    constant TOTAL_FP_UNITS_CONST : integer := TOTAL_FP_UNITS;
-    type aggregated_results_t is array (0 to TOTAL_FP_UNITS_CONST-1) of fp_unit_output_t;
-    signal all_fp_outputs : aggregated_results_t;
-    
-    -- FIFO interface signals per producer
-    type fifo_data_array_t is array (0 to NUM_PRODUCERS-1) of std_logic_vector(47 downto 0);  -- 32 data + 16 TID
-    signal fifo_wr_en   : std_logic_vector(0 to NUM_PRODUCERS-1);
-    signal fifo_wr_data : fifo_data_array_t;
-    signal fifo_rd_en   : std_logic_vector(0 to NUM_PRODUCERS-1);
-    signal fifo_rd_data : fifo_data_array_t;
-    signal fifo_empty   : std_logic_vector(0 to NUM_PRODUCERS-1);
-    signal fifo_full    : std_logic_vector(0 to NUM_PRODUCERS-1);
-    
-    -- Routing signals
-    type producer_id_array_t is array (0 to TOTAL_FP_UNITS_CONST-1) of integer range 0 to NUM_PRODUCERS-1;
-    signal decoded_producer_ids : producer_id_array_t;
+    END COMPONENT;
 
-begin
+    -- Aggregated results from all FP units
+    CONSTANT TOTAL_FP_UNITS_CONST : INTEGER := TOTAL_FP_UNITS;
+    TYPE aggregated_results_t IS ARRAY (0 TO TOTAL_FP_UNITS_CONST - 1) OF fp_unit_output_t;
+    SIGNAL all_fp_outputs : aggregated_results_t;
+
+    -- FIFO interface signals per producer
+    TYPE fifo_data_array_t IS ARRAY (0 TO NUM_PRODUCERS - 1) OF STD_LOGIC_VECTOR(47 DOWNTO 0); -- 32 data + 16 TID
+    SIGNAL fifo_wr_en   : STD_LOGIC_VECTOR(0 TO NUM_PRODUCERS - 1);
+    SIGNAL fifo_wr_data : fifo_data_array_t;
+    SIGNAL fifo_rd_en   : STD_LOGIC_VECTOR(0 TO NUM_PRODUCERS - 1);
+    SIGNAL fifo_rd_data : fifo_data_array_t;
+    SIGNAL fifo_empty   : STD_LOGIC_VECTOR(0 TO NUM_PRODUCERS - 1);
+    SIGNAL fifo_full    : STD_LOGIC_VECTOR(0 TO NUM_PRODUCERS - 1);
+
+    -- Routing signals
+    TYPE producer_id_array_t IS ARRAY (0 TO TOTAL_FP_UNITS_CONST - 1) OF INTEGER RANGE 0 TO NUM_PRODUCERS - 1;
+    SIGNAL decoded_producer_ids : producer_id_array_t;
+
+BEGIN
 
     -- Aggregate all FP unit outputs into single array for easier processing
-    process(mult_outputs, fma_outputs, addsub_outputs)
-        variable idx : integer;
-    begin
-        idx := 0;  -- Reset at start of each evaluation
-        
+    PROCESS (mult_outputs, fma_outputs, addsub_outputs)
+        VARIABLE idx : INTEGER;
+    BEGIN
+        idx := 0; -- Reset at start of each evaluation
+
         -- Collect MULT outputs
-        for i in 0 to NUM_MULT_UNITS-1 loop
+        FOR i IN 0 TO NUM_MULT_UNITS - 1 LOOP
             all_fp_outputs(idx) <= mult_outputs(i);
             idx := idx + 1;
-        end loop;
-        
+        END LOOP;
+
         -- Collect FMA outputs
-        for i in 0 to NUM_FMA_UNITS-1 loop
+        FOR i IN 0 TO NUM_FMA_UNITS - 1 LOOP
             all_fp_outputs(idx) <= fma_outputs(i);
             idx := idx + 1;
-        end loop;
-        
+        END LOOP;
+
         -- Collect ADDSUB outputs
-        for i in 0 to NUM_ADDSUB_UNITS-1 loop
+        FOR i IN 0 TO NUM_ADDSUB_UNITS - 1 LOOP
             all_fp_outputs(idx) <= addsub_outputs(i);
             idx := idx + 1;
-        end loop;
-    end process;
-    
+        END LOOP;
+    END PROCESS;
+
     -- Decode producer IDs from TIDs
-    process(all_fp_outputs)
-    begin
-        for i in 0 to TOTAL_FP_UNITS_CONST-1 loop
+    PROCESS (all_fp_outputs)
+    BEGIN
+        FOR i IN 0 TO TOTAL_FP_UNITS_CONST - 1 LOOP
             decoded_producer_ids(i) <= get_producer_id(all_fp_outputs(i).tid);
-        end loop;
-    end process;
-    
+        END LOOP;
+    END PROCESS;
+
     -- Route FP outputs to appropriate producer FIFOs
     -- Priority encoder: if multiple FP units output to same producer, lower index wins
-    process(all_fp_outputs, decoded_producer_ids, fifo_full)
-        variable prod_id : integer range 0 to NUM_PRODUCERS-1;
-        variable fifo_wr_en_var : std_logic_vector(0 to NUM_PRODUCERS-1);
-    begin
+    PROCESS (all_fp_outputs, decoded_producer_ids, fifo_full)
+        VARIABLE prod_id        : INTEGER RANGE 0 TO NUM_PRODUCERS - 1;
+        VARIABLE fifo_wr_en_var : STD_LOGIC_VECTOR(0 TO NUM_PRODUCERS - 1);
+    BEGIN
         -- Default: no writes
-        fifo_wr_en_var := (others => '0');
-        fifo_wr_data <= (others => (others => '0'));
-        
+        fifo_wr_en_var := (OTHERS => '0');
+        fifo_wr_data <= (OTHERS => (OTHERS => '0'));
+
         -- For each FP unit, try to write to its target producer FIFO
-        for fp_idx in 0 to TOTAL_FP_UNITS_CONST-1 loop
-            if all_fp_outputs(fp_idx).valid = '1' then
+        FOR fp_idx IN 0 TO TOTAL_FP_UNITS_CONST - 1 LOOP
+            IF all_fp_outputs(fp_idx).valid = '1' THEN
                 prod_id := decoded_producer_ids(fp_idx);
-                
+
                 -- Only write if FIFO not full and no earlier FP unit has claimed this producer
-                if fifo_full(prod_id) = '0' and fifo_wr_en_var(prod_id) = '0' then
+                IF fifo_full(prod_id) = '0' AND fifo_wr_en_var(prod_id) = '0' THEN
                     fifo_wr_en_var(prod_id) := '1';
-                    fifo_wr_data(prod_id)(31 downto 0) <= all_fp_outputs(fp_idx).data;
-                    fifo_wr_data(prod_id)(47 downto 32) <= all_fp_outputs(fp_idx).tid;
-                end if;
-            end if;
-        end loop;
-        
+                    fifo_wr_data(prod_id)(31 DOWNTO 0)  <= all_fp_outputs(fp_idx).data;
+                    fifo_wr_data(prod_id)(47 DOWNTO 32) <= all_fp_outputs(fp_idx).tid;
+                END IF;
+            END IF;
+        END LOOP;
+
         -- Assign variable to signal
         fifo_wr_en <= fifo_wr_en_var;
-    end process;
-    
+    END PROCESS;
+
     -- Generate output FIFOs for each producer
-    gen_producer_fifos: for i in 0 to NUM_PRODUCERS-1 generate
+    gen_producer_fifos : FOR i IN 0 TO NUM_PRODUCERS - 1 GENERATE
         fifo_inst : simple_fifo
-            generic map (
-                DATA_WIDTH => 48,
-                DEPTH => OUTPUT_FIFO_DEPTH
-            )
-            port map (
-                clk     => clk,
-                rst     => rst,
-                wr_en   => fifo_wr_en(i),
-                wr_data => fifo_wr_data(i),
-                rd_en   => fifo_rd_en(i),
-                rd_data => fifo_rd_data(i),
-                empty   => fifo_empty(i),
-                full    => fifo_full(i)
-            );
-    end generate;
-    
+        GENERIC MAP(
+            DATA_WIDTH => 48,
+            DEPTH      => OUTPUT_FIFO_DEPTH
+        )
+        PORT MAP(
+            clk     => clk,
+            rst     => rst,
+            wr_en   => fifo_wr_en(i),
+            wr_data => fifo_wr_data(i),
+            rd_en   => fifo_rd_en(i),
+            rd_data => fifo_rd_data(i),
+            empty   => fifo_empty(i),
+            full    => fifo_full(i)
+        );
+    END GENERATE;
+
     -- Producer output interface
-    process(fifo_empty, fifo_rd_data)
-    begin
-        for i in 0 to NUM_PRODUCERS-1 loop
+    PROCESS (fifo_empty, fifo_rd_data)
+    BEGIN
+        FOR i IN 0 TO NUM_PRODUCERS - 1 LOOP
             -- Valid when FIFO has data
-            prod_results(i).valid <= not fifo_empty(i);
-            
+            prod_results(i).valid <= NOT fifo_empty(i);
+
             -- Extract data and TID from FIFO output
-            prod_results(i).data <= fifo_rd_data(i)(31 downto 0);
-            prod_results(i).tid <= fifo_rd_data(i)(47 downto 32);
-            
+            prod_results(i).data  <= fifo_rd_data(i)(31 DOWNTO 0);
+            prod_results(i).tid   <= fifo_rd_data(i)(47 DOWNTO 32);
+
             -- Always ready (for now - producers can control this)
             prod_results(i).ready <= '1';
-        end loop;
-    end process;
-    
-    -- FIFO read enable: read when valid and producer ready
-    process(prod_results)
-    begin
-        for i in 0 to NUM_PRODUCERS-1 loop
-            fifo_rd_en(i) <= prod_results(i).valid and prod_results(i).ready;
-        end loop;
-    end process;
-    
-    -- Debug: Monitor routing
-    process(clk)
-    begin
-        if rising_edge(clk) then
-            for i in 0 to TOTAL_FP_UNITS_CONST-1 loop
-                if all_fp_outputs(i).valid = '1' then
-                    report "OUTPUT_ROUTER: FP unit " & integer'image(i) & 
-                           " has valid output, TID=" & integer'image(to_integer(unsigned(all_fp_outputs(i).tid))) &
-                           " (0x" & to_hstring(all_fp_outputs(i).tid) & ")" &
-                           ", decoded Producer ID=" & integer'image(decoded_producer_ids(i)) &
-                           ", fifo_full=" & std_logic'image(fifo_full(decoded_producer_ids(i))) &
-                           ", fifo_wr_en=" & std_logic'image(fifo_wr_en(decoded_producer_ids(i)));
-                end if;
-            end loop;
-        end if;
-    end process;
+        END LOOP;
+    END PROCESS;
 
-end Behavioral;
+    -- FIFO read enable: read when valid and producer ready
+    PROCESS (prod_results)
+    BEGIN
+        FOR i IN 0 TO NUM_PRODUCERS - 1 LOOP
+            fifo_rd_en(i) <= prod_results(i).valid AND prod_results(i).ready;
+        END LOOP;
+    END PROCESS;
+
+    -- Debug: Monitor routing
+    PROCESS (clk)
+    BEGIN
+        IF rising_edge(clk) THEN
+            FOR i IN 0 TO TOTAL_FP_UNITS_CONST - 1 LOOP
+                IF all_fp_outputs(i).valid = '1' THEN
+                    REPORT "OUTPUT_ROUTER: FP unit " & INTEGER'image(i) &
+                    " has valid output, TID=" & INTEGER'image(to_integer(unsigned(all_fp_outputs(i).tid))) &
+                    " (0x" & to_hstring(all_fp_outputs(i).tid) & ")" &
+                    ", decoded Producer ID=" & INTEGER'image(decoded_producer_ids(i)) &
+                    ", fifo_full=" & STD_LOGIC'image(fifo_full(decoded_producer_ids(i))) &
+                    ", fifo_wr_en=" & STD_LOGIC'image(fifo_wr_en(decoded_producer_ids(i)));
+                END IF;
+            END LOOP;
+        END IF;
+    END PROCESS;
+
+END Behavioral;
