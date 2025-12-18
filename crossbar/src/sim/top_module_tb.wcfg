@@ -20,7 +20,7 @@
       <NameColumnWidth column_width="200"></NameColumnWidth>
       <ValueColumnWidth column_width="96"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="16" />
+   <WVObjectSize size="22" />
    <wvobject type="logic" fp_name="/top_module_tb/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -29,73 +29,101 @@
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top_module_tb/start">
-      <obj_property name="ElementShortName">start</obj_property>
-      <obj_property name="ObjectShortName">start</obj_property>
+   <wvobject type="logic" fp_name="/top_module_tb/test_done">
+      <obj_property name="ElementShortName">test_done</obj_property>
+      <obj_property name="ObjectShortName">test_done</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top_module_tb/done">
-      <obj_property name="ElementShortName">done</obj_property>
-      <obj_property name="ObjectShortName">done</obj_property>
+   <wvobject type="group" fp_name="group_top">
+      <obj_property name="label">Top Module State</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="other" fp_name="/top_module_tb/dut/state">
+         <obj_property name="ElementShortName">state</obj_property>
+         <obj_property name="ObjectShortName">state</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/test_counter">
+         <obj_property name="ElementShortName">test_counter[6:0]</obj_property>
+         <obj_property name="ObjectShortName">test_counter[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/cycle_counter">
+         <obj_property name="ElementShortName">cycle_counter[31:0]</obj_property>
+         <obj_property name="ObjectShortName">cycle_counter[31:0]</obj_property>
+      </wvobject>
    </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/a_x">
-      <obj_property name="ElementShortName">a_x[31:0]</obj_property>
-      <obj_property name="ObjectShortName">a_x[31:0]</obj_property>
-      <obj_property name="Radix">REALRADIX</obj_property>
-      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-      <obj_property name="radix_fractionWidth">24</obj_property>
-      <obj_property name="radix_otherWidth">8</obj_property>
+   <wvobject type="group" fp_name="group_vectors">
+      <obj_property name="label">Test Vectors</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/top_module_tb/dut/a_vec.x">
+         <obj_property name="ElementShortName">.x[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.x[31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/a_vec.y">
+         <obj_property name="ElementShortName">.y[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.y[31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/a_vec.z">
+         <obj_property name="ElementShortName">.z[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.z[31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/b_vec.x">
+         <obj_property name="ElementShortName">.x[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.x[31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/b_vec.y">
+         <obj_property name="ElementShortName">.y[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.y[31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/b_vec.z">
+         <obj_property name="ElementShortName">.z[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.z[31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
    </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/a_y">
-      <obj_property name="ElementShortName">a_y[31:0]</obj_property>
-      <obj_property name="ObjectShortName">a_y[31:0]</obj_property>
-      <obj_property name="Radix">REALRADIX</obj_property>
-      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-      <obj_property name="radix_fractionWidth">24</obj_property>
-      <obj_property name="radix_otherWidth">8</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/a_z">
-      <obj_property name="ElementShortName">a_z[31:0]</obj_property>
-      <obj_property name="ObjectShortName">a_z[31:0]</obj_property>
-      <obj_property name="Radix">REALRADIX</obj_property>
-      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-      <obj_property name="radix_fractionWidth">24</obj_property>
-      <obj_property name="radix_otherWidth">8</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/b_x">
-      <obj_property name="ElementShortName">b_x[31:0]</obj_property>
-      <obj_property name="ObjectShortName">b_x[31:0]</obj_property>
-      <obj_property name="Radix">REALRADIX</obj_property>
-      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-      <obj_property name="radix_fractionWidth">24</obj_property>
-      <obj_property name="radix_otherWidth">8</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/b_y">
-      <obj_property name="ElementShortName">b_y[31:0]</obj_property>
-      <obj_property name="ObjectShortName">b_y[31:0]</obj_property>
-      <obj_property name="Radix">REALRADIX</obj_property>
-      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-      <obj_property name="radix_fractionWidth">24</obj_property>
-      <obj_property name="radix_otherWidth">8</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/b_z">
-      <obj_property name="ElementShortName">b_z[31:0]</obj_property>
-      <obj_property name="ObjectShortName">b_z[31:0]</obj_property>
-      <obj_property name="Radix">REALRADIX</obj_property>
-      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-      <obj_property name="radix_fractionWidth">24</obj_property>
-      <obj_property name="radix_otherWidth">8</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/result">
-      <obj_property name="ElementShortName">result[31:0]</obj_property>
-      <obj_property name="ObjectShortName">result[31:0]</obj_property>
-      <obj_property name="Radix">REALRADIX</obj_property>
-      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-      <obj_property name="radix_fractionWidth">24</obj_property>
-      <obj_property name="radix_otherWidth">8</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top_module_tb/result_valid">
-      <obj_property name="ElementShortName">result_valid[0:0]</obj_property>
-      <obj_property name="ObjectShortName">result_valid[0:0]</obj_property>
+   <wvobject type="group" fp_name="group_crossbar">
+      <obj_property name="label">Crossbar Interface</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/top_module_tb/dut/dot_requests(0).valid">
+         <obj_property name="ElementShortName">(0).valid</obj_property>
+         <obj_property name="ObjectShortName">(0).valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top_module_tb/dut/prod_grants(0).granted">
+         <obj_property name="ElementShortName">(0).granted</obj_property>
+         <obj_property name="ObjectShortName">(0).granted</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top_module_tb/dut/prod_results(0).valid">
+         <obj_property name="ElementShortName">(0).valid</obj_property>
+         <obj_property name="ObjectShortName">(0).valid</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_module_tb/dut/prod_results(0).data">
+         <obj_property name="ElementShortName">(0).data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">(0).data[31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group0">
       <obj_property name="label">Producer State</obj_property>

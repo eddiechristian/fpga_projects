@@ -223,12 +223,48 @@ puts "Synthesis complete - Status: $synth_status"
 # Check if synthesis succeeded
 if {[string match "*Complete!" $synth_status]} {
     puts "========================================"
-    puts "Synthesis build complete!"
+    puts "Running implementation..."
     puts "========================================"
-    puts "Synthesis checkpoint: $project_dir/$project_name.runs/synth_1/top_module.dcp"
-    puts "\nTo run implementation and bitstream generation, use:"
-    puts "  vivado -mode batch -source full_build.tcl"
-    puts "========================================"
+    
+    # Run implementation (opt_design, place_design, route_design)
+    launch_runs impl_1 -jobs 8
+    wait_on_run impl_1
+    
+    set impl_status [get_property STATUS [get_runs impl_1]]
+    puts "Implementation complete - Status: $impl_status"
+    
+    # Check if implementation succeeded
+    if {[string match "*Complete!" $impl_status]} {
+        puts "========================================"
+        puts "Generating bitstream..."
+        puts "========================================"
+        
+        # Generate bitstream
+        launch_runs impl_1 -to_step write_bitstream -jobs 8
+        wait_on_run impl_1
+        
+        set bitstream_status [get_property STATUS [get_runs impl_1]]
+        puts "Bitstream generation complete - Status: $bitstream_status"
+        
+        # Generate reports
+        open_run impl_1
+        
+        puts "\nGenerating implementation reports..."
+        report_utilization -file $log_dir/utilization_impl.rpt
+        report_timing_summary -file $log_dir/timing_summary.rpt
+        report_power -file $log_dir/power.rpt
+        
+        puts "\n========================================"
+        puts "Build complete!"
+        puts "========================================"
+        puts "Bitstream: $project_dir/$project_name.runs/impl_1/top_module.bit"
+        puts "Reports available in: $log_dir/"
+        puts "========================================"
+    } else {
+        puts "\nERROR: Implementation failed!"
+        puts "Status: $impl_status"
+        exit 1
+    }
 } else {
     puts "\nERROR: Synthesis failed!"
     puts "Status: $synth_status"

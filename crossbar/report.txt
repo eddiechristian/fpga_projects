@@ -1,24 +1,1291 @@
- run 200us
-Note: Starting dot product tests...
-Time: 155 ns  Iteration: 0  Process: /top_module_tb/stimulus_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/top_module_tb.vhd
-Note: Test 1: [1, 2, 3] . [4, 5, 6] = 32
-Time: 155 ns  Iteration: 0  Process: /top_module_tb/stimulus_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/top_module_tb.vhd
-Note: TOP: DOT request issued - a_vec=127,128,128
-Time: 175 ns  Iteration: 0  Process: /top_module_tb/dut/line__80  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module.vhd
+
+# run 200us
+Note: Reset released, test starting...
+Time: 50 ns  Iteration: 0  Process: /top_module_parallel_tb/stimulus_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/top_module_parallel_tb.vhd
+Note: === STARTING PARALLEL THROUGHPUT TEST: 100 DOT PRODUCTS (10 parallel) ===
+Time: 165 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Batch 0: Issuing 10 DOT requests at cycle 12
+Time: 175 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
 Note: ARBITER: DOT unit 0 granted to producer 0
-Time: 185 ns  Iteration: 1  Process: /top_module_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 1 granted to producer 1
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 2 granted to producer 2
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 3 granted to producer 3
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 4 granted to producer 4
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 5 granted to producer 5
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 6 granted to producer 6
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 7 granted to producer 7
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 8 granted to producer 8
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 9 granted to producer 9
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
 Note: DOT_HW: Started computation, TID=0
-Time: 185 ns  Iteration: 1  Process: /top_module_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__151  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=2049
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=4098
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=6147
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=8196
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=10245
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=12294
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=14343
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=16392
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=18441
+Time: 185 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: Batch 0: All grants received at cycle 14
+Time: 195 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
 Note: DOT_HW: MULT stage - x='1' y='1' z='1'
-Time: 205 ns  Iteration: 1  Process: /top_module_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__151  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Time: 205 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 205 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 205 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 205 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 205 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 205 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 205 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 205 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 205 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 205 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
 Note: DOT_HW: First ADD stage complete
-Time: 225 ns  Iteration: 1  Process: /top_module_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__151  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Time: 225 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 225 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 225 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 225 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 225 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 225 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 225 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 225 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 225 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 225 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=0
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=2049
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=4098
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=6147
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=8196
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=10245
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=12294
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=14343
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=16392
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=18441
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=0 (0x0000), decoded Producer ID=0, fifo_full='0', fifo_wr_en='1'
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 1 has valid output, TID=2049 (0x0801), decoded Producer ID=1, fifo_full='0', fifo_wr_en='1'
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 2 has valid output, TID=4098 (0x1002), decoded Producer ID=2, fifo_full='0', fifo_wr_en='1'
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 3 has valid output, TID=6147 (0x1803), decoded Producer ID=3, fifo_full='0', fifo_wr_en='1'
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 4 has valid output, TID=8196 (0x2004), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 5 has valid output, TID=10245 (0x2805), decoded Producer ID=5, fifo_full='0', fifo_wr_en='1'
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 6 has valid output, TID=12294 (0x3006), decoded Producer ID=6, fifo_full='0', fifo_wr_en='1'
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 7 has valid output, TID=14343 (0x3807), decoded Producer ID=7, fifo_full='0', fifo_wr_en='1'
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 8 has valid output, TID=16392 (0x4008), decoded Producer ID=8, fifo_full='0', fifo_wr_en='1'
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 9 has valid output, TID=18441 (0x4809), decoded Producer ID=9, fifo_full='0', fifo_wr_en='1'
+Time: 245 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: Batch 0: All results received at cycle 21
+Time: 265 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Batch 1: Issuing 10 DOT requests at cycle 22
+Time: 275 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: ARBITER: DOT unit 0 granted to producer 0
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 1 granted to producer 1
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 2 granted to producer 2
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 3 granted to producer 3
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 4 granted to producer 4
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 5 granted to producer 5
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 6 granted to producer 6
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 7 granted to producer 7
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 8 granted to producer 8
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 9 granted to producer 9
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: DOT_HW: Started computation, TID=10
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=2059
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=4108
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=6157
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=8206
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=10255
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=12304
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=14353
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=16402
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=18451
+Time: 285 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: Batch 1: All grants received at cycle 24
+Time: 295 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 305 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 305 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 305 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 305 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 305 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 305 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 305 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 305 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 305 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 305 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 325 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 325 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 325 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 325 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 325 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 325 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 325 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 325 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 325 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 325 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=10
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=2059
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=4108
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=6157
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=8206
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=10255
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=12304
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=14353
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=16402
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=18451
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=10 (0x000A), decoded Producer ID=0, fifo_full='0', fifo_wr_en='1'
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 1 has valid output, TID=2059 (0x080B), decoded Producer ID=1, fifo_full='0', fifo_wr_en='1'
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 2 has valid output, TID=4108 (0x100C), decoded Producer ID=2, fifo_full='0', fifo_wr_en='1'
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 3 has valid output, TID=6157 (0x180D), decoded Producer ID=3, fifo_full='0', fifo_wr_en='1'
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 4 has valid output, TID=8206 (0x200E), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 5 has valid output, TID=10255 (0x280F), decoded Producer ID=5, fifo_full='0', fifo_wr_en='1'
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 6 has valid output, TID=12304 (0x3010), decoded Producer ID=6, fifo_full='0', fifo_wr_en='1'
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 7 has valid output, TID=14353 (0x3811), decoded Producer ID=7, fifo_full='0', fifo_wr_en='1'
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 8 has valid output, TID=16402 (0x4012), decoded Producer ID=8, fifo_full='0', fifo_wr_en='1'
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 9 has valid output, TID=18451 (0x4813), decoded Producer ID=9, fifo_full='0', fifo_wr_en='1'
+Time: 345 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: Batch 1: All results received at cycle 31
+Time: 365 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Batch 2: Issuing 10 DOT requests at cycle 32
+Time: 375 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: ARBITER: DOT unit 0 granted to producer 0
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 1 granted to producer 1
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 2 granted to producer 2
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 3 granted to producer 3
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 4 granted to producer 4
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 5 granted to producer 5
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 6 granted to producer 6
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 7 granted to producer 7
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 8 granted to producer 8
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 9 granted to producer 9
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: DOT_HW: Started computation, TID=20
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=2069
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=4118
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=6167
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=8216
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=10265
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=12314
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=14363
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=16412
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=18461
+Time: 385 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: Batch 2: All grants received at cycle 34
+Time: 395 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 405 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 405 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 405 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 405 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 405 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 405 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 405 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 405 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 405 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 405 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 425 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 425 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 425 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 425 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 425 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 425 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 425 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 425 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 425 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 425 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=20
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=2069
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=4118
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=6167
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=8216
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=10265
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=12314
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=14363
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=16412
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=18461
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=20 (0x0014), decoded Producer ID=0, fifo_full='0', fifo_wr_en='1'
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 1 has valid output, TID=2069 (0x0815), decoded Producer ID=1, fifo_full='0', fifo_wr_en='1'
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 2 has valid output, TID=4118 (0x1016), decoded Producer ID=2, fifo_full='0', fifo_wr_en='1'
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 3 has valid output, TID=6167 (0x1817), decoded Producer ID=3, fifo_full='0', fifo_wr_en='1'
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 4 has valid output, TID=8216 (0x2018), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 5 has valid output, TID=10265 (0x2819), decoded Producer ID=5, fifo_full='0', fifo_wr_en='1'
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 6 has valid output, TID=12314 (0x301A), decoded Producer ID=6, fifo_full='0', fifo_wr_en='1'
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 7 has valid output, TID=14363 (0x381B), decoded Producer ID=7, fifo_full='0', fifo_wr_en='1'
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 8 has valid output, TID=16412 (0x401C), decoded Producer ID=8, fifo_full='0', fifo_wr_en='1'
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 9 has valid output, TID=18461 (0x481D), decoded Producer ID=9, fifo_full='0', fifo_wr_en='1'
+Time: 445 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: Batch 2: All results received at cycle 41
+Time: 465 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Batch 3: Issuing 10 DOT requests at cycle 42
+Time: 475 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: ARBITER: DOT unit 0 granted to producer 0
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 1 granted to producer 1
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 2 granted to producer 2
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 3 granted to producer 3
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 4 granted to producer 4
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 5 granted to producer 5
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 6 granted to producer 6
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 7 granted to producer 7
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 8 granted to producer 8
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 9 granted to producer 9
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: DOT_HW: Started computation, TID=30
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=2079
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=4128
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=6177
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=8226
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=10275
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=12324
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=14373
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=16422
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=18471
+Time: 485 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: Batch 3: All grants received at cycle 44
+Time: 495 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 505 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 505 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 505 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 505 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 505 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 505 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 505 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 505 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 505 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 505 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 525 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 525 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 525 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 525 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 525 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 525 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 525 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 525 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 525 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 525 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=30
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=2079
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=4128
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=6177
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=8226
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=10275
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=12324
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=14373
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=16422
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=18471
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=30 (0x001E), decoded Producer ID=0, fifo_full='0', fifo_wr_en='1'
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 1 has valid output, TID=2079 (0x081F), decoded Producer ID=1, fifo_full='0', fifo_wr_en='1'
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 2 has valid output, TID=4128 (0x1020), decoded Producer ID=2, fifo_full='0', fifo_wr_en='1'
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 3 has valid output, TID=6177 (0x1821), decoded Producer ID=3, fifo_full='0', fifo_wr_en='1'
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 4 has valid output, TID=8226 (0x2022), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 5 has valid output, TID=10275 (0x2823), decoded Producer ID=5, fifo_full='0', fifo_wr_en='1'
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 6 has valid output, TID=12324 (0x3024), decoded Producer ID=6, fifo_full='0', fifo_wr_en='1'
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 7 has valid output, TID=14373 (0x3825), decoded Producer ID=7, fifo_full='0', fifo_wr_en='1'
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 8 has valid output, TID=16422 (0x4026), decoded Producer ID=8, fifo_full='0', fifo_wr_en='1'
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 9 has valid output, TID=18471 (0x4827), decoded Producer ID=9, fifo_full='0', fifo_wr_en='1'
+Time: 545 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: Batch 3: All results received at cycle 51
+Time: 565 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Batch 4: Issuing 10 DOT requests at cycle 52
+Time: 575 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: ARBITER: DOT unit 0 granted to producer 0
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 1 granted to producer 1
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 2 granted to producer 2
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 3 granted to producer 3
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 4 granted to producer 4
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 5 granted to producer 5
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 6 granted to producer 6
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 7 granted to producer 7
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 8 granted to producer 8
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 9 granted to producer 9
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: DOT_HW: Started computation, TID=40
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=2089
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=4138
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=6187
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=8236
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=10285
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=12334
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=14383
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=16432
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=18481
+Time: 585 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: Batch 4: All grants received at cycle 54
+Time: 595 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 605 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 605 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 605 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 605 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 605 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 605 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 605 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 605 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 605 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 605 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 625 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 625 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 625 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 625 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 625 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 625 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 625 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 625 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 625 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 625 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=40
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=2089
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=4138
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=6187
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=8236
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=10285
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=12334
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=14383
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=16432
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=18481
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=40 (0x0028), decoded Producer ID=0, fifo_full='0', fifo_wr_en='1'
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 1 has valid output, TID=2089 (0x0829), decoded Producer ID=1, fifo_full='0', fifo_wr_en='1'
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 2 has valid output, TID=4138 (0x102A), decoded Producer ID=2, fifo_full='0', fifo_wr_en='1'
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 3 has valid output, TID=6187 (0x182B), decoded Producer ID=3, fifo_full='0', fifo_wr_en='1'
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 4 has valid output, TID=8236 (0x202C), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 5 has valid output, TID=10285 (0x282D), decoded Producer ID=5, fifo_full='0', fifo_wr_en='1'
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 6 has valid output, TID=12334 (0x302E), decoded Producer ID=6, fifo_full='0', fifo_wr_en='1'
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 7 has valid output, TID=14383 (0x382F), decoded Producer ID=7, fifo_full='0', fifo_wr_en='1'
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 8 has valid output, TID=16432 (0x4030), decoded Producer ID=8, fifo_full='0', fifo_wr_en='1'
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 9 has valid output, TID=18481 (0x4831), decoded Producer ID=9, fifo_full='0', fifo_wr_en='1'
+Time: 645 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: Batch 4: All results received at cycle 61
+Time: 665 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Batch 5: Issuing 10 DOT requests at cycle 62
+Time: 675 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: ARBITER: DOT unit 0 granted to producer 0
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 1 granted to producer 1
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 2 granted to producer 2
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 3 granted to producer 3
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 4 granted to producer 4
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 5 granted to producer 5
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 6 granted to producer 6
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 7 granted to producer 7
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 8 granted to producer 8
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 9 granted to producer 9
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: DOT_HW: Started computation, TID=50
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=2099
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=4148
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=6197
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=8246
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=10295
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=12344
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=14393
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=16442
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=18491
+Time: 685 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: Batch 5: All grants received at cycle 64
+Time: 695 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 705 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 705 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 705 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 705 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 705 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 705 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 705 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 705 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 705 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 705 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 725 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 725 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 725 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 725 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 725 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 725 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 725 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 725 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 725 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 725 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=50
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=2099
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=4148
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=6197
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=8246
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=10295
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=12344
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=14393
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=16442
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=18491
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=50 (0x0032), decoded Producer ID=0, fifo_full='0', fifo_wr_en='1'
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 1 has valid output, TID=2099 (0x0833), decoded Producer ID=1, fifo_full='0', fifo_wr_en='1'
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 2 has valid output, TID=4148 (0x1034), decoded Producer ID=2, fifo_full='0', fifo_wr_en='1'
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 3 has valid output, TID=6197 (0x1835), decoded Producer ID=3, fifo_full='0', fifo_wr_en='1'
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 4 has valid output, TID=8246 (0x2036), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 5 has valid output, TID=10295 (0x2837), decoded Producer ID=5, fifo_full='0', fifo_wr_en='1'
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 6 has valid output, TID=12344 (0x3038), decoded Producer ID=6, fifo_full='0', fifo_wr_en='1'
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 7 has valid output, TID=14393 (0x3839), decoded Producer ID=7, fifo_full='0', fifo_wr_en='1'
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 8 has valid output, TID=16442 (0x403A), decoded Producer ID=8, fifo_full='0', fifo_wr_en='1'
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 9 has valid output, TID=18491 (0x483B), decoded Producer ID=9, fifo_full='0', fifo_wr_en='1'
+Time: 745 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: Batch 5: All results received at cycle 71
+Time: 765 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Batch 6: Issuing 10 DOT requests at cycle 72
+Time: 775 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: ARBITER: DOT unit 0 granted to producer 0
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 1 granted to producer 1
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 2 granted to producer 2
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 3 granted to producer 3
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 4 granted to producer 4
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 5 granted to producer 5
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 6 granted to producer 6
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 7 granted to producer 7
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 8 granted to producer 8
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 9 granted to producer 9
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: DOT_HW: Started computation, TID=60
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=2109
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=4158
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=6207
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=8256
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=10305
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=12354
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=14403
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=16452
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=18501
+Time: 785 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: Batch 6: All grants received at cycle 74
+Time: 795 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 805 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 805 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 805 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 805 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 805 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 805 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 805 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 805 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 805 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 805 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 825 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 825 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 825 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 825 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 825 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 825 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 825 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 825 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 825 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 825 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=60
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=2109
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=4158
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=6207
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=8256
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=10305
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=12354
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=14403
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=16452
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=18501
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=60 (0x003C), decoded Producer ID=0, fifo_full='0', fifo_wr_en='1'
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 1 has valid output, TID=2109 (0x083D), decoded Producer ID=1, fifo_full='0', fifo_wr_en='1'
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 2 has valid output, TID=4158 (0x103E), decoded Producer ID=2, fifo_full='0', fifo_wr_en='1'
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 3 has valid output, TID=6207 (0x183F), decoded Producer ID=3, fifo_full='0', fifo_wr_en='1'
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 4 has valid output, TID=8256 (0x2040), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 5 has valid output, TID=10305 (0x2841), decoded Producer ID=5, fifo_full='0', fifo_wr_en='1'
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 6 has valid output, TID=12354 (0x3042), decoded Producer ID=6, fifo_full='0', fifo_wr_en='1'
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 7 has valid output, TID=14403 (0x3843), decoded Producer ID=7, fifo_full='0', fifo_wr_en='1'
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 8 has valid output, TID=16452 (0x4044), decoded Producer ID=8, fifo_full='0', fifo_wr_en='1'
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 9 has valid output, TID=18501 (0x4845), decoded Producer ID=9, fifo_full='0', fifo_wr_en='1'
+Time: 845 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: Batch 6: All results received at cycle 81
+Time: 865 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Batch 7: Issuing 10 DOT requests at cycle 82
+Time: 875 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: ARBITER: DOT unit 0 granted to producer 0
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 1 granted to producer 1
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 2 granted to producer 2
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 3 granted to producer 3
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 4 granted to producer 4
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 5 granted to producer 5
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 6 granted to producer 6
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 7 granted to producer 7
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 8 granted to producer 8
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 9 granted to producer 9
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: DOT_HW: Started computation, TID=70
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=2119
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=4168
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=6217
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=8266
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=10315
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=12364
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=14413
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=16462
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=18511
+Time: 885 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: Batch 7: All grants received at cycle 84
+Time: 895 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 905 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 905 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 905 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 905 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 905 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 905 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 905 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 905 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 905 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 905 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 925 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 925 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 925 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 925 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 925 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 925 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 925 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 925 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 925 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 925 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=70
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=2119
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=4168
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=6217
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=8266
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=10315
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=12364
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=14413
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=16462
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=18511
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=70 (0x0046), decoded Producer ID=0, fifo_full='0', fifo_wr_en='1'
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 1 has valid output, TID=2119 (0x0847), decoded Producer ID=1, fifo_full='0', fifo_wr_en='1'
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 2 has valid output, TID=4168 (0x1048), decoded Producer ID=2, fifo_full='0', fifo_wr_en='1'
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 3 has valid output, TID=6217 (0x1849), decoded Producer ID=3, fifo_full='0', fifo_wr_en='1'
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 4 has valid output, TID=8266 (0x204A), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 5 has valid output, TID=10315 (0x284B), decoded Producer ID=5, fifo_full='0', fifo_wr_en='1'
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 6 has valid output, TID=12364 (0x304C), decoded Producer ID=6, fifo_full='0', fifo_wr_en='1'
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 7 has valid output, TID=14413 (0x384D), decoded Producer ID=7, fifo_full='0', fifo_wr_en='1'
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 8 has valid output, TID=16462 (0x404E), decoded Producer ID=8, fifo_full='0', fifo_wr_en='1'
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 9 has valid output, TID=18511 (0x484F), decoded Producer ID=9, fifo_full='0', fifo_wr_en='1'
+Time: 945 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: Batch 7: All results received at cycle 91
+Time: 965 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Batch 8: Issuing 10 DOT requests at cycle 92
+Time: 975 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: ARBITER: DOT unit 0 granted to producer 0
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 1 granted to producer 1
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 2 granted to producer 2
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 3 granted to producer 3
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 4 granted to producer 4
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 5 granted to producer 5
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 6 granted to producer 6
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 7 granted to producer 7
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 8 granted to producer 8
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 9 granted to producer 9
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: DOT_HW: Started computation, TID=80
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=2129
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=4178
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=6227
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=8276
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=10325
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=12374
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=14423
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=16472
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=18521
+Time: 985 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: Batch 8: All grants received at cycle 94
+Time: 995 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1005 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1005 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1005 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1005 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1005 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1005 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1005 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1005 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1005 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1005 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1025 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1025 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1025 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1025 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1025 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1025 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1025 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1025 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1025 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1025 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=80
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=2129
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=4178
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=6227
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=8276
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=10325
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=12374
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=14423
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=16472
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=18521
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=80 (0x0050), decoded Producer ID=0, fifo_full='0', fifo_wr_en='1'
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 1 has valid output, TID=2129 (0x0851), decoded Producer ID=1, fifo_full='0', fifo_wr_en='1'
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 2 has valid output, TID=4178 (0x1052), decoded Producer ID=2, fifo_full='0', fifo_wr_en='1'
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 3 has valid output, TID=6227 (0x1853), decoded Producer ID=3, fifo_full='0', fifo_wr_en='1'
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 4 has valid output, TID=8276 (0x2054), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 5 has valid output, TID=10325 (0x2855), decoded Producer ID=5, fifo_full='0', fifo_wr_en='1'
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 6 has valid output, TID=12374 (0x3056), decoded Producer ID=6, fifo_full='0', fifo_wr_en='1'
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 7 has valid output, TID=14423 (0x3857), decoded Producer ID=7, fifo_full='0', fifo_wr_en='1'
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 8 has valid output, TID=16472 (0x4058), decoded Producer ID=8, fifo_full='0', fifo_wr_en='1'
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 9 has valid output, TID=18521 (0x4859), decoded Producer ID=9, fifo_full='0', fifo_wr_en='1'
+Time: 1045 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: Batch 8: All results received at cycle 101
+Time: 1065 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Batch 9: Issuing 10 DOT requests at cycle 102
+Time: 1075 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: ARBITER: DOT unit 0 granted to producer 0
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 1 granted to producer 1
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 2 granted to producer 2
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 3 granted to producer 3
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 4 granted to producer 4
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 5 granted to producer 5
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 6 granted to producer 6
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 7 granted to producer 7
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 8 granted to producer 8
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: ARBITER: DOT unit 9 granted to producer 9
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/arbiter_inst/line__182  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_arbiter.vhd
+Note: DOT_HW: Started computation, TID=90
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=2139
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=4188
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=6237
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=8286
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=10335
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=12384
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=14433
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=16482
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Started computation, TID=18531
+Time: 1085 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: Batch 9: All grants received at cycle 104
+Time: 1095 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1105 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1105 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1105 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1105 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1105 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1105 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1105 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1105 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1105 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: MULT stage - x='1' y='1' z='1'
+Time: 1105 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1125 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1125 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1125 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1125 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1125 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1125 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1125 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1125 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1125 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: First ADD stage complete
+Time: 1125 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=90
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(0)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=2139
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(1)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=4188
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(2)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=6237
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(3)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=8286
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(4)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=10335
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(5)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=12384
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(6)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=14433
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(7)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=16482
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(8)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: DOT_HW: Result ready, TID=18531
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/\gen_dot_units(9)\/dot_inst/line__180  File: /home/eddie/fpga_projects/crossbar/src/hdl/vec3_dot_hw.vhd
+Note: OUTPUT_ROUTER: FP unit 0 has valid output, TID=90 (0x005A), decoded Producer ID=0, fifo_full='0', fifo_wr_en='1'
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 1 has valid output, TID=2139 (0x085B), decoded Producer ID=1, fifo_full='0', fifo_wr_en='1'
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 2 has valid output, TID=4188 (0x105C), decoded Producer ID=2, fifo_full='0', fifo_wr_en='1'
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 3 has valid output, TID=6237 (0x185D), decoded Producer ID=3, fifo_full='0', fifo_wr_en='1'
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 4 has valid output, TID=8286 (0x205E), decoded Producer ID=4, fifo_full='0', fifo_wr_en='1'
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 5 has valid output, TID=10335 (0x285F), decoded Producer ID=5, fifo_full='0', fifo_wr_en='1'
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 6 has valid output, TID=12384 (0x3060), decoded Producer ID=6, fifo_full='0', fifo_wr_en='1'
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 7 has valid output, TID=14433 (0x3861), decoded Producer ID=7, fifo_full='0', fifo_wr_en='1'
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 8 has valid output, TID=16482 (0x4062), decoded Producer ID=8, fifo_full='0', fifo_wr_en='1'
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: OUTPUT_ROUTER: FP unit 9 has valid output, TID=18531 (0x4863), decoded Producer ID=9, fifo_full='0', fifo_wr_en='1'
+Time: 1145 ns  Iteration: 2  Process: /top_module_parallel_tb/dut/crossbar_inst/output_router_inst/line__175  File: /home/eddie/fpga_projects/crossbar/src/hdl/crossbar_output_router.vhd
+Note: Batch 9: All results received at cycle 111
+Time: 1165 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Test completed!
+Time: 1165 ns  Iteration: 3  Process: /top_module_parallel_tb/stimulus_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/top_module_parallel_tb.vhd
+Note: === TEST COMPLETE ===
+Time: 1175 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Total operations: 100
+Time: 1175 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Total cycles: 100
+Time: 1175 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Cycles per operation: 1
+Time: 1175 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Throughput: 100.0 ops per 100 cycles
+Time: 1175 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Parallel speedup vs sequential: 9.0x
+Time: 1175 ns  Iteration: 1  Process: /top_module_parallel_tb/dut/line__86  File: /home/eddie/fpga_projects/crossbar/src/hdl/top_module_parallel.vhd
+Note: Simulation ending...
+Time: 1265 ns  Iteration: 0  Process: /top_module_parallel_tb/stimulus_proc  File: /home/eddie/fpga_projects/crossbar/src/sim/top_module_parallel_tb.vhd
 INFO: [Common 17-41] Interrupt caught. Command should exit soon.
-run: Time (s): cpu = 00:00:07 ; elapsed = 00:00:24 . Memory (MB): peak = 7945.664 ; gain = 0.000 ; free physical = 38393 ; free virtual = 58277
+run: Time (s): cpu = 00:00:04 ; elapsed = 00:00:18 . Memory (MB): peak = 8108.293 ; gain = 10.000 ; free physical = 37786 ; free virtual = 57731
 INFO: [Common 17-344] 'run' was cancelled
 INFO: [Common 17-344] 'source' was cancelled
-xsim: Time (s): cpu = 00:00:12 ; elapsed = 00:00:28 . Memory (MB): peak = 7945.664 ; gain = 39.090 ; free physical = 38393 ; free virtual = 58277
+xsim: Time (s): cpu = 00:00:07 ; elapsed = 00:00:21 . Memory (MB): peak = 8108.293 ; gain = 12.836 ; free physical = 37771 ; free virtual = 57724
 INFO: [Common 17-344] 'xsim' was cancelled
 INFO: [Vivado 12-5357] 'simulate' step aborted
-launch_simulation: Time (s): cpu = 00:03:00 ; elapsed = 00:01:22 . Memory (MB): peak = 7945.664 ; gain = 39.090 ; free physical = 38393 ; free virtual = 58277
+launch_simulation: Time (s): cpu = 00:00:16 ; elapsed = 00:00:30 . Memory (MB): peak = 8108.293 ; gain = 12.836 ; free physical = 37771 ; free virtual = 57724
 INFO: [Common 17-344] 'launch_simulation' was cancelled
