@@ -10,8 +10,9 @@ PACKAGE crossbar_pkg IS
     CONSTANT NUM_MULT_UNITS    : INTEGER := 10;
     CONSTANT NUM_FMA_UNITS     : INTEGER := 5;
     CONSTANT NUM_ADDSUB_UNITS  : INTEGER := 3;
-    CONSTANT NUM_DOT_UNITS     : INTEGER := 10;
-    CONSTANT TOTAL_FP_UNITS    : INTEGER := NUM_DOT_UNITS + NUM_MULT_UNITS + NUM_FMA_UNITS + NUM_ADDSUB_UNITS;
+    CONSTANT NUM_DOT_UNITS     : INTEGER := 10;  -- Vec3 dot product units
+    CONSTANT NUM_DOT4_UNITS    : INTEGER := 10;  -- Vec4 dot product units
+    CONSTANT TOTAL_FP_UNITS    : INTEGER := NUM_DOT_UNITS + NUM_DOT4_UNITS + NUM_MULT_UNITS + NUM_FMA_UNITS + NUM_ADDSUB_UNITS;
 
     -- Data width constants
     CONSTANT FP32_WIDTH        : INTEGER := 32;
@@ -33,7 +34,7 @@ PACKAGE crossbar_pkg IS
     CONSTANT FP_LATENCY        : INTEGER := 2;
 
     -- Unit type enumeration
-    TYPE unit_type_t IS (UNIT_MULT, UNIT_FMA, UNIT_ADDSUB, UNIT_DOT);
+    TYPE unit_type_t IS (UNIT_MULT, UNIT_FMA, UNIT_ADDSUB, UNIT_DOT, UNIT_DOT4);
 
     -- Producer request records (separate type per unit to avoid MAX_DATA_WIDTH waste)
     TYPE producer_mult_request_t IS RECORD
@@ -65,6 +66,14 @@ PACKAGE crossbar_pkg IS
         tid        : STD_LOGIC_VECTOR(TID_WIDTH - 1 DOWNTO 0);
     END RECORD;
 
+    TYPE producer_dot4_request_t IS RECORD
+        valid      : STD_LOGIC;
+        unit_index : INTEGER RANGE 0 TO 15; -- Which DOT4 unit
+        a          : Vec4;
+        b          : Vec4;
+        tid        : STD_LOGIC_VECTOR(TID_WIDTH - 1 DOWNTO 0);
+    END RECORD;
+
     -- Producer grant record
     TYPE producer_grant_t IS RECORD
         granted    : STD_LOGIC;
@@ -82,6 +91,7 @@ PACKAGE crossbar_pkg IS
 
     -- Array types for multiple producers (one array per unit type)
     TYPE producer_dot_request_array_t IS ARRAY (0 TO NUM_PRODUCERS - 1) OF producer_dot_request_t;
+    TYPE producer_dot4_request_array_t IS ARRAY (0 TO NUM_PRODUCERS - 1) OF producer_dot4_request_t;
     TYPE producer_mult_request_array_t IS ARRAY (0 TO NUM_PRODUCERS - 1) OF producer_mult_request_t;
     TYPE producer_fma_request_array_t IS ARRAY (0 TO NUM_PRODUCERS - 1) OF producer_fma_request_t;
     TYPE producer_addsub_request_array_t IS ARRAY (0 TO NUM_PRODUCERS - 1) OF producer_addsub_request_t;
@@ -91,6 +101,7 @@ PACKAGE crossbar_pkg IS
 
     -- Request matrix: request(producer)(fp_unit)
     TYPE request_matrix_dot_t IS ARRAY (0 TO NUM_PRODUCERS - 1, 0 TO NUM_DOT_UNITS - 1) OF STD_LOGIC;
+    TYPE request_matrix_dot4_t IS ARRAY (0 TO NUM_PRODUCERS - 1, 0 TO NUM_DOT4_UNITS - 1) OF STD_LOGIC;
     TYPE request_matrix_mult_t IS ARRAY (0 TO NUM_PRODUCERS - 1, 0 TO NUM_MULT_UNITS - 1) OF STD_LOGIC;
     TYPE request_matrix_fma_t IS ARRAY (0 TO NUM_PRODUCERS - 1, 0 TO NUM_FMA_UNITS - 1) OF STD_LOGIC;
     TYPE request_matrix_addsub_t IS ARRAY (0 TO NUM_PRODUCERS - 1, 0 TO NUM_ADDSUB_UNITS - 1) OF STD_LOGIC;
@@ -98,6 +109,7 @@ PACKAGE crossbar_pkg IS
     -- Grant vector: which producer (if any) granted to each FP unit
     -- -1 = no grant (unit idle), 0 to N-1 = producer index
     TYPE grant_vector_dot_t IS ARRAY (0 TO NUM_DOT_UNITS - 1) OF INTEGER RANGE -1 TO NUM_PRODUCERS - 1;
+    TYPE grant_vector_dot4_t IS ARRAY (0 TO NUM_DOT4_UNITS - 1) OF INTEGER RANGE -1 TO NUM_PRODUCERS - 1;
     TYPE grant_vector_mult_t IS ARRAY (0 TO NUM_MULT_UNITS - 1) OF INTEGER RANGE -1 TO NUM_PRODUCERS - 1;
     TYPE grant_vector_fma_t IS ARRAY (0 TO NUM_FMA_UNITS - 1) OF INTEGER RANGE -1 TO NUM_PRODUCERS - 1;
     TYPE grant_vector_addsub_t IS ARRAY (0 TO NUM_ADDSUB_UNITS - 1) OF INTEGER RANGE -1 TO NUM_PRODUCERS - 1;
@@ -107,6 +119,13 @@ PACKAGE crossbar_pkg IS
         valid : STD_LOGIC;
         a     : Vec3;
         b     : Vec3;
+        tid   : STD_LOGIC_VECTOR(TID_WIDTH - 1 DOWNTO 0);
+    END RECORD;
+
+    TYPE fp_dot4_input_t IS RECORD
+        valid : STD_LOGIC;
+        a     : Vec4;
+        b     : Vec4;
         tid   : STD_LOGIC_VECTOR(TID_WIDTH - 1 DOWNTO 0);
     END RECORD;
 
@@ -139,6 +158,9 @@ PACKAGE crossbar_pkg IS
     TYPE fp_dot_input_array_t IS ARRAY (0 TO NUM_DOT_UNITS - 1) OF fp_dot_input_t;
     TYPE fp_dot_output_array_t IS ARRAY (0 TO NUM_DOT_UNITS - 1) OF fp_unit_output_t;
 
+    TYPE fp_dot4_input_array_t IS ARRAY (0 TO NUM_DOT4_UNITS - 1) OF fp_dot4_input_t;
+    TYPE fp_dot4_output_array_t IS ARRAY (0 TO NUM_DOT4_UNITS - 1) OF fp_unit_output_t;
+
     TYPE fp_mult_input_array_t IS ARRAY (0 TO NUM_MULT_UNITS - 1) OF fp_mult_input_t;
     TYPE fp_mult_output_array_t IS ARRAY (0 TO NUM_MULT_UNITS - 1) OF fp_unit_output_t;
 
@@ -158,6 +180,7 @@ PACKAGE crossbar_pkg IS
 
     -- Initialize producer requests to idle state
     FUNCTION init_producer_dot_request RETURN producer_dot_request_t;
+    FUNCTION init_producer_dot4_request RETURN producer_dot4_request_t;
     FUNCTION init_producer_mult_request RETURN producer_mult_request_t;
     FUNCTION init_producer_fma_request RETURN producer_fma_request_t;
     FUNCTION init_producer_addsub_request RETURN producer_addsub_request_t;
@@ -187,7 +210,7 @@ PACKAGE BODY crossbar_pkg IS
         RETURN tid;
     END FUNCTION;
 
-    -- Initialize producer MULT request to idle state
+    -- Initialize producer DOT request to idle state
     FUNCTION init_producer_dot_request RETURN producer_dot_request_t IS
         VARIABLE req : producer_dot_request_t;
     BEGIN
@@ -199,6 +222,24 @@ PACKAGE BODY crossbar_pkg IS
         req.b.x        := (OTHERS => '0');
         req.b.y        := (OTHERS => '0');
         req.b.z        := (OTHERS => '0');
+        req.tid        := (OTHERS => '0');
+        RETURN req;
+    END FUNCTION;
+
+    -- Initialize producer DOT4 request to idle state
+    FUNCTION init_producer_dot4_request RETURN producer_dot4_request_t IS
+        VARIABLE req : producer_dot4_request_t;
+    BEGIN
+        req.valid      := '0';
+        req.unit_index := 0;
+        req.a.x        := (OTHERS => '0');
+        req.a.y        := (OTHERS => '0');
+        req.a.z        := (OTHERS => '0');
+        req.a.w        := (OTHERS => '0');
+        req.b.x        := (OTHERS => '0');
+        req.b.y        := (OTHERS => '0');
+        req.b.z        := (OTHERS => '0');
+        req.b.w        := (OTHERS => '0');
         req.tid        := (OTHERS => '0');
         RETURN req;
     END FUNCTION;
