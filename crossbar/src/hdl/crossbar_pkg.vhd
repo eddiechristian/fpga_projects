@@ -10,8 +10,8 @@ PACKAGE crossbar_pkg IS
     CONSTANT NUM_MULT_UNITS    : INTEGER := 10;
     CONSTANT NUM_FMA_UNITS     : INTEGER := 5;
     CONSTANT NUM_ADDSUB_UNITS  : INTEGER := 3;
-    CONSTANT NUM_DOT_UNITS     : INTEGER := 10;  -- Vec3 dot product units
-    CONSTANT NUM_DOT4_UNITS    : INTEGER := 10;  -- Vec4 dot product units
+    CONSTANT NUM_DOT_UNITS     : INTEGER := 16;  -- Vec3 dot product units
+    CONSTANT NUM_DOT4_UNITS    : INTEGER := 16;  -- Vec4 dot product units
     CONSTANT TOTAL_FP_UNITS    : INTEGER := NUM_DOT_UNITS + NUM_DOT4_UNITS + NUM_MULT_UNITS + NUM_FMA_UNITS + NUM_ADDSUB_UNITS;
 
     -- Data width constants
