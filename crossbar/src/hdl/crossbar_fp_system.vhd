@@ -14,6 +14,7 @@ ENTITY crossbar_fp_system IS
 
         -- Producer interfaces (separate array per unit type)
         dot_requests    : IN producer_dot_request_array_t;
+        dot4_requests   : IN producer_dot4_request_array_t;
         mult_requests   : IN producer_mult_request_array_t;
         fma_requests    : IN producer_fma_request_array_t;
         addsub_requests : IN producer_addsub_request_array_t;
@@ -41,18 +42,21 @@ ARCHITECTURE Structural OF crossbar_fp_system IS
 
     -- Arbiter outputs
     SIGNAL dot_mux_sel    : grant_vector_dot_t;
+    SIGNAL dot4_mux_sel   : grant_vector_dot4_t;
     SIGNAL mult_mux_sel   : grant_vector_mult_t;
     SIGNAL fma_mux_sel    : grant_vector_fma_t;
     SIGNAL addsub_mux_sel : grant_vector_addsub_t;
 
     -- Input mux outputs to FP units
     SIGNAL dot_inputs     : fp_dot_input_array_t;
+    SIGNAL dot4_inputs    : fp_dot4_input_array_t;
     SIGNAL mult_inputs    : fp_mult_input_array_t;
     SIGNAL fma_inputs     : fp_fma_input_array_t;
     SIGNAL addsub_inputs  : fp_addsub_input_array_t;
 
     -- FP unit outputs
     SIGNAL dot_outputs    : fp_dot_output_array_t;
+    SIGNAL dot4_outputs   : fp_dot4_output_array_t;
     SIGNAL mult_outputs   : fp_mult_output_array_t;
     SIGNAL fma_outputs    : fp_fma_output_array_t;
     SIGNAL addsub_outputs : fp_addsub_output_array_t;
@@ -82,11 +86,13 @@ BEGIN
             clk             => clk_internal,
             rst             => rst,
             dot_requests    => dot_requests,
+            dot4_requests   => dot4_requests,
             mult_requests   => mult_requests,
             fma_requests    => fma_requests,
             addsub_requests => addsub_requests,
             prod_grants     => prod_grants,
             dot_mux_sel     => dot_mux_sel,
+            dot4_mux_sel    => dot4_mux_sel,
             mult_mux_sel    => mult_mux_sel,
             fma_mux_sel     => fma_mux_sel,
             addsub_mux_sel  => addsub_mux_sel
@@ -96,14 +102,17 @@ BEGIN
     input_mux_inst : ENTITY work.crossbar_input_mux
         PORT MAP(
             dot_requests    => dot_requests,
+            dot4_requests   => dot4_requests,
             mult_requests   => mult_requests,
             fma_requests    => fma_requests,
             addsub_requests => addsub_requests,
             dot_mux_sel     => dot_mux_sel,
+            dot4_mux_sel    => dot4_mux_sel,
             mult_mux_sel    => mult_mux_sel,
             fma_mux_sel     => fma_mux_sel,
             addsub_mux_sel  => addsub_mux_sel,
             dot_inputs      => dot_inputs,
+            dot4_inputs     => dot4_inputs,
             mult_inputs     => mult_inputs,
             fma_inputs      => fma_inputs,
             addsub_inputs   => addsub_inputs
@@ -122,6 +131,22 @@ BEGIN
                 valid_out   => dot_outputs(i).valid,
                 result      => dot_outputs(i).data,
                 output_tid  => dot_outputs(i).tid
+            );
+    END GENERATE;
+
+    -- Generate DOT4 unit wrappers
+    gen_dot4_units : FOR i IN 0 TO NUM_DOT4_UNITS - 1 GENERATE
+        dot4_inst : ENTITY work.vec4_dot_hw
+            PORT MAP(
+                clk         => clk_internal,
+                aresetn     => aresetn,
+                input_valid => dot4_inputs(i).valid,
+                input_tid   => dot4_inputs(i).tid,
+                a           => dot4_inputs(i).a,
+                b           => dot4_inputs(i).b,
+                valid_out   => dot4_outputs(i).valid,
+                result      => dot4_outputs(i).data,
+                output_tid  => dot4_outputs(i).tid
             );
     END GENERATE;
 
@@ -176,6 +201,7 @@ BEGIN
             clk            => clk_internal,
             rst            => rst,
             dot_outputs    => dot_outputs,
+            dot4_outputs   => dot4_outputs,
             mult_outputs   => mult_outputs,
             fma_outputs    => fma_outputs,
             addsub_outputs => addsub_outputs,

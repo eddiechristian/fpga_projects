@@ -9,18 +9,21 @@ ENTITY crossbar_input_mux IS
     PORT (
         -- Producer data inputs (one array per unit type)
         dot_requests    : IN producer_dot_request_array_t;
+        dot4_requests   : IN producer_dot4_request_array_t;
         mult_requests   : IN producer_mult_request_array_t;
         fma_requests    : IN producer_fma_request_array_t;
         addsub_requests : IN producer_addsub_request_array_t;
 
         -- Mux select signals from arbiter
         dot_mux_sel     : IN grant_vector_dot_t;
+        dot4_mux_sel    : IN grant_vector_dot4_t;
         mult_mux_sel    : IN grant_vector_mult_t;
         fma_mux_sel     : IN grant_vector_fma_t;
         addsub_mux_sel  : IN grant_vector_addsub_t;
 
         -- FP unit outputs
         dot_inputs      : OUT fp_dot_input_array_t;
+        dot4_inputs     : OUT fp_dot4_input_array_t;
         mult_inputs     : OUT fp_mult_input_array_t;
         fma_inputs      : OUT fp_fma_input_array_t;
         addsub_inputs   : OUT fp_addsub_input_array_t
@@ -59,6 +62,38 @@ BEGIN
             END IF;
         END LOOP;
     END PROCESS;
+
+    -- DOT4 unit input multiplexing
+    PROCESS (dot4_requests, dot4_mux_sel)
+        VARIABLE sel_prod : INTEGER;
+    BEGIN
+        FOR unit IN 0 TO NUM_DOT4_UNITS - 1 LOOP
+            sel_prod := dot4_mux_sel(unit);
+
+            IF sel_prod >= 0 AND sel_prod < NUM_PRODUCERS THEN
+                -- Valid producer selected
+                dot4_inputs(unit).valid <= dot4_requests(sel_prod).valid;
+                dot4_inputs(unit).a     <= dot4_requests(sel_prod).a;
+                dot4_inputs(unit).b     <= dot4_requests(sel_prod).b;
+                dot4_inputs(unit).tid   <= dot4_requests(sel_prod).tid;
+            ELSE
+                -- No producer selected (unit idle)
+                dot4_inputs(unit).valid <= '0';
+                dot4_inputs(unit).a.x   <= (OTHERS => '0');
+                dot4_inputs(unit).a.y   <= (OTHERS => '0');
+                dot4_inputs(unit).a.z   <= (OTHERS => '0');
+                dot4_inputs(unit).a.w   <= (OTHERS => '0');
+
+                dot4_inputs(unit).b.x   <= (OTHERS => '0');
+                dot4_inputs(unit).b.y   <= (OTHERS => '0');
+                dot4_inputs(unit).b.z   <= (OTHERS => '0');
+                dot4_inputs(unit).b.w   <= (OTHERS => '0');
+
+                dot4_inputs(unit).tid   <= (OTHERS => '0');
+            END IF;
+        END LOOP;
+    END PROCESS;
+
     -- MULT unit input multiplexing
     PROCESS (mult_requests, mult_mux_sel)
         VARIABLE sel_prod : INTEGER;
