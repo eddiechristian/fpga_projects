@@ -25,6 +25,7 @@ ARCHITECTURE structural OF top_module IS
     
     -- Crossbar signals (must match package size NUM_PRODUCERS=10)
     SIGNAL dot_requests    : producer_dot_request_array_t;
+    SIGNAL dot4_requests   : producer_dot4_request_array_t;
     SIGNAL mult_requests   : producer_mult_request_array_t;
     SIGNAL fma_requests    : producer_fma_request_array_t;
     SIGNAL addsub_requests : producer_addsub_request_array_t;
@@ -67,6 +68,10 @@ BEGIN
     -- Initialize unused producer slots (producers 1-9)
     gen_unused_dot : FOR i IN 1 TO NUM_PRODUCERS - 1 GENERATE
         dot_requests(i) <= init_producer_dot_request;
+    END GENERATE;
+
+    gen_unused_dot4 : FOR i IN 0 TO NUM_PRODUCERS - 1 GENERATE
+        dot4_requests(i) <= init_producer_dot4_request;
     END GENERATE;
 
     gen_unused_mult : FOR i IN 1 TO NUM_PRODUCERS - 1 GENERATE
@@ -181,6 +186,7 @@ BEGIN
             rst             => rst,
             locked          => locked,
             dot_requests    => dot_requests,
+            dot4_requests   => dot4_requests,
             mult_requests   => mult_requests,
             fma_requests    => fma_requests,
             addsub_requests => addsub_requests,

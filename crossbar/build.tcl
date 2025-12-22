@@ -152,6 +152,34 @@ set_property -dict [list \
     CONFIG.Add_Sub_Value {Both} \
 ] [get_ips floating_point_addsub]
 
+puts "Creating Floating Point Division IP..."
+
+# Create FP32 Division IP - 28 cycle latency, NonBlocking mode
+create_ip -name floating_point -vendor xilinx.com -library ip -version 7.1 -module_name floating_point_div -dir $ip_dir
+set_property -dict [list \
+    CONFIG.Operation_Type {Divide} \
+    CONFIG.A_Precision_Type {Single} \
+    CONFIG.Result_Precision_Type {Single} \
+    CONFIG.C_Latency {28} \
+    CONFIG.C_Rate {1} \
+    CONFIG.Flow_Control {NonBlocking} \
+    CONFIG.Maximum_Latency {false} \
+] [get_ips floating_point_div]
+
+puts "Creating Floating Point Square Root IP..."
+
+# Create FP32 Square Root IP - 28 cycle latency, NonBlocking mode
+create_ip -name floating_point -vendor xilinx.com -library ip -version 7.1 -module_name floating_point_sqrt -dir $ip_dir
+set_property -dict [list \
+    CONFIG.Operation_Type {Square_root} \
+    CONFIG.A_Precision_Type {Single} \
+    CONFIG.Result_Precision_Type {Single} \
+    CONFIG.C_Latency {28} \
+    CONFIG.C_Rate {1} \
+    CONFIG.Flow_Control {NonBlocking} \
+    CONFIG.Maximum_Latency {false} \
+] [get_ips floating_point_sqrt]
+
 # Generate all IP outputs and synthesis products
 puts "Generating IP cores..."
 generate_target all [get_ips]
@@ -223,12 +251,42 @@ puts "Synthesis complete - Status: $synth_status"
 # Check if synthesis succeeded
 if {[string match "*Complete!" $synth_status]} {
     puts "========================================"
+    puts "Generating utilization report..."
+    puts "========================================"
+    
+    # Open the synthesis checkpoint
+    open_run synth_1
+    
+    # Generate utilization report
+    set report_file "$project_dir/utilization_synth.rpt"
+    report_utilization -file $report_file
+    
+    puts "\n========================================"
     puts "Synthesis build complete!"
     puts "========================================"
     puts "Synthesis checkpoint: $project_dir/$project_name.runs/synth_1/top_module.dcp"
+    puts "Utilization report: $report_file"
     puts "\nTo run implementation and bitstream generation, use:"
     puts "  vivado -mode batch -source full_build.tcl"
     puts "========================================"
+    
+    # Print summary from utilization report
+    puts "\n=== Resource Utilization Summary ==="
+    set fp [open $report_file r]
+    set in_summary 0
+    while {[gets $fp line] >= 0} {
+        if {[string match "*Slice Logic*" $line]} {
+            set in_summary 1
+        }
+        if {$in_summary && [string match "|*" $line]} {
+            puts $line
+        }
+        if {$in_summary && [string match "*DSP*" $line]} {
+            break
+        }
+    }
+    close $fp
+    puts "===================================="
 } else {
     puts "\nERROR: Synthesis failed!"
     puts "Status: $synth_status"
