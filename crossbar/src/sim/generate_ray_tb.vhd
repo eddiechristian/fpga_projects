@@ -218,6 +218,17 @@ begin
         variable pixel_y : integer;
         variable proScreenX_val : real;
         variable proScreenY_val : real;
+        
+        -- Variables for throughput test
+        variable start_time : time;
+        variable end_time : time;
+        variable total_time : time;
+        variable rays_sent : integer := 0;
+        variable rays_received : integer := 0;
+        variable first_output_time : time;
+        variable last_output_time : time;
+        variable steady_state_time : time;
+        variable avg_time_per_ray : time;
     begin
         -- Initial reset
         rst <= '1';
@@ -427,6 +438,84 @@ begin
         else
             report "Test 5 FAILED: Timeout" severity error;
         end if;
+        
+        wait for 200 ns;
+        
+        -- Test 6: Throughput test - Send 20 rays back-to-back
+        report "========================================";
+        report "Test 6: Throughput Test (20 rays back-to-back)";
+        report "========================================";
+        
+        start_time := now;
+        rays_sent := 0;
+        rays_received := 0;
+        
+        -- Send 20 rays back-to-back (as fast as ready_out allows)
+        for i in 0 to 19 loop
+            pixel_x := i * 10;  -- Vary the pixels
+            pixel_y := i * 5;
+            proScreenX_val := (real(pixel_x) * X_FACT) - 1.0;
+            proScreenY_val := (real(pixel_y) * Y_FACT) - 1.0;
+            
+            proScreenX <= real_to_fp32(proScreenX_val);
+            proScreenY <= real_to_fp32(proScreenY_val);
+            valid_in <= '1';
+            
+            wait for CLK_PERIOD;
+            rays_sent := rays_sent + 1;
+        end loop;
+        
+        valid_in <= '0';
+        
+        report "  Sent " & integer'image(rays_sent) & " rays";
+        report "  Waiting for outputs...";
+        
+        -- Wait for all outputs
+        for i in 0 to 19 loop
+            wait until valid_out = '1' for 20 us;
+            
+            if valid_out = '1' then
+                rays_received := rays_received + 1;
+                if rays_received = 1 then
+                    first_output_time := now;
+                    report "  First output at: " & time'image(now - start_time);
+                end if;
+                last_output_time := now;
+                wait for CLK_PERIOD;  -- Wait for valid_out to drop
+            else
+                report "  Timeout waiting for output " & integer'image(i+1) & "/20" severity error;
+                exit;
+            end if;
+        end loop;
+        
+        end_time := now;
+        total_time := end_time - start_time;
+        
+        report "========================================";
+        report "Throughput Test Results:";
+        report "  Rays sent: " & integer'image(rays_sent);
+        report "  Rays received: " & integer'image(rays_received);
+        report "  Total time: " & time'image(total_time);
+        
+        if rays_received > 1 then
+            -- Calculate steady-state throughput (after first ray)
+            steady_state_time := last_output_time - first_output_time;
+            avg_time_per_ray := steady_state_time / (rays_received - 1);
+            
+            report "  First ray latency: " & time'image(first_output_time - start_time);
+            report "  Steady-state time (rays 2-20): " & time'image(steady_state_time);
+            report "  Average time per ray (steady-state): " & time'image(avg_time_per_ray);
+            report "  Throughput: " & real'image(real(rays_received - 1) * 1.0e9 / (steady_state_time / 1 ns)) & " rays/sec";
+            
+            -- Check if we achieved expected speedup
+            if avg_time_per_ray < 200 ns then
+                report "  Pipeline speedup achieved! (< 200ns/ray)";
+            else
+                report "  No significant speedup (> 200ns/ray)" severity warning;
+            end if;
+        end if;
+        
+        report "========================================";
         
         wait for 200 ns;
         
