@@ -23,7 +23,7 @@ architecture testbench of vec3_ops_tb is
     -- Crossbar system
     signal locked : std_logic;
     
-    -- Producer request/grant/result arrays (9 producers total: 3 for each op)
+    -- Producer request/grant/result arrays (3 producers total: 1 for each op)
     signal dot_requests    : producer_dot_request_array_t := (others => init_producer_dot_request);
     signal dot4_requests   : producer_dot4_request_array_t := (others => init_producer_dot4_request);
     signal mult_requests   : producer_mult_request_array_t := (others => init_producer_mult_request);
@@ -37,21 +37,21 @@ architecture testbench of vec3_ops_tb is
     signal prod_grants     : producer_grant_array_t;
     signal prod_results    : producer_result_array_t;
     
-    -- Vec3 Scale signals (Producer IDs 0-2)
+    -- Vec3 Scale signals (Producer ID 0)
     signal scale_valid_in  : std_logic := '0';
     signal scale_v         : Vec3;
     signal scale_scalar    : fp32;
     signal scale_result    : Vec3;
     signal scale_valid_out : std_logic;
     
-    -- Vec3 Add signals (Producer IDs 3-5)
+    -- Vec3 Add signals (Producer ID 1)
     signal add_valid_in  : std_logic := '0';
     signal add_a         : Vec3;
     signal add_b         : Vec3;
     signal add_result    : Vec3;
     signal add_valid_out : std_logic;
     
-    -- Vec3 Sub signals (Producer IDs 6-8)
+    -- Vec3 Sub signals (Producer ID 2)
     signal sub_valid_in  : std_logic := '0';
     signal sub_a         : Vec3;
     signal sub_b         : Vec3;
@@ -163,10 +163,10 @@ begin
             prod_results    => prod_results
         );
     
-    -- Vec3 Scale instantiation (uses producer IDs 0, 1, 2)
+    -- Vec3 Scale instantiation (uses producer ID 0)
     scale_inst : entity work.vec3_scale_hw
         generic map (
-            PRODUCER_ID_BASE => 0
+            PRODUCER_ID => 0
         )
         port map (
             clk             => clk,
@@ -181,10 +181,10 @@ begin
             mult_results    => prod_results
         );
     
-    -- Vec3 Add instantiation (uses producer IDs 3, 4, 5)
+    -- Vec3 Add instantiation (uses producer ID 1)
     add_inst : entity work.vec3_add_hw
         generic map (
-            PRODUCER_ID_BASE => 3
+            PRODUCER_ID => 1
         )
         port map (
             clk             => clk,
@@ -199,10 +199,10 @@ begin
             addsub_results  => prod_results
         );
     
-    -- Vec3 Sub instantiation (uses producer IDs 6, 7, 8)
+    -- Vec3 Sub instantiation (uses producer ID 2)
     sub_inst : entity work.vec3_sub_hw
         generic map (
-            PRODUCER_ID_BASE => 6
+            PRODUCER_ID => 2
         )
         port map (
             clk             => clk,

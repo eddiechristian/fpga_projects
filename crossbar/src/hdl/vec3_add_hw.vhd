@@ -7,17 +7,17 @@ use work.lin_alg_pkg.all;
 use work.crossbar_pkg.all;
 
 -- Hardware Vec3 addition using crossbar: result = a + b
--- Uses 3 producer slots to request 3 ADDSUB units in parallel
+-- Uses single producer ID with 3 operation IDs for x, y, z components
 -- 
 -- Performance:
 --   Latency: ~4 clock cycles (crossbar latency + FP_ADDSUB latency)
 --   Throughput: 1 result per cycle when all 3 addsubs are granted
 --   Resource usage: Shares crossbar ADDSUB units
 --
--- Producer IDs: Uses PRODUCER_ID_BASE, PRODUCER_ID_BASE+1, PRODUCER_ID_BASE+2
+-- Producer ID: Uses single PRODUCER_ID with op IDs 0, 1, 2
 entity vec3_add_hw is
     generic (
-        PRODUCER_ID_BASE : integer range 0 to 28 := 0  -- Base ID (needs 3 consecutive IDs)
+        PRODUCER_ID : integer range 0 to 31 := 0  -- Single producer ID
     );
     port (
         clk       : in  std_logic;
@@ -66,9 +66,9 @@ begin
             if reset = '1' then
                 state <= IDLE;
                 op_counter <= (others => '0');
-                addsub_requests(PRODUCER_ID_BASE + 0) <= init_producer_addsub_request;
-                addsub_requests(PRODUCER_ID_BASE + 1) <= init_producer_addsub_request;
-                addsub_requests(PRODUCER_ID_BASE + 2) <= init_producer_addsub_request;
+                addsub_requests(PRODUCER_ID) <= init_producer_addsub_request;
+                addsub_requests(PRODUCER_ID) <= init_producer_addsub_request;
+                addsub_requests(PRODUCER_ID) <= init_producer_addsub_request;
                 granted_x <= '0';
                 granted_y <= '0';
                 granted_z <= '0';
@@ -83,103 +83,103 @@ begin
                 case state is
                     when IDLE =>
                         -- Default: no requests when idle
-                        addsub_requests(PRODUCER_ID_BASE + 0).valid <= '0';
-                        addsub_requests(PRODUCER_ID_BASE + 1).valid <= '0';
-                        addsub_requests(PRODUCER_ID_BASE + 2).valid <= '0';
+                        addsub_requests(PRODUCER_ID).valid <= '0';
+                        addsub_requests(PRODUCER_ID).valid <= '0';
+                        addsub_requests(PRODUCER_ID).valid <= '0';
                         
                         if valid_in = '1' then
-                            report "VEC3_ADD: Entering REQUESTING state, PRODUCER_ID_BASE=" & integer'image(PRODUCER_ID_BASE);
+                            report "VEC3_ADD: Entering REQUESTING state, PRODUCER_ID=" & integer'image(PRODUCER_ID);
                             -- Latch inputs
                             a_reg <= a;
                             b_reg <= b;
-                            op_counter <= op_counter + 1;
                             granted_x <= '0';
                             granted_y <= '0';
                             granted_z <= '0';
                             result_x_valid <= '0';
                             result_y_valid <= '0';
                             result_z_valid <= '0';
-                            -- Generate TIDs immediately (each component uses its own producer ID)
-                            tid_x <= make_tid(PRODUCER_ID_BASE + 0, to_integer(op_counter));
-                            tid_y <= make_tid(PRODUCER_ID_BASE + 1, to_integer(op_counter));
-                            tid_z <= make_tid(PRODUCER_ID_BASE + 2, to_integer(op_counter));
+                            -- Generate TIDs with operation IDs 0, 1, 2 for x, y, z (before incrementing counter)
+                            tid_x <= make_tid(PRODUCER_ID, to_integer(op_counter) * 3 + 0);
+                            tid_y <= make_tid(PRODUCER_ID, to_integer(op_counter) * 3 + 1);
+                            tid_z <= make_tid(PRODUCER_ID, to_integer(op_counter) * 3 + 2);
+                            -- Increment counter for next operation
+                            op_counter <= op_counter + 1;
                             state <= REQUESTING;
                         end if;
                     
                     when REQUESTING =>
-                        report "VEC3_ADD: In REQUESTING state, granted=(" & std_logic'image(granted_x) & "," & std_logic'image(granted_y) & "," & std_logic'image(granted_z) & ")";
-                        -- Request X addition (if not yet granted)
+                        -- Request X, Y, Z additions sequentially using same producer ID
                         if granted_x = '0' then
-                            addsub_requests(PRODUCER_ID_BASE + 0).valid <= '1';
-                            addsub_requests(PRODUCER_ID_BASE + 0).unit_index <= 0;  -- Let arbiter choose
-                            addsub_requests(PRODUCER_ID_BASE + 0).data(31 downto 0) <= a_reg.x;
-                            addsub_requests(PRODUCER_ID_BASE + 0).data(63 downto 32) <= b_reg.x;
-                            addsub_requests(PRODUCER_ID_BASE + 0).data(64) <= '0';  -- 0 = ADD operation
-                            addsub_requests(PRODUCER_ID_BASE + 0).tid <= tid_x;
-                            
-                            if addsub_grants(PRODUCER_ID_BASE + 0).granted = '1' then
+                            addsub_requests(PRODUCER_ID).valid <= '1';
+                            addsub_requests(PRODUCER_ID).unit_index <= 0;
+                            addsub_requests(PRODUCER_ID).data(31 downto 0) <= a_reg.x;
+                            addsub_requests(PRODUCER_ID).data(63 downto 32) <= b_reg.x;
+                            addsub_requests(PRODUCER_ID).data(64) <= '0';  -- 0 = ADD operation
+                            addsub_requests(PRODUCER_ID).tid <= tid_x;
+                            if addsub_grants(PRODUCER_ID).granted = '1' then
                                 granted_x <= '1';
                             end if;
-                        end if;
-                        
-                        -- Request Y addition (if not yet granted)
-                        if granted_y = '0' then
-                            addsub_requests(PRODUCER_ID_BASE + 1).valid <= '1';
-                            addsub_requests(PRODUCER_ID_BASE + 1).unit_index <= 0;
-                            addsub_requests(PRODUCER_ID_BASE + 1).data(31 downto 0) <= a_reg.y;
-                            addsub_requests(PRODUCER_ID_BASE + 1).data(63 downto 32) <= b_reg.y;
-                            addsub_requests(PRODUCER_ID_BASE + 1).data(64) <= '0';  -- 0 = ADD operation
-                            addsub_requests(PRODUCER_ID_BASE + 1).tid <= tid_y;
-                            
-                            if addsub_grants(PRODUCER_ID_BASE + 1).granted = '1' then
+                        elsif granted_y = '0' then
+                            addsub_requests(PRODUCER_ID).valid <= '1';
+                            addsub_requests(PRODUCER_ID).unit_index <= 0;
+                            addsub_requests(PRODUCER_ID).data(31 downto 0) <= a_reg.y;
+                            addsub_requests(PRODUCER_ID).data(63 downto 32) <= b_reg.y;
+                            addsub_requests(PRODUCER_ID).data(64) <= '0';
+                            addsub_requests(PRODUCER_ID).tid <= tid_y;
+                            if addsub_grants(PRODUCER_ID).granted = '1' then
                                 granted_y <= '1';
                             end if;
+                        elsif granted_z = '0' then
+                            addsub_requests(PRODUCER_ID).valid <= '1';
+                            addsub_requests(PRODUCER_ID).unit_index <= 0;
+                            addsub_requests(PRODUCER_ID).data(31 downto 0) <= a_reg.z;
+                            addsub_requests(PRODUCER_ID).data(63 downto 32) <= b_reg.z;
+                            addsub_requests(PRODUCER_ID).data(64) <= '0';
+                            addsub_requests(PRODUCER_ID).tid <= tid_z;
+                            if addsub_grants(PRODUCER_ID).granted = '1' then
+                                granted_z <= '1';
+                            end if;
+                        else
+                            state <= WAITING;
                         end if;
                         
-                        -- Request Z addition (if not yet granted)
-                        if granted_z = '0' then
-                            addsub_requests(PRODUCER_ID_BASE + 2).valid <= '1';
-                            addsub_requests(PRODUCER_ID_BASE + 2).unit_index <= 0;
-                            addsub_requests(PRODUCER_ID_BASE + 2).data(31 downto 0) <= a_reg.z;
-                            addsub_requests(PRODUCER_ID_BASE + 2).data(63 downto 32) <= b_reg.z;
-                            addsub_requests(PRODUCER_ID_BASE + 2).data(64) <= '0';  -- 0 = ADD operation
-                            addsub_requests(PRODUCER_ID_BASE + 2).tid <= tid_z;
-                            
-                            if addsub_grants(PRODUCER_ID_BASE + 2).granted = '1' then
-                                granted_z <= '1';
+                        -- Capture results even while requesting (results may arrive early)
+                        if addsub_results(PRODUCER_ID).valid = '1' then
+                            if addsub_results(PRODUCER_ID).tid = tid_x and result_x_valid = '0' then
+                                result_x <= addsub_results(PRODUCER_ID).data;
+                                result_x_valid <= '1';
+                            elsif addsub_results(PRODUCER_ID).tid = tid_y and result_y_valid = '0' then
+                                result_y <= addsub_results(PRODUCER_ID).data;
+                                result_y_valid <= '1';
+                            elsif addsub_results(PRODUCER_ID).tid = tid_z and result_z_valid = '0' then
+                                result_z <= addsub_results(PRODUCER_ID).data;
+                                result_z_valid <= '1';
                             end if;
                         end if;
                         
-                        -- Move to waiting once all are granted
-                        if (granted_x = '1' or addsub_grants(PRODUCER_ID_BASE + 0).granted = '1') and
-                           (granted_y = '1' or addsub_grants(PRODUCER_ID_BASE + 1).granted = '1') and
-                           (granted_z = '1' or addsub_grants(PRODUCER_ID_BASE + 2).granted = '1') then
-                            report "VEC3_ADD: All grants received, moving to WAITING";
-                            state <= WAITING;
+                        -- Check if done (all requests granted AND all results received)
+                        if granted_x = '1' and granted_y = '1' and granted_z = '1' and
+                           result_x_valid = '1' and result_y_valid = '1' and result_z_valid = '1' then
+                            valid_out <= '1';
+                            state <= IDLE;
                         end if;
                     
                     when WAITING =>
                         -- Stop requesting
-                        addsub_requests(PRODUCER_ID_BASE + 0).valid <= '0';
-                        addsub_requests(PRODUCER_ID_BASE + 1).valid <= '0';
-                        addsub_requests(PRODUCER_ID_BASE + 2).valid <= '0';
+                        addsub_requests(PRODUCER_ID).valid <= '0';
                         
-                        -- Capture X result
-                        if addsub_results(PRODUCER_ID_BASE + 0).valid = '1' and addsub_results(PRODUCER_ID_BASE + 0).tid = tid_x then
-                            result_x <= addsub_results(PRODUCER_ID_BASE + 0).data;
-                            result_x_valid <= '1';
-                        end if;
-                        
-                        -- Capture Y result
-                        if addsub_results(PRODUCER_ID_BASE + 1).valid = '1' and addsub_results(PRODUCER_ID_BASE + 1).tid = tid_y then
-                            result_y <= addsub_results(PRODUCER_ID_BASE + 1).data;
-                            result_y_valid <= '1';
-                        end if;
-                        
-                        -- Capture Z result
-                        if addsub_results(PRODUCER_ID_BASE + 2).valid = '1' and addsub_results(PRODUCER_ID_BASE + 2).tid = tid_z then
-                            result_z <= addsub_results(PRODUCER_ID_BASE + 2).data;
-                            result_z_valid <= '1';
+                        -- Capture results by matching TID
+                        if addsub_results(PRODUCER_ID).valid = '1' then
+                            if addsub_results(PRODUCER_ID).tid = tid_x then
+                                result_x <= addsub_results(PRODUCER_ID).data;
+                                result_x_valid <= '1';
+                            elsif addsub_results(PRODUCER_ID).tid = tid_y then
+                                result_y <= addsub_results(PRODUCER_ID).data;
+                                result_y_valid <= '1';
+                            elsif addsub_results(PRODUCER_ID).tid = tid_z then
+                                result_z <= addsub_results(PRODUCER_ID).data;
+                                result_z_valid <= '1';
+                            end if;
                         end if;
                         
                         -- When all results are ready, assert valid_out
