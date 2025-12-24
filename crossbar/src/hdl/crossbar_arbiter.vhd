@@ -107,8 +107,12 @@ BEGIN
 
         -- Decode ADDSUB requests
         FOR i IN 0 TO NUM_PRODUCERS - 1 LOOP
-            IF addsub_requests(i).valid = '1' AND addsub_requests(i).unit_index < NUM_ADDSUB_UNITS THEN
-                req_addsub(i, addsub_requests(i).unit_index) <= '1';
+            IF addsub_requests(i).valid = '1' THEN
+                report "ARBITER: ADDSUB request from producer " & integer'image(i) & ", unit_index=" & integer'image(addsub_requests(i).unit_index) & ", NUM_ADDSUB_UNITS=" & integer'image(NUM_ADDSUB_UNITS);
+                IF addsub_requests(i).unit_index < NUM_ADDSUB_UNITS THEN
+                    req_addsub(i, addsub_requests(i).unit_index) <= '1';
+                    report "ARBITER: ADDSUB req_addsub(" & integer'image(i) & "," & integer'image(addsub_requests(i).unit_index) & ") set to 1";
+                END IF;
             END IF;
         END LOOP;
     END PROCESS;
@@ -261,6 +265,7 @@ BEGIN
                 FOR unit IN 0 TO NUM_ADDSUB_UNITS - 1 LOOP
                     IF grant_addsub_int(unit) /= - 1 THEN
                         addsub_priorities(unit) <= (grant_addsub_int(unit) + 1) MOD NUM_PRODUCERS;
+                        report "ARBITER: ADDSUB unit " & integer'image(unit) & " granted to producer " & integer'image(grant_addsub_int(unit));
                     END IF;
                 END LOOP;
             END IF;
