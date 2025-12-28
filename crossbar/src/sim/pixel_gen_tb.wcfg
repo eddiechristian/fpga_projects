@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="top_module_raytracer_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="crossbar_pkg" />
+            <top_module name="lin_alg_pkg" />
+            <top_module name="ray_tracing_pkg" />
+            <top_module name="top_module_raytracer_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="3,259.883 ns"></ZoomStartTime>
+      <ZoomEndTime time="3,290.586 ns"></ZoomEndTime>
+      <Cursor1Time time="3,266.885 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="248"></NameColumnWidth>
+      <ValueColumnWidth column_width="378"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="11" />
+   <wvobject type="logic" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/frame_complete">
+      <obj_property name="ElementShortName">frame_complete</obj_property>
+      <obj_property name="ObjectShortName">frame_complete</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/frame_ack">
+      <obj_property name="ElementShortName">frame_ack</obj_property>
+      <obj_property name="ObjectShortName">frame_ack</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/ray_rd_en">
+      <obj_property name="ElementShortName">ray_rd_en</obj_property>
+      <obj_property name="ObjectShortName">ray_rd_en</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/ray_out">
+      <obj_property name="ElementShortName">ray_out</obj_property>
+      <obj_property name="ObjectShortName">ray_out</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/x_counter">
+      <obj_property name="ElementShortName">x_counter</obj_property>
+      <obj_property name="ObjectShortName">x_counter</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/y_counter">
+      <obj_property name="ElementShortName">y_counter</obj_property>
+      <obj_property name="ObjectShortName">y_counter</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/frame_counter">
+      <obj_property name="ElementShortName">frame_counter</obj_property>
+      <obj_property name="ObjectShortName">frame_counter</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/ray_fifo_full">
+      <obj_property name="ElementShortName">ray_fifo_full</obj_property>
+      <obj_property name="ObjectShortName">ray_fifo_full</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/gen_ray_out">
+      <obj_property name="ElementShortName">gen_ray_out</obj_property>
+      <obj_property name="ObjectShortName">gen_ray_out</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/state">
+      <obj_property name="ElementShortName">state</obj_property>
+      <obj_property name="ObjectShortName">state</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_module_raytracer_tb/dut/crossbar_inst/locked_i">
+      <obj_property name="ElementShortName">locked_i</obj_property>
+      <obj_property name="ObjectShortName">locked_i</obj_property>
+   </wvobject>
+</wave_config>

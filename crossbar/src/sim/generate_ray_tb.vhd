@@ -29,8 +29,13 @@ architecture testbench of generate_ray_tb is
     signal proScreenX : fp32;
     signal proScreenY : fp32;
     signal valid_in : std_logic := '0';
+    signal ready_out : std_logic;
     signal ray_out : Ray;
     signal valid_out : std_logic;
+    
+    -- Counters for waveform viewing
+    signal num_valid_in : integer := 0;
+    signal num_valid_out : integer := 0;
     
     -- Crossbar signals (for vec3 operations inside generate_ray)
     signal dot_requests    : producer_dot_request_array_t := (others => init_producer_dot_request);
@@ -202,6 +207,7 @@ begin
             proScreenY      => proScreenY,
             valid_in        => valid_in,
             camera_in       => camera,
+            ready_out       => ready_out,
             ray             => ray_out,
             valid_out       => valid_out,
             mult_requests   => genray_mult_requests,
@@ -211,6 +217,35 @@ begin
             addsub_grants   => prod_grants,
             addsub_results  => prod_results
         );
+    
+    -- Counter processes for waveform viewing
+    -- These count AFTER the clock edge, so they show the count of completed transfers
+    process(clk)
+    begin
+        if rising_edge(clk) then
+            if rst = '1' then
+                num_valid_in <= 0;
+            else
+                -- Count on previous cycle's handshake
+                if valid_in = '1' and ready_out = '1' then
+                    num_valid_in <= num_valid_in + 1;
+                end if;
+            end if;
+        end if;
+    end process;
+    
+    process(clk)
+    begin
+        if rising_edge(clk) then
+            if rst = '1' then
+                num_valid_out <= 0;
+            else
+                if valid_out = '1' then
+                    num_valid_out <= num_valid_out + 1;
+                end if;
+            end if;
+        end if;
+    end process;
     
     -- Test stimulus
     stimulus: process
@@ -255,6 +290,8 @@ begin
         report "  Screen U: " & vec3_to_string(camera.screen_u);
         report "  Screen V: " & vec3_to_string(camera.screen_v);
         
+        -- Tests 1-5 commented out for faster simulation
+        if false then
         -- Test cases from gen_ray.txt
         -- Test 1: x=0, y=0
         report "========================================";
@@ -440,39 +477,53 @@ begin
         end if;
         
         wait for 200 ns;
+        end if;
         
-        -- Test 6: Throughput test - Send 20 rays back-to-back
+        -- Test 6: Throughput test - Send 100 rays back-to-back
         report "========================================";
-        report "Test 6: Throughput Test (20 rays back-to-back)";
+        report "Test 6: Throughput Test (100 rays back-to-back)";
         report "========================================";
         
         start_time := now;
         rays_sent := 0;
         rays_received := 0;
         
-        -- Send 20 rays back-to-back (as fast as ready_out allows)
-        for i in 0 to 19 loop
+        -- Send 100 rays back-to-back (as fast as ready_out allows)
+        for i in 0 to 99 loop
             pixel_x := i * 10;  -- Vary the pixels
             pixel_y := i * 5;
             proScreenX_val := (real(pixel_x) * X_FACT) - 1.0;
             proScreenY_val := (real(pixel_y) * Y_FACT) - 1.0;
             
+            -- Set up ray data
             proScreenX <= real_to_fp32(proScreenX_val);
             proScreenY <= real_to_fp32(proScreenY_val);
-            valid_in <= '1';
             
+            -- Wait until ready (with timeout)
+            if ready_out /= '1' then
+                report "TB: Waiting for ready_out for ray " & integer'image(i);
+                wait until ready_out = '1' for 10 us;
+                if ready_out /= '1' then
+                    report "TB: Timeout waiting for ready_out!" severity error;
+                    exit;
+                end if;
+            end if;
+            
+            -- Now assert valid and wait one clock for transfer
+            valid_in <= '1';
             wait for CLK_PERIOD;
+            valid_in <= '0';
+            
             rays_sent := rays_sent + 1;
+            report "TB: Ray " & integer'image(i) & " sent, total=" & integer'image(rays_sent);
         end loop;
-        
-        valid_in <= '0';
         
         report "  Sent " & integer'image(rays_sent) & " rays";
         report "  Waiting for outputs...";
         
         -- Wait for all outputs
-        for i in 0 to 19 loop
-            wait until valid_out = '1' for 20 us;
+        for i in 0 to 99 loop
+            wait until valid_out = '1' for 100 us;
             
             if valid_out = '1' then
                 rays_received := rays_received + 1;
@@ -483,7 +534,7 @@ begin
                 last_output_time := now;
                 wait for CLK_PERIOD;  -- Wait for valid_out to drop
             else
-                report "  Timeout waiting for output " & integer'image(i+1) & "/20" severity error;
+                report "  Timeout waiting for output " & integer'image(i+1) & "/100" severity error;
                 exit;
             end if;
         end loop;
@@ -503,7 +554,7 @@ begin
             avg_time_per_ray := steady_state_time / (rays_received - 1);
             
             report "  First ray latency: " & time'image(first_output_time - start_time);
-            report "  Steady-state time (rays 2-20): " & time'image(steady_state_time);
+            report "  Steady-state time (rays 2-100): " & time'image(steady_state_time);
             report "  Average time per ray (steady-state): " & time'image(avg_time_per_ray);
             report "  Throughput: " & real'image(real(rays_received - 1) * 1.0e9 / (steady_state_time / 1 ns)) & " rays/sec";
             

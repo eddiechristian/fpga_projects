@@ -60,25 +60,24 @@ begin
                 count <= 0;
                 
             else
-                -- Handle write
-                if wr_en = '1' and count < DEPTH then
+                -- Handle simultaneous read and write
+                if wr_en = '1' and rd_en = '1' and count > 0 and count < DEPTH then
+                    -- Both operations: count stays the same
                     mem(to_integer(head) mod DEPTH) <= wr_data;
                     head <= head + 1;
-                    
-                    -- Update count
-                    if rd_en = '0' or count = 0 then
-                        count <= count + 1;
-                    end if;
-                end if;
-                
-                -- Handle read
-                if rd_en = '1' and count > 0 then
                     tail <= tail + 1;
+                    -- count unchanged
                     
-                    -- Update count (if no simultaneous write, or write when full)
-                    if wr_en = '0' or count = DEPTH then
-                        count <= count - 1;
-                    end if;
+                elsif wr_en = '1' and count < DEPTH then
+                    -- Write only
+                    mem(to_integer(head) mod DEPTH) <= wr_data;
+                    head <= head + 1;
+                    count <= count + 1;
+                    
+                elsif rd_en = '1' and count > 0 then
+                    -- Read only
+                    tail <= tail + 1;
+                    count <= count - 1;
                 end if;
                 
             end if;

@@ -110,7 +110,6 @@ begin
                         -- Request X, Y, Z subtractions sequentially using same producer ID
                         if granted_x = '0' then
                             addsub_requests(PRODUCER_ID).valid <= '1';
-                            addsub_requests(PRODUCER_ID).unit_index <= 0;
                             addsub_requests(PRODUCER_ID).data(31 downto 0) <= a_reg.x;
                             addsub_requests(PRODUCER_ID).data(63 downto 32) <= b_reg.x;
                             addsub_requests(PRODUCER_ID).data(64) <= '1';  -- 1 = SUBTRACT operation
@@ -120,7 +119,6 @@ begin
                             end if;
                         elsif granted_y = '0' then
                             addsub_requests(PRODUCER_ID).valid <= '1';
-                            addsub_requests(PRODUCER_ID).unit_index <= 0;
                             addsub_requests(PRODUCER_ID).data(31 downto 0) <= a_reg.y;
                             addsub_requests(PRODUCER_ID).data(63 downto 32) <= b_reg.y;
                             addsub_requests(PRODUCER_ID).data(64) <= '1';
@@ -130,7 +128,6 @@ begin
                             end if;
                         elsif granted_z = '0' then
                             addsub_requests(PRODUCER_ID).valid <= '1';
-                            addsub_requests(PRODUCER_ID).unit_index <= 0;
                             addsub_requests(PRODUCER_ID).data(31 downto 0) <= a_reg.z;
                             addsub_requests(PRODUCER_ID).data(63 downto 32) <= b_reg.z;
                             addsub_requests(PRODUCER_ID).data(64) <= '1';

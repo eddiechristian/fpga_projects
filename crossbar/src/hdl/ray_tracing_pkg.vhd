@@ -18,6 +18,8 @@ PACKAGE ray_tracing_pkg IS
         point1 : Vec3;
         point2 : Vec3;
         lab    : Vec3;
+        pixel_x : integer;
+        pixel_y : integer;
     END RECORD;
 
     TYPE Camera IS RECORD
@@ -47,4 +49,11 @@ PACKAGE ray_tracing_pkg IS
         obj_type : ObjectType;
         color    : Color;
     END RECORD;
+
+    
+    TYPE Scene IS RECORD
+        camera_val : Camera;
+        --objects....
+    END RECORD;
+
 END PACKAGE ray_tracing_pkg;

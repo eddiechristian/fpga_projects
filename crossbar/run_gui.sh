@@ -10,7 +10,7 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 # Run Vivado GUI with logs redirected to logs directory
 # The GUI will stay open, so we run it in the background and monitor for log files
 cd logs
-vivado -mode gui build/resource_test.xpr -log gui_${TIMESTAMP}.log -journal gui_${TIMESTAMP}.jou &
+vivado -mode gui build/sss.xpr -log gui_${TIMESTAMP}.log -journal gui_${TIMESTAMP}.jou &
 VIVADO_PID=$!
 cd ..
 

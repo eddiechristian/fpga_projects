@@ -293,7 +293,7 @@ if {[string match "*Complete!" $synth_status]} {
     exit 1
 }
 
-# Set up post-synthesis simulation
-set_property -name {xsim.simulate.runtime} -value {200us} -objects [get_filesets sim_1]
+# Set up post-synthesis simulation - run indefinitely
+set_property -name {xsim.simulate.runtime} -value {all} -objects [get_filesets sim_1]
 
 exit 0
