@@ -93,8 +93,9 @@ BEGIN
 
         -- Decode MULT requests
         FOR i IN 0 TO NUM_PRODUCERS - 1 LOOP
-            report "ARBITER: MULT request from producer " & integer'image(i) & ", unit_index=" & integer'image(mult_requests(i).unit_index) & ", NUM_MULT_UNITS=" & integer'image(NUM_MULT_UNITS);
+
             IF mult_requests(i).valid = '1' AND mult_requests(i).unit_index < NUM_MULT_UNITS THEN
+                REPORT "ARBITER: MULT request from producer " & INTEGER'image(i) & ", unit_index=" & INTEGER'image(mult_requests(i).unit_index) & ", NUM_MULT_UNITS=" & INTEGER'image(NUM_MULT_UNITS);
                 req_mult(i, mult_requests(i).unit_index) <= '1';
             END IF;
         END LOOP;
@@ -109,10 +110,10 @@ BEGIN
         -- Decode ADDSUB requests
         FOR i IN 0 TO NUM_PRODUCERS - 1 LOOP
             IF addsub_requests(i).valid = '1' THEN
-                report "ARBITER: ADDSUB request from producer " & integer'image(i) & ", unit_index=" & integer'image(addsub_requests(i).unit_index) & ", NUM_ADDSUB_UNITS=" & integer'image(NUM_ADDSUB_UNITS);
+                REPORT "ARBITER: ADDSUB request from producer " & INTEGER'image(i) & ", unit_index=" & INTEGER'image(addsub_requests(i).unit_index) & ", NUM_ADDSUB_UNITS=" & INTEGER'image(NUM_ADDSUB_UNITS);
                 IF addsub_requests(i).unit_index < NUM_ADDSUB_UNITS THEN
                     req_addsub(i, addsub_requests(i).unit_index) <= '1';
-                    report "ARBITER: ADDSUB req_addsub(" & integer'image(i) & "," & integer'image(addsub_requests(i).unit_index) & ") set to 1";
+                    REPORT "ARBITER: ADDSUB req_addsub(" & INTEGER'image(i) & "," & INTEGER'image(addsub_requests(i).unit_index) & ") set to 1";
                 END IF;
             END IF;
         END LOOP;
@@ -229,7 +230,7 @@ BEGIN
                 mult_priorities   <= (OTHERS => 0);
                 fma_priorities    <= (OTHERS => 0);
                 addsub_priorities <= (OTHERS => 0);
-                ELSE
+            ELSE
                 -- Update DOT priority pointers
                 FOR unit IN 0 TO NUM_DOT_UNITS - 1 LOOP
                     IF grant_dot_int(unit) /= - 1 THEN
@@ -266,7 +267,7 @@ BEGIN
                 FOR unit IN 0 TO NUM_ADDSUB_UNITS - 1 LOOP
                     IF grant_addsub_int(unit) /= - 1 THEN
                         addsub_priorities(unit) <= (grant_addsub_int(unit) + 1) MOD NUM_PRODUCERS;
-                        report "ARBITER: ADDSUB unit " & integer'image(unit) & " granted to producer " & integer'image(grant_addsub_int(unit));
+                        REPORT "ARBITER: ADDSUB unit " & INTEGER'image(unit) & " granted to producer " & INTEGER'image(grant_addsub_int(unit));
                     END IF;
                 END LOOP;
             END IF;

@@ -61,6 +61,13 @@ ARCHITECTURE Structural OF crossbar_fp_system IS
     SIGNAL fma_outputs    : fp_fma_output_array_t;
     SIGNAL addsub_outputs : fp_addsub_output_array_t;
 
+    -- Unit busy indicators (for simulation visibility)
+    SIGNAL dot_busy       : STD_LOGIC_VECTOR(NUM_DOT_UNITS - 1 DOWNTO 0);
+    SIGNAL dot4_busy      : STD_LOGIC_VECTOR(NUM_DOT4_UNITS - 1 DOWNTO 0);
+    SIGNAL mult_busy      : STD_LOGIC_VECTOR(NUM_MULT_UNITS - 1 DOWNTO 0);
+    SIGNAL fma_busy       : STD_LOGIC_VECTOR(NUM_FMA_UNITS - 1 DOWNTO 0);
+    SIGNAL addsub_busy    : STD_LOGIC_VECTOR(NUM_ADDSUB_UNITS - 1 DOWNTO 0);
+
 BEGIN
 
     -- Clock management (for now, pass through - will add PLL/MMCM later)
@@ -194,6 +201,65 @@ BEGIN
                 m_axis_tid   => addsub_outputs(i).tid
             );
     END GENERATE;
+
+    -- Busy signal tracking: unit is busy from input valid to output valid
+    PROCESS(clk_internal)
+    BEGIN
+        IF rising_edge(clk_internal) THEN
+            IF rst = '1' THEN
+                dot_busy    <= (OTHERS => '0');
+                dot4_busy   <= (OTHERS => '0');
+                mult_busy   <= (OTHERS => '0');
+                fma_busy    <= (OTHERS => '0');
+                addsub_busy <= (OTHERS => '0');
+            ELSE
+                -- DOT units
+                FOR i IN 0 TO NUM_DOT_UNITS - 1 LOOP
+                    IF dot_inputs(i).valid = '1' THEN
+                        dot_busy(i) <= '1';
+                    ELSIF dot_outputs(i).valid = '1' THEN
+                        dot_busy(i) <= '0';
+                    END IF;
+                END LOOP;
+
+                -- DOT4 units
+                FOR i IN 0 TO NUM_DOT4_UNITS - 1 LOOP
+                    IF dot4_inputs(i).valid = '1' THEN
+                        dot4_busy(i) <= '1';
+                    ELSIF dot4_outputs(i).valid = '1' THEN
+                        dot4_busy(i) <= '0';
+                    END IF;
+                END LOOP;
+
+                -- MULT units
+                FOR i IN 0 TO NUM_MULT_UNITS - 1 LOOP
+                    IF mult_inputs(i).valid = '1' THEN
+                        mult_busy(i) <= '1';
+                    ELSIF mult_outputs(i).valid = '1' THEN
+                        mult_busy(i) <= '0';
+                    END IF;
+                END LOOP;
+
+                -- FMA units
+                FOR i IN 0 TO NUM_FMA_UNITS - 1 LOOP
+                    IF fma_inputs(i).valid = '1' THEN
+                        fma_busy(i) <= '1';
+                    ELSIF fma_outputs(i).valid = '1' THEN
+                        fma_busy(i) <= '0';
+                    END IF;
+                END LOOP;
+
+                -- ADDSUB units
+                FOR i IN 0 TO NUM_ADDSUB_UNITS - 1 LOOP
+                    IF addsub_inputs(i).valid = '1' THEN
+                        addsub_busy(i) <= '1';
+                    ELSIF addsub_outputs(i).valid = '1' THEN
+                        addsub_busy(i) <= '0';
+                    END IF;
+                END LOOP;
+            END IF;
+        END IF;
+    END PROCESS;
 
     -- Output router
     output_router_inst : ENTITY work.crossbar_output_router

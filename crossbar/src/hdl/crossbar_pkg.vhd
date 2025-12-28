@@ -6,7 +6,7 @@ USE work.lin_alg_pkg.ALL;
 PACKAGE crossbar_pkg IS
 
     -- System configuration constants
-    CONSTANT NUM_PRODUCERS     : INTEGER := 10;
+    CONSTANT NUM_PRODUCERS     : INTEGER := 40;
     CONSTANT NUM_MULT_UNITS    : INTEGER := 32;
     CONSTANT NUM_FMA_UNITS     : INTEGER := 5;
     CONSTANT NUM_ADDSUB_UNITS  : INTEGER := 16;
@@ -39,28 +39,28 @@ PACKAGE crossbar_pkg IS
     -- Producer request records (separate type per unit to avoid MAX_DATA_WIDTH waste)
     TYPE producer_mult_request_t IS RECORD
         valid      : STD_LOGIC;
-        unit_index : INTEGER RANGE 0 TO 15; -- Which MULT unit
+        unit_index : INTEGER RANGE 0 TO 31; -- Which MULT unit
         data       : STD_LOGIC_VECTOR(MULT_DATA_WIDTH - 1 DOWNTO 0);
         tid        : STD_LOGIC_VECTOR(TID_WIDTH - 1 DOWNTO 0);
     END RECORD;
 
     TYPE producer_fma_request_t IS RECORD
         valid      : STD_LOGIC;
-        unit_index : INTEGER RANGE 0 TO 15; -- Which FMA unit
+        unit_index : INTEGER RANGE 0 TO 4; -- Which FMA unit
         data       : STD_LOGIC_VECTOR(FMA_DATA_WIDTH - 1 DOWNTO 0);
         tid        : STD_LOGIC_VECTOR(TID_WIDTH - 1 DOWNTO 0);
     END RECORD;
 
     TYPE producer_addsub_request_t IS RECORD
         valid      : STD_LOGIC;
-        unit_index : INTEGER RANGE 0 TO 15; -- Which ADDSUB unit
+        unit_index : INTEGER RANGE 0 TO 15; -- Which ADDSUB unit (16 units)
         data       : STD_LOGIC_VECTOR(ADDSUB_DATA_WIDTH - 1 DOWNTO 0);
         tid        : STD_LOGIC_VECTOR(TID_WIDTH - 1 DOWNTO 0);
     END RECORD;
 
     TYPE producer_dot_request_t IS RECORD
         valid      : STD_LOGIC;
-        unit_index : INTEGER RANGE 0 TO 15; -- Which DOT unit
+        unit_index : INTEGER RANGE 0 TO 15; -- Which DOT unit (16 units)
         a          : Vec3;
         b          : Vec3;
         tid        : STD_LOGIC_VECTOR(TID_WIDTH - 1 DOWNTO 0);
@@ -68,7 +68,7 @@ PACKAGE crossbar_pkg IS
 
     TYPE producer_dot4_request_t IS RECORD
         valid      : STD_LOGIC;
-        unit_index : INTEGER RANGE 0 TO 15; -- Which DOT4 unit
+        unit_index : INTEGER RANGE 0 TO 15; -- Which DOT4 unit (16 units)
         a          : Vec4;
         b          : Vec4;
         tid        : STD_LOGIC_VECTOR(TID_WIDTH - 1 DOWNTO 0);
@@ -78,7 +78,7 @@ PACKAGE crossbar_pkg IS
     TYPE producer_grant_t IS RECORD
         granted    : STD_LOGIC;
         unit_type  : unit_type_t;
-        unit_index : INTEGER RANGE 0 TO 15;
+        unit_index : INTEGER RANGE 0 TO 31; -- Max of all unit types (32 mult units)
     END RECORD;
 
     -- Producer result record

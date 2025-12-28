@@ -257,15 +257,22 @@ if {[string match "*Complete!" $synth_status]} {
     # Open the synthesis checkpoint
     open_run synth_1
     
-    # Generate utilization report
+    # Generate utilization reports
     set report_file "$project_dir/utilization_synth.rpt"
+    set report_file_hier "$project_dir/utilization_synth_hierarchical.rpt"
+    
+    # Standard utilization report
     report_utilization -file $report_file
+    
+    # Hierarchical utilization report with percentages
+    report_utilization -hierarchical -hierarchical_percentages -file $report_file_hier
     
     puts "\n========================================"
     puts "Synthesis build complete!"
     puts "========================================"
     puts "Synthesis checkpoint: $project_dir/$project_name.runs/synth_1/top_module.dcp"
     puts "Utilization report: $report_file"
+    puts "Hierarchical report: $report_file_hier"
     puts "\nTo run implementation and bitstream generation, use:"
     puts "  vivado -mode batch -source full_build.tcl"
     puts "========================================"
