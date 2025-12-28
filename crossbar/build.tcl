@@ -232,8 +232,8 @@ if {[llength $xdc_files] > 0} {
 }
 
 # Set top module
-set_property top top_module [current_fileset]
-set_property top top_module_tb [get_filesets sim_1]
+set_property top top_module_raytracer [current_fileset]
+set_property top top_module_raytracer_tb [get_filesets sim_1]
 
 # Update compile order
 update_compile_order -fileset sources_1

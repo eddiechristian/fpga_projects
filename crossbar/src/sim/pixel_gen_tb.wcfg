@@ -13,15 +13,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="3,259.883 ns"></ZoomStartTime>
-      <ZoomEndTime time="3,290.586 ns"></ZoomEndTime>
-      <Cursor1Time time="3,266.885 ns"></Cursor1Time>
+      <ZoomStartTime time="23,852.167 ns"></ZoomStartTime>
+      <ZoomEndTime time="25,189.168 ns"></ZoomEndTime>
+      <Cursor1Time time="24,075.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="248"></NameColumnWidth>
-      <ValueColumnWidth column_width="378"></ValueColumnWidth>
+      <ValueColumnWidth column_width="374"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="11" />
+   <WVObjectSize size="12" />
    <wvobject type="logic" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/frame_complete">
       <obj_property name="ElementShortName">frame_complete</obj_property>
       <obj_property name="ObjectShortName">frame_complete</obj_property>
@@ -33,6 +33,10 @@
    <wvobject type="logic" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/ray_rd_en">
       <obj_property name="ElementShortName">ray_rd_en</obj_property>
       <obj_property name="ObjectShortName">ray_rd_en</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/ray_empty">
+      <obj_property name="ElementShortName">ray_empty</obj_property>
+      <obj_property name="ObjectShortName">ray_empty</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top_module_raytracer_tb/dut/pixel_gen_inst/ray_out">
       <obj_property name="ElementShortName">ray_out</obj_property>

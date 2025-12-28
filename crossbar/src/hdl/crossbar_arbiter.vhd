@@ -93,6 +93,7 @@ BEGIN
 
         -- Decode MULT requests
         FOR i IN 0 TO NUM_PRODUCERS - 1 LOOP
+            report "ARBITER: MULT request from producer " & integer'image(i) & ", unit_index=" & integer'image(mult_requests(i).unit_index) & ", NUM_MULT_UNITS=" & integer'image(NUM_MULT_UNITS);
             IF mult_requests(i).valid = '1' AND mult_requests(i).unit_index < NUM_MULT_UNITS THEN
                 req_mult(i, mult_requests(i).unit_index) <= '1';
             END IF;

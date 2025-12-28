@@ -108,7 +108,7 @@ begin
                         -- Request X, Y, Z multiplications sequentially using same producer ID
                         if granted_x = '0' then
                             mult_requests(PRODUCER_ID).valid <= '1';
-                            mult_requests(PRODUCER_ID).unit_index <= 0;
+                            mult_requests(PRODUCER_ID).unit_index <= (PRODUCER_ID * 3 + 0) mod NUM_MULT_UNITS;
                             mult_requests(PRODUCER_ID).data(31 downto 0) <= v_reg.x;
                             mult_requests(PRODUCER_ID).data(63 downto 32) <= scalar_reg;
                             mult_requests(PRODUCER_ID).tid <= tid_x;
@@ -118,7 +118,7 @@ begin
                             end if;
                         elsif granted_y = '0' then
                             mult_requests(PRODUCER_ID).valid <= '1';
-                            mult_requests(PRODUCER_ID).unit_index <= 0;
+                            mult_requests(PRODUCER_ID).unit_index <= (PRODUCER_ID * 3 + 1) mod NUM_MULT_UNITS;
                             mult_requests(PRODUCER_ID).data(31 downto 0) <= v_reg.y;
                             mult_requests(PRODUCER_ID).data(63 downto 32) <= scalar_reg;
                             mult_requests(PRODUCER_ID).tid <= tid_y;
@@ -128,7 +128,7 @@ begin
                             end if;
                         elsif granted_z = '0' then
                             mult_requests(PRODUCER_ID).valid <= '1';
-                            mult_requests(PRODUCER_ID).unit_index <= 0;
+                            mult_requests(PRODUCER_ID).unit_index <= (PRODUCER_ID * 3 + 2) mod NUM_MULT_UNITS;
                             mult_requests(PRODUCER_ID).data(31 downto 0) <= v_reg.z;
                             mult_requests(PRODUCER_ID).data(63 downto 32) <= scalar_reg;
                             mult_requests(PRODUCER_ID).tid <= tid_z;

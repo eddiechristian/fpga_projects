@@ -673,7 +673,7 @@ BEGIN
                     IF mult_x_granted = '0' THEN
                         x_fp := int_to_fp32(pixel_x_save);
                         coord_mult_requests(PRODUCER_ID_BASE + 0).valid      <= '1';
-                        coord_mult_requests(PRODUCER_ID_BASE + 0).unit_index <= 0;
+                        coord_mult_requests(PRODUCER_ID_BASE + 0).unit_index <= ((PRODUCER_ID_BASE + 0) * 2) mod NUM_MULT_UNITS;
                         coord_mult_requests(PRODUCER_ID_BASE + 0).data       <= x_fp & x_factor;
                         coord_mult_requests(PRODUCER_ID_BASE + 0).tid        <= make_tid(PRODUCER_ID_BASE + 0, 0);
                         IF mult_grants(PRODUCER_ID_BASE + 0).granted = '1' THEN
@@ -688,7 +688,7 @@ BEGIN
                     IF mult_y_granted = '0' THEN
                         y_fp := int_to_fp32(pixel_y_save);
                         coord_mult_requests(PRODUCER_ID_BASE + 1).valid      <= '1';
-                        coord_mult_requests(PRODUCER_ID_BASE + 1).unit_index <= 0;
+                        coord_mult_requests(PRODUCER_ID_BASE + 1).unit_index <= ((PRODUCER_ID_BASE + 1) * 2) mod NUM_MULT_UNITS;
                         coord_mult_requests(PRODUCER_ID_BASE + 1).data       <= y_fp & y_factor;
                         coord_mult_requests(PRODUCER_ID_BASE + 1).tid        <= make_tid(PRODUCER_ID_BASE + 1, 0);
                         IF mult_grants(PRODUCER_ID_BASE + 1).granted = '1' THEN
@@ -712,7 +712,7 @@ BEGIN
                     -- X subtract (after mult done)
                     IF mult_x_done = '1' AND sub_x_granted = '0' THEN
                         coord_addsub_requests(PRODUCER_ID_BASE + 2).valid      <= '1';
-                        coord_addsub_requests(PRODUCER_ID_BASE + 2).unit_index <= 0;
+                        coord_addsub_requests(PRODUCER_ID_BASE + 2).unit_index <= ((PRODUCER_ID_BASE + 2) * 2) mod NUM_ADDSUB_UNITS;
                         coord_addsub_requests(PRODUCER_ID_BASE + 2).data       <= mult_x_result & X"3F800000" & '1';
                         coord_addsub_requests(PRODUCER_ID_BASE + 2).tid        <= make_tid(PRODUCER_ID_BASE + 2, 0);
                         IF addsub_grants(PRODUCER_ID_BASE + 2).granted = '1' THEN
@@ -726,7 +726,7 @@ BEGIN
                     -- Y subtract (after mult done)
                     IF mult_y_done = '1' AND sub_y_granted = '0' THEN
                         coord_addsub_requests(PRODUCER_ID_BASE + 3).valid      <= '1';
-                        coord_addsub_requests(PRODUCER_ID_BASE + 3).unit_index <= 0;
+                        coord_addsub_requests(PRODUCER_ID_BASE + 3).unit_index <= ((PRODUCER_ID_BASE + 3) * 2) mod NUM_ADDSUB_UNITS;
                         coord_addsub_requests(PRODUCER_ID_BASE + 3).data       <= mult_y_result & X"3F800000" & '1';
                         coord_addsub_requests(PRODUCER_ID_BASE + 3).tid        <= make_tid(PRODUCER_ID_BASE + 3, 0);
                         IF addsub_grants(PRODUCER_ID_BASE + 3).granted = '1' THEN
